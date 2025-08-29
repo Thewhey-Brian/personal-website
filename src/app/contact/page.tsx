@@ -9,9 +9,9 @@ export default function ContactPage() {
       <div className="mx-auto max-w-2xl text-center">
         <h1 className="text-3xl font-bold tracking-tight mb-4">Get in Touch</h1>
         <p className="text-lg text-muted-foreground mb-8">
-          I'm always interested in hearing about new opportunities, collaborations, or ideas worth exploring. 
-          Whether it's about computational biology, AI projects, or turning crazy ideas into real prototypes, 
-          I'd be glad to connect.
+          I&apos;m always interested in hearing about new opportunities, collaborations, or ideas worth exploring. 
+          Whether it&apos;s about computational biology, AI projects, or turning crazy ideas into real prototypes, 
+          I&apos;d be glad to connect.
         </p>
       </div>
 
@@ -107,7 +107,7 @@ export default function ContactPage() {
           <CardContent>
             <p className="text-muted-foreground">
               If you have an opportunity, a collaboration idea, or just want to talk tech and science, 
-              I'd love to hear from you.
+              I&apos;d love to hear from you.
             </p>
           </CardContent>
         </Card>

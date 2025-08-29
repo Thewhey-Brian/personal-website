@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Query parameter is required' }, { status: 400 })
     }
 
-    let results: any = {}
+    let results: { semantic?: unknown[]; keyword?: unknown[]; combined?: unknown[] } = {}
 
     if (method === 'semantic') {
       // Pure semantic search
@@ -48,9 +48,9 @@ async function fallbackContentSearch(
   query: string, 
   type?: string, 
   limit = 10
-): Promise<any> {
+): Promise<{ semantic: never[]; keyword: never[]; combined: unknown[] }> {
   const searchTerm = query.toLowerCase()
-  let results: any[] = []
+  let results: unknown[] = []
 
   // Search publications
   if (!type || type === 'publication') {
@@ -105,7 +105,7 @@ async function fallbackContentSearch(
   }
 
   // Sort by relevance and limit
-  results.sort((a, b) => b.score - a.score)
+  results.sort((a: any, b: any) => b.score - a.score)
   
   return {
     semantic: [],
@@ -117,9 +117,9 @@ async function fallbackContentSearch(
 /**
  * Enrich search results with full content metadata
  */
-async function enrichSearchResults(results: any): Promise<any> {
+async function enrichSearchResults(results: { semantic?: unknown[]; keyword?: unknown[]; combined?: unknown[] }): Promise<{ semantic: unknown[]; keyword: unknown[]; combined: unknown[] }> {
   const enrichResults = (items: any[]) => {
-    return items.map(item => {
+    return items.map((item: any) => {
       let enrichedMetadata = { ...item.metadata }
 
       // Find full content for publications

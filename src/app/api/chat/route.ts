@@ -1,7 +1,6 @@
 import { openai } from '@ai-sdk/openai'
-import { streamText, tool, CoreMessage, Message } from 'ai'
+import { streamText, type CoreMessage } from 'ai'
 import { NextRequest } from 'next/server'
-import { toolSchemas, toolImplementations } from '@/lib/agent-tools'
 
 // System prompt for the AI agent
 const SYSTEM_PROMPT = `You are an intelligent assistant for a personal academic website. Your role is to help visitors explore and understand the content, including research publications, projects, and photography.
@@ -34,7 +33,7 @@ Always be ready to explore connections between different pieces of content and p
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages }: { messages: Message[] } = await req.json()
+    const { messages }: { messages: CoreMessage[] } = await req.json()
 
     // Stream the response with tool calling capabilities
     const result = streamText({
@@ -43,7 +42,6 @@ export async function POST(req: NextRequest) {
         { role: 'system', content: SYSTEM_PROMPT },
         ...messages
       ],
-      maxTokens: 2000,
       temperature: 0.7,
     })
 
