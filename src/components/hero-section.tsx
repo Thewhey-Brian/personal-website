@@ -9,7 +9,7 @@ import ParticleNetwork from "./particle-network"
 export default function HeroSection() {
   const [displayText, setDisplayText] = useState('')
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0)
-  const roles = ['Scientist', 'Developer', 'Photographer', 'Researcher']
+  const roles = ['Researcher', 'Developer', 'Photographer', 'Scientist', 'Entrepreneur']
   
   useEffect(() => {
     const currentRole = roles[currentRoleIndex]
