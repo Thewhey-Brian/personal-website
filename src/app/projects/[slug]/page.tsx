@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { GraphVisualization } from "@/components/graph-visualization"
 import { ArrowLeft, ExternalLink, Github, Calendar, User, Clock, CheckCircle, Circle } from "lucide-react"
 import Link from "next/link"
 import { Metadata } from "next"
@@ -188,15 +187,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             </div>
           </div>
         )}
-
-        {/* Knowledge Graph */}
-        <div className="mb-8">
-          <GraphVisualization 
-            nodeId={project.slug}
-            title={`Technology Graph for "${project.title}"`}
-            height={400}
-          />
-        </div>
 
         {/* MDX Content */}
         <div className="prose prose-gray dark:prose-invert max-w-none">

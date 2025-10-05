@@ -3,7 +3,9 @@ import { defineDocumentType, makeSource } from "contentlayer2/source-files";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
+import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 var Publication = defineDocumentType(() => ({
   name: "Publication",
   filePathPattern: `publications/**/*.mdx`,
@@ -140,9 +142,10 @@ var contentlayer_config_default = makeSource({
   documentTypes: [Publication, Project],
   disableImportAliasWarning: true,
   mdx: {
-    remarkPlugins: [remarkGfm],
+    remarkPlugins: [remarkGfm, remarkMath],
     rehypePlugins: [
       rehypeSlug,
+      rehypeKatex,
       [
         rehypePrettyCode,
         {
@@ -174,4 +177,4 @@ var contentlayer_config_default = makeSource({
 export {
   contentlayer_config_default as default
 };
-//# sourceMappingURL=compiled-contentlayer-config-6IDIBZVW.mjs.map
+//# sourceMappingURL=compiled-contentlayer-config-PFMIYUO6.mjs.map

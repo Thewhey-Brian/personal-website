@@ -21,7 +21,7 @@ export default function ParticleNetwork({ className = '' }: ParticleNetworkProps
   const [mounted, setMounted] = useState(false)
   const particlesRef = useRef<Particle[]>([])
   const mouseRef = useRef({ x: 0, y: 0 })
-  const animationFrameRef = useRef<number>()
+  const animationFrameRef = useRef<number | undefined>(undefined)
 
   // Configuration
   const config = {

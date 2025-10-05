@@ -12,8 +12,7 @@
     "test-env": "npx tsx --env-file=.env.local src/scripts/simple-test.ts",
     "setup-storage": "npx tsx --env-file=.env.local src/scripts/setup-storage.ts",
     "fix-rls": "npx tsx --env-file=.env.local src/scripts/fix-rls-policies.ts",
-    "test-rls": "npx tsx --env-file=.env.local src/scripts/simple-rls-fix.ts",
-    "build-graph": "npx tsx --env-file=.env.local src/scripts/build-graph.ts"
+    "test-rls": "npx tsx --env-file=.env.local src/scripts/simple-rls-fix.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.22",
@@ -32,8 +31,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "contentlayer2": "^0.5.8",
-    "cytoscape": "^3.33.1",
-    "cytoscape-dagre": "^2.5.0",
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.1",
     "lucide-react": "^0.542.0",
@@ -43,6 +40,7 @@
     "openai": "^5.16.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-markdown": "^10.1.0",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-katex": "^7.0.1",
     "rehype-pretty-code": "^0.14.1",
@@ -56,7 +54,6 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@types/cytoscape": "^3.21.9",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

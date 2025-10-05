@@ -6,13 +6,15 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
-import { 
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import {
   Brain,
-  X, 
-  Minimize2, 
-  Maximize2, 
-  Send, 
-  Loader2, 
+  X,
+  Minimize2,
+  Maximize2,
+  Send,
+  Loader2,
   User,
   Lightbulb
 } from 'lucide-react'
@@ -193,8 +195,14 @@ export function ByteBrainChat({ className = "" }: ByteBrainChatProps) {
                 <Badge variant="secondary" className="text-xs">AI Twin</Badge>
               </div>
             )}
-            <div className="text-sm whitespace-pre-wrap leading-relaxed">
-              {message.content}
+            <div className="text-sm leading-relaxed prose prose-sm dark:prose-invert max-w-none prose-p:my-2 prose-ul:my-2 prose-li:my-0 prose-headings:my-2">
+              {isByteBrain ? (
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {message.content}
+                </ReactMarkdown>
+              ) : (
+                <div className="whitespace-pre-wrap">{message.content}</div>
+              )}
             </div>
           </div>
         </div>

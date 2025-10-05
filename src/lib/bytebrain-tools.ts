@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { getSiteContent } from './content-indexer'
 import { hybridSearch } from './embeddings'
-import { getNodeGraph } from './graph'
 import { supabase } from './supabase'
 
 // Enhanced tool schemas for ByteBrain
@@ -15,11 +14,6 @@ export const bytebrainToolSchemas = {
     query: z.string().describe('What to search for'),
     type: z.enum(['publication', 'project', 'photo', 'all']).optional().default('all').describe('Type of content'),
     limit: z.number().optional().default(5).describe('Max results to return')
-  }),
-
-  get_knowledge_graph: z.object({
-    nodeId: z.string().describe('Central node to explore'),
-    depth: z.number().optional().default(1).describe('Relationship depth')
   }),
 
   render_gallery: z.object({
@@ -142,37 +136,6 @@ export const bytebrainToolImplementations = {
         query,
         results: [],
         totalFound: 0
-      }
-    }
-  },
-
-  get_knowledge_graph: async ({ nodeId, depth }: z.infer<typeof bytebrainToolSchemas.get_knowledge_graph>) => {
-    try {
-      const graphData = await getNodeGraph(nodeId, depth)
-      
-      return {
-        centralNode: nodeId,
-        nodes: graphData.nodes.map(node => ({
-          id: node.id,
-          type: node.type,
-          label: node.label,
-          connections: graphData.edges.filter(e => e.source === node.id || e.target === node.id).length
-        })),
-        relationships: graphData.edges.map(edge => ({
-          from: edge.source,
-          to: edge.target,
-          type: edge.relation,
-          strength: edge.weight
-        })),
-        insights: `This shows how "${nodeId}" connects to ${graphData.nodes.length - 1} other concepts in Brian's work!`,
-        totalConnections: graphData.edges.length
-      }
-    } catch (error) {
-      return {
-        error: 'Knowledge graph circuits are sparking! Give me a moment to rewire.',
-        centralNode: nodeId,
-        nodes: [],
-        relationships: []
       }
     }
   },

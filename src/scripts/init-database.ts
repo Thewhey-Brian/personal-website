@@ -6,7 +6,6 @@
  */
 
 import { storeEmbeddings, EmbeddingContent } from '../lib/embeddings'
-import { extractEntitiesFromContent, storeGraphData } from '../lib/graph'
 
 async function initializeDatabase() {
   // Import contentlayer data dynamically to avoid module resolution issues
@@ -82,27 +81,16 @@ async function initializeDatabase() {
     })
 
     console.log(`📝 Processing ${embeddingContents.length} content chunks...`)
-    
+
     // Store embeddings (this will generate them using OpenAI)
     await storeEmbeddings(embeddingContents)
     console.log('✅ Embeddings stored successfully!')
-
-    // 2. Generate and store knowledge graph
-    console.log('\n🕸️ Generating knowledge graph...')
-    
-    const graphData = extractEntitiesFromContent()
-    console.log(`📊 Generated graph with ${graphData.nodes.length} nodes and ${graphData.edges.length} edges`)
-    
-    await storeGraphData(graphData)
-    console.log('✅ Knowledge graph stored successfully!')
 
     // 3. Summary
     console.log('\n🎉 Database initialization complete!')
     console.log(`📚 Publications: ${allPublications.length}`)
     console.log(`🚀 Projects: ${allProjects.length}`)
     console.log(`🔍 Embedding chunks: ${embeddingContents.length}`)
-    console.log(`🕸️ Graph nodes: ${graphData.nodes.length}`)
-    console.log(`🔗 Graph edges: ${graphData.edges.length}`)
 
     console.log('\n✨ Your AI agent is now ready to use!')
     console.log('💬 Try asking: "What research have you published?" or "Show me your latest projects"')

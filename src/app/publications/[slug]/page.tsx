@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { GraphVisualization } from "@/components/graph-visualization"
 import { ArrowLeft, ExternalLink, FileText, Code, Presentation, Video, Calendar, Building2 } from "lucide-react"
 import Link from "next/link"
 import { Metadata } from "next"
@@ -172,15 +171,6 @@ export default async function PublicationPage({ params }: PublicationPageProps) 
             </p>
           </CardContent>
         </Card>
-
-        {/* Knowledge Graph */}
-        <div className="mb-8">
-          <GraphVisualization 
-            nodeId={publication.slug}
-            title={`Knowledge Graph for "${publication.title}"`}
-            height={500}
-          />
-        </div>
 
         {/* MDX Content */}
         <div className="prose prose-gray dark:prose-invert max-w-none">
