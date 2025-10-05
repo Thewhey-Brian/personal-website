@@ -3,7 +3,9 @@ import { spawn } from 'child_process'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import rehypePrettyCode from 'rehype-pretty-code'
 import rehypeSlug from 'rehype-slug'
+import rehypeKatex from 'rehype-katex'
 import remarkGfm from 'remark-gfm'
+import remarkMath from 'remark-math'
 
 const Publication = defineDocumentType(() => ({
   name: 'Publication',
@@ -143,9 +145,10 @@ export default makeSource({
   documentTypes: [Publication, Project],
   disableImportAliasWarning: true,
   mdx: {
-    remarkPlugins: [remarkGfm],
+    remarkPlugins: [remarkGfm, remarkMath],
     rehypePlugins: [
       rehypeSlug,
+      rehypeKatex,
       [
         rehypePrettyCode,
         {

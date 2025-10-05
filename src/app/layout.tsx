@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import "katex/dist/katex.min.css";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
-import { ChatDock } from "@/components/chat-dock";
+import { ByteBrainChat } from "@/components/bytebrain-chat";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,7 +33,7 @@ export default function RootLayout({
             <Navbar />
             <main className="flex-1">{children}</main>
             <Footer />
-            <ChatDock />
+            <ByteBrainChat />
           </div>
         </ThemeProvider>
       </body>

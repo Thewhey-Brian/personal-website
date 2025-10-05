@@ -12,7 +12,8 @@
     "test-env": "npx tsx --env-file=.env.local src/scripts/simple-test.ts",
     "setup-storage": "npx tsx --env-file=.env.local src/scripts/setup-storage.ts",
     "fix-rls": "npx tsx --env-file=.env.local src/scripts/fix-rls-policies.ts",
-    "test-rls": "npx tsx --env-file=.env.local src/scripts/simple-rls-fix.ts"
+    "test-rls": "npx tsx --env-file=.env.local src/scripts/simple-rls-fix.ts",
+    "build-graph": "npx tsx --env-file=.env.local src/scripts/build-graph.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.22",
@@ -43,9 +44,11 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "rehype-autolink-headings": "^7.1.0",
+    "rehype-katex": "^7.0.1",
     "rehype-pretty-code": "^0.14.1",
     "rehype-slug": "^6.0.0",
     "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
     "shiki": "^3.12.0",
     "tailwind-merge": "^3.3.1",
     "zod": "^3.25.76"
