@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { RelatedContent } from "@/components/related-content"
 import { ArrowLeft, ExternalLink, Github, Calendar, User, Clock, CheckCircle, Circle } from "lucide-react"
 import Link from "next/link"
 import { Metadata } from "next"
@@ -191,6 +192,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         {/* MDX Content */}
         <div className="prose prose-gray dark:prose-invert max-w-none">
           <Mdx code={project.body.code} />
+        </div>
+
+        {/* Related Content */}
+        <div className="my-12">
+          <RelatedContent contentId={project.slug} contentType="project" />
         </div>
 
         {/* Navigation to other projects */}

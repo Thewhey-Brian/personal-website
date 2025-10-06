@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { RelatedContent } from "@/components/related-content"
 import { ArrowLeft, ExternalLink, FileText, Code, Presentation, Video, Calendar, Building2 } from "lucide-react"
 import Link from "next/link"
 import { Metadata } from "next"
@@ -175,6 +176,11 @@ export default async function PublicationPage({ params }: PublicationPageProps) 
         {/* MDX Content */}
         <div className="prose prose-gray dark:prose-invert max-w-none">
           <Mdx code={publication.body.code} publication={publication} />
+        </div>
+
+        {/* Related Content */}
+        <div className="my-12">
+          <RelatedContent contentId={publication.slug} contentType="publication" />
         </div>
 
         {/* Navigation to other publications */}

@@ -1,7 +1,8 @@
 import { openai } from '@ai-sdk/openai'
-import { streamText, type CoreMessage } from 'ai'
+import { streamText, tool, type CoreMessage } from 'ai'
 import { NextRequest } from 'next/server'
 import { getSiteContent, generateContentSummary } from '@/lib/content-indexer'
+import { toolSchemas, toolActions } from '@/lib/bytebrain-actions'
 
 // Generate dynamic system prompt based on current site content
 async function generateSystemPrompt(): Promise<string> {
@@ -22,11 +23,12 @@ ${contentSummary}
 - Genuinely excited to help you explore Brian's work
 - Can guide you to any page or content you're interested in
 
-## What I Can Do:
-- Answer questions about Brian's research and projects
-- Help you navigate to specific pages or content
-- Explain complex computational biology concepts
-- Share insights about Brian's work and background
+## What I Can Do (with real-time tools!):
+- **Search Content**: Use search_content tool to find publications, projects by keywords
+- **Find Related Work**: Use get_related_content to discover connected research
+- **Summarize**: Use summarize_content to explain papers or projects in detail
+- **Get Details**: Use get_content_details to retrieve full information
+- Answer questions and provide insights about Brian's research
 
 ## My Navigation Powers:
 - Publications page: /publications (${siteContent.publications.length} papers)
@@ -69,7 +71,7 @@ export async function POST(req: NextRequest) {
     // Generate fresh system prompt with current content
     const systemPrompt = await generateSystemPrompt()
 
-    // Stream the response with updated context
+    // Stream the response WITHOUT tools for now (debugging)
     const result = streamText({
       model: openai('gpt-4o-mini'),
       messages: [
