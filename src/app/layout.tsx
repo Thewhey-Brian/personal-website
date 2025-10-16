@@ -11,8 +11,50 @@ import { ByteBrainChat } from "@/components/bytebrain-chat";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Xinyu Guo - Personal Website",
-  description: "Ph.D. in Computational Biology and Bioinformatics. Showcasing research in genomics, AI projects, machine learning applications, scientific publications, and photography.",
+  metadataBase: new URL('https://www.xinyuguo.com'),
+  title: {
+    default: "Xinyu Guo - Computational Biology Researcher & AI Developer",
+    template: "%s | Xinyu Guo"
+  },
+  description: "Ph.D. candidate in Computational Biology & Bioinformatics at USC. Specializing in genomics, machine learning, and deep learning applications in biological research.",
+  keywords: ["computational biology", "bioinformatics", "machine learning", "genomics", "AI research", "USC PhD", "Xinyu Guo", "single-cell", "spatial transcriptomics"],
+  authors: [{ name: "Xinyu Guo" }],
+  creator: "Xinyu Guo",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://www.xinyuguo.com",
+    title: "Xinyu Guo - Computational Biology Researcher",
+    description: "Ph.D. in Computational Biology exploring genomics, AI, and machine learning",
+    siteName: "Xinyu Guo",
+    images: [{
+      url: "/headshot.jpg",
+      width: 1200,
+      height: 630,
+      alt: "Xinyu Guo"
+    }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Xinyu Guo - Computational Biology Researcher",
+    description: "Ph.D. in Computational Biology exploring genomics, AI, and machine learning",
+    images: ["/headshot.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    }
+  },
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  }
 };
 
 export default function RootLayout({

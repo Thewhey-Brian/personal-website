@@ -2,6 +2,15 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Mail, Github, Twitter, Linkedin, MapPin } from "lucide-react"
 import Link from "next/link"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Contact",
+  description: "Get in touch with Xinyu Guo for collaborations, opportunities, or discussions about computational biology and AI projects.",
+  alternates: {
+    canonical: 'https://www.xinyuguo.com/contact'
+  }
+}
 
 export default function ContactPage() {
   return (

@@ -1,6 +1,15 @@
 import { Button } from "@/components/ui/button"
 import { Download, MapPin, Calendar } from "lucide-react"
 import Link from "next/link"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "About",
+  description: "Learn about Xinyu Guo's background in computational biology, education at USC and Johns Hopkins, and research interests in genomics and AI.",
+  alternates: {
+    canonical: 'https://www.xinyuguo.com/about'
+  }
+}
 
 export default function AboutPage() {
   return (
