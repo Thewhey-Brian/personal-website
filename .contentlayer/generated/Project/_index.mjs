@@ -3,7 +3,8 @@
 import projects__gnnSpatialTranscriptomicsMdx from './projects__gnn-spatial-transcriptomics.mdx.json' with { type: 'json' }
 import projects__gnnSslMostaMdx from './projects__gnn-ssl-mosta.mdx.json' with { type: 'json' }
 import projects__gnnSslSitMdx from './projects__gnn-ssl-sit.mdx.json' with { type: 'json' }
+import projects__nanochatLlmTrainingMdx from './projects__nanochat-llm-training.mdx.json' with { type: 'json' }
 import projects__personalWebsiteMdx from './projects__personal-website.mdx.json' with { type: 'json' }
 import projects__selfSupervisedLearningMdx from './projects__self-supervised-learning.mdx.json' with { type: 'json' }
 
-export const allProjects = [projects__gnnSpatialTranscriptomicsMdx, projects__gnnSslMostaMdx, projects__gnnSslSitMdx, projects__personalWebsiteMdx, projects__selfSupervisedLearningMdx]
+export const allProjects = [projects__gnnSpatialTranscriptomicsMdx, projects__gnnSslMostaMdx, projects__gnnSslSitMdx, projects__nanochatLlmTrainingMdx, projects__personalWebsiteMdx, projects__selfSupervisedLearningMdx]
