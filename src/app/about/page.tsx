@@ -26,7 +26,7 @@ export default function AboutPage() {
                 />
               </div>
               <div className="mt-6 text-center">
-                <h1 className="text-2xl font-bold">Xinyu (Brian) Guo</h1>
+                <h1 className="text-2xl font-bold">Xinyu (Brian) Guo 郭昕育</h1>
                 <p className="text-muted-foreground">Researcher & Developer</p>
                 <div className="mt-2 flex items-center justify-center gap-2 text-sm text-muted-foreground">
                   <MapPin className="h-4 w-4" />
@@ -50,7 +50,7 @@ export default function AboutPage() {
                 <h2 className="text-xl font-semibold mb-4">About</h2>
                 <div className="space-y-4 text-muted-foreground">
                   <p>
-                    Welcome to my corner of the internet! I’m (郭昕育) Xinyu (Brian) Guo — a passionate researcher, 
+                    Welcome to my corner of the internet! I’m Xinyu (Brian) Guo — a passionate researcher, 
                     developer, and Ph.D. candidate in Computational Biology & Bioinformatics at USC. 
                   </p>
                   <p>
