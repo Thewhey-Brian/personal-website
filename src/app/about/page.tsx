@@ -50,7 +50,7 @@ export default function AboutPage() {
                 <h2 className="text-xl font-semibold mb-4">About</h2>
                 <div className="space-y-4 text-muted-foreground">
                   <p>
-                    Welcome to my corner of the internet! I’m Xinyu (Brian) Guo — a passionate researcher, 
+                    Welcome to my corner of the internet! I’m (郭昕育) Xinyu (Brian) Guo — a passionate researcher, 
                     developer, and Ph.D. candidate in Computational Biology & Bioinformatics at USC. 
                   </p>
                   <p>
