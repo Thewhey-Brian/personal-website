@@ -1,117 +1,133 @@
-import Link from "next/link"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { ExternalLink, Github, Calendar, Clock } from "lucide-react"
-import { Project } from "contentlayer/generated"
-import { format } from "date-fns"
+import Link from "next/link";
+import { ArrowUpRight, ExternalLink, Github } from "lucide-react";
+import { format } from "date-fns";
+import type { Project } from "contentlayer/generated";
 
-interface ProjectCardProps {
-  project: Project
-}
-
-const statusVariants = {
-  completed: "default" as const,
-  "in-progress": "secondary" as const,
-  planned: "outline" as const,
-}
-
-const statusLabels = {
+const STATUS_LABEL: Record<Project["status"], string> = {
   completed: "Completed",
-  "in-progress": "In Progress",
+  "in-progress": "In progress",
   planned: "Planned",
+};
+
+/** Only live work gets the accent; finished and planned stay quiet. */
+const STATUS_STYLE: Record<Project["status"], string> = {
+  "in-progress": "bg-signal-soft text-signal",
+  completed: "border border-border text-muted-foreground",
+  planned: "border border-dashed border-border text-muted-foreground",
+};
+
+function dateRange(project: Project): string | null {
+  if (!project.startDate && !project.endDate) return null;
+  const fmt = (d: string) => format(new Date(d), "MMM yyyy");
+
+  if (project.startDate && project.endDate) {
+    const from = fmt(project.startDate);
+    const to = fmt(project.endDate);
+    // Single-month work would otherwise read "Jul 2026 — Jul 2026".
+    return from === to ? from : `${from} — ${to}`;
+  }
+  if (project.startDate) {
+    return project.status === "in-progress"
+      ? `${fmt(project.startDate)} — present`
+      : fmt(project.startDate);
+  }
+  return fmt(project.endDate!);
 }
 
-export function ProjectCard({ project }: ProjectCardProps) {
+/**
+ * Project card. Same construction as the publication card: a stretched link on
+ * the title covers the surface, and the repo/demo links sit above it so nested
+ * anchors are never produced.
+ */
+export function ProjectCard({ project }: { project: Project }) {
+  const links = [
+    project.demoUrl && {
+      label: "Demo",
+      href: project.demoUrl,
+      icon: ExternalLink,
+    },
+    project.repoUrl && { label: "Code", href: project.repoUrl, icon: Github },
+  ].filter(Boolean) as {
+    label: string;
+    href: string;
+    icon: typeof ExternalLink;
+  }[];
+
+  const range = dateRange(project);
+
   return (
-    <Card className="h-full flex flex-col">
-      <CardHeader>
-        <div className="flex items-start justify-between">
-          <CardTitle className="text-lg leading-6">
-            <Link href={project.url} className="hover:text-primary transition-colors">
-              {project.title}
-            </Link>
-          </CardTitle>
-          <Badge variant={statusVariants[project.status]}>
-            {statusLabels[project.status]}
-          </Badge>
-        </div>
-        {project.role && (
-          <CardDescription className="text-sm">{project.role}</CardDescription>
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-border bg-surface p-6 transition-colors duration-500 hover:border-signal/40 hover:bg-surface-raised">
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-signal transition-transform duration-500 ease-out group-hover:scale-x-100"
+      />
+
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <span
+          className={`rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.1em] ${STATUS_STYLE[project.status]}`}
+        >
+          {STATUS_LABEL[project.status]}
+        </span>
+        {range && (
+          <span className="font-mono text-[10px] text-muted-foreground">
+            {range}
+          </span>
         )}
-      </CardHeader>
-      
-      <CardContent className="flex-1">
-        <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
-          {project.summary}
+        <span className="font-mono text-[10px] text-muted-foreground/70">
+          {project.readingTime} min read
+        </span>
+      </div>
+
+      <h3 className="text-xl leading-snug">
+        <Link
+          href={project.url}
+          className="before:absolute before:inset-0 before:z-0"
+        >
+          {project.title}
+        </Link>
+      </h3>
+
+      {project.role && (
+        <p className="mt-2 font-mono text-xs text-muted-foreground">
+          {project.role}
         </p>
+      )}
 
-        {/* Tech stack */}
-        {project.stack.length > 0 && (
-          <div className="mb-4">
-            <div className="text-xs font-medium text-muted-foreground mb-2">Tech Stack:</div>
-            <div className="flex flex-wrap gap-1">
-              {project.stack.map((tech) => (
-                <Badge key={tech} variant="outline" className="text-xs">
-                  {tech}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        )}
+      <p className="mt-4 line-clamp-3 flex-1 text-[15px] leading-relaxed text-muted-foreground">
+        {project.summary}
+      </p>
 
-        {/* Project dates */}
-        {(project.startDate || project.endDate) && (
-          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-4">
-            <Calendar className="h-3 w-3" />
-            {project.startDate && (
-              <span>{format(new Date(project.startDate), "MMM yyyy")}</span>
-            )}
-            {project.startDate && project.endDate && <span>-</span>}
-            {project.endDate && (
-              <span>{format(new Date(project.endDate), "MMM yyyy")}</span>
-            )}
-            {project.startDate && !project.endDate && project.status === "in-progress" && (
-              <span>- Present</span>
-            )}
-          </div>
-        )}
-
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2">
-          {project.tags.map((tag) => (
-            <Badge key={tag} variant="secondary" className="text-xs">
-              {tag}
-            </Badge>
+      {project.stack.length > 0 && (
+        <div className="mt-5 flex flex-wrap gap-1.5">
+          {project.stack.map((tech) => (
+            <span
+              key={tech}
+              className="rounded-full border border-border px-2.5 py-0.5 font-mono text-[10px] text-muted-foreground"
+            >
+              {tech}
+            </span>
           ))}
         </div>
-      </CardContent>
-      
-      <CardFooter className="pt-0">
-        <div className="flex flex-wrap gap-2 w-full">
-          {project.demoUrl && (
-            <Button size="sm" variant="outline" asChild>
-              <Link href={project.demoUrl} target="_blank">
-                <ExternalLink className="h-3 w-3 mr-1" />
-                Demo
-              </Link>
-            </Button>
-          )}
-          {project.repoUrl && (
-            <Button size="sm" variant="outline" asChild>
-              <Link href={project.repoUrl} target="_blank">
-                <Github className="h-3 w-3 mr-1" />
-                Code
-              </Link>
-            </Button>
-          )}
-          <Button size="sm" variant="ghost" asChild>
-            <Link href={project.url}>
-              View Details
+      )}
+
+      {links.length > 0 && (
+        <div className="relative z-10 mt-5 flex flex-wrap gap-2 border-t border-border pt-4">
+          {links.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 font-mono text-[11px] text-muted-foreground transition-colors hover:border-signal/50 hover:text-foreground"
+            >
+              <link.icon className="h-3 w-3" />
+              {link.label}
             </Link>
-          </Button>
+          ))}
         </div>
-      </CardFooter>
-    </Card>
-  )
+      )}
+
+      <ArrowUpRight className="pointer-events-none absolute right-5 top-5 h-4 w-4 -translate-x-1 translate-y-1 text-signal opacity-0 transition-all duration-500 ease-out group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100" />
+    </article>
+  );
 }

@@ -5,29 +5,104 @@ year: 2024
 venue: "Briefings in Bioinformatics"
 doi: "https://doi.org/10.1093/bib/bbad517"
 pdfUrl: "https://academic.oup.com/bib/article/25/2/bbad517/7584788"
-# codeUrl: "https://github.com/sample/research-code"
 videoUrl: "https://youtu.be/mwVI5TFUEwY"
-slidesUrl: "/slides/sample-publication.pdf"
 tags: ["RNA-seq", "single cell", "cell cycle"]
 featured: true
 ---
 
-# Sample Research Publication
+The cell cycle is one of the strongest sources of variation in a single-cell
+RNA-seq experiment, which makes it two problems at once. Sometimes it is the
+signal — you want to know which cells are dividing and where they are in the
+cycle. More often it is a confounder that has to be identified before it can be
+regressed out, and removing it badly distorts everything downstream.
 
-This is the main content of the publication. You can include detailed explanations, methodology, results, and conclusions here.
+About a dozen tools exist for this, and they disagree. We wanted to know how
+much, and why.
 
-## Abstract
+## Making the comparison fair
 
-This is a placeholder for the abstract content.
+Two obstacles come before any benchmark.
 
-## Methodology
+The methods do not agree on what the phases *are*. Seurat returns G1, S and
+G2M. Revelio returns G1S, S, G2, G2M and MG1. The benchmark datasets label
+differently again — one gives G1/S/G2, another G1/S/G2M. Scoring these against
+each other as plain categories is not well defined.
 
-Describe your research methodology here...
+And the cell cycle is a circle, so accuracy is not categorical. Calling a G2
+cell "G2M" is a small error; calling it "G1" is a large one. A confusion matrix
+treats both as simply wrong.
 
-## Results
+We handled both by placing the phases on a circle as angles and measuring the
+error as $\mathrm{sin}(|\theta_T - \theta_P|)$ between the true and predicted
+angle. Phases that neighbour each other cost little; opposite points on the
+cycle cost the most. That gives one number comparable across methods with
+different phase vocabularies.
 
-Present your findings and results...
+We ran four representative methods — Tricycle, Seurat, Revelio and CS1CC —
+against four datasets with experimentally established phase labels: human
+embryonic stem cells sorted by FUCCI, mouse ES cells by Quartz-Seq, mouse ES
+cells sorted on Hoechst staining, and human RPE-FUCCI cells. Mouse genes were
+mapped to human homologs with biomaRt where a method's marker set required it.
 
-## Conclusion
+## No method wins
 
-Summarize the key takeaways and future work...
+The headline result is that no method is best across all four datasets, and the
+spread is not small.
+
+CS1CC had the lowest error on human ES cells (0.27, against 0.485 for Seurat) —
+and the highest on mouse ES cells (0.596, against 0.268 for Tricycle). Tricycle
+was the reverse. Averaged over all four datasets the four methods land between
+0.433 and 0.468, which is close enough to be meaningless as a ranking.
+
+The averages hide the finding. What matters is *which* dataset.
+
+## Why the reference matters more than the method
+
+Tricycle works by transfer learning: it projects new data into a reference
+embedding built from mouse cortical neurosphere data. It was consistently
+strong on the mouse datasets and noticeably weaker on human. The method did not
+change between those runs. The distance between its reference and the data
+being analyzed did.
+
+This is the practical conclusion of the paper. For a transfer-learning method,
+performance is set by how well the reference matches your data. For a
+marker-gene method, it is set by how well the marker list matches your data.
+Either way, the question worth asking before you pick a tool is not which
+scored best in a benchmark — it is which one's assumptions fit the experiment
+in front of you.
+
+The two families also fail differently. Seurat and Revelio assign every cell to
+whichever predetermined phase scores highest, so a dataset containing only S
+cells still gets spread across all phases. CS1CC clusters first and lets the
+number of clusters vary, which handles unusual phase compositions better and
+carries its own risk: a misassigned cluster takes every cell in it along.
+
+## Padding the data helps
+
+If a method's accuracy depends on how well the data fits its assumptions, you
+can improve the fit from the data side.
+
+We tested this by blending cells from the benchmark datasets, with known
+phases, into the target data at 20%, 40%, 60% and 80%. Error dropped for every
+method as the proportion rose, and most for the clustering-based approaches,
+which now had well-populated phases to cluster against.
+
+That is a usable technique: merging in a small labelled reference alongside your
+own cells improves phase prediction without changing the tool.
+
+The stress test also exposed the failure mode. Given only S-phase cells and no
+padding, CS1CC assigned the entire sample to MG1 and G2M — with nothing to
+contrast against, the clustering has no way to locate itself on the cycle.
+CS1CC's strength on G1 across all the datasets is the same effect running the
+other way: G1 simply has more well-characterised marker genes than the other
+phases.
+
+## What is still missing
+
+G0 remains largely out of reach. Quiescent cells are not paused mid-cycle, and
+the marker-gene and pseudotime machinery built for the dividing phases does not
+transfer cleanly, so this review covers G1 through M.
+
+The broader gap is a reference embedding, or a marker list, that holds across
+tissues and species. Until one exists, choosing a cell cycle method means
+matching it to the dataset, and the safest practice is to check more than one.

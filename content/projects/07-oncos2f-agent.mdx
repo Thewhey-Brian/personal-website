@@ -1,0 +1,328 @@
+---
+title: "Building OncoS2F: A Governed Agent for Genomic Foundation Models"
+summary: "A full-stack biomedical AI agent that routes scientific requests across 13 genomic model configurations, 23 governed tool packages, and 15 workflow skills while enforcing plan approval, provenance, evidence separation, and research-use boundaries."
+status: "completed"
+startDate: "2026-07-29"
+endDate: "2026-07-29"
+stack:
+  - "Python"
+  - "FastAPI"
+  - "React"
+  - "Amazon Bedrock"
+  - "AWS SageMaker"
+  - "Genomic Foundation Models"
+tags:
+  - "AI Agents & ML Systems"
+  - "agentic AI"
+  - "AI engineering"
+  - "computational biology"
+  - "MLOps"
+  - "tool use"
+  - "responsible AI"
+featured: true
+---
+
+> **Disclosure note.** Architecture, registry metadata, and aggregate test results are included. Session content, research data, prompts containing cohort information, credentials, endpoint names, account identifiers, and storage paths are excluded. OncoS2F is a research workbench, not a clinical decision system.
+
+# Building OncoS2F
+
+Genomic foundation models can predict regulatory tracks, estimate sequence likelihood, generate embeddings, and compare reference and alternate alleles. Using them responsibly still requires much more than placing a chatbot in front of an API.
+
+A scientist’s request must be translated into:
+
+- a valid biological task;
+- the correct model family and input representation;
+- approved computation;
+- inspectable outputs;
+- source-labeled evidence;
+- reproducible provenance;
+- appropriately limited conclusions.
+
+I built **OncoS2F**, a full-stack, research-use biomedical agent that orchestrates those steps. The current system exposes **13 genomic model configurations**, **23 governed tool packages**, and **15 workflow skills** through a small language-model loop backed by deterministic policy and execution controls.
+
+## Table of contents
+
+1. [The problem](#the-problem)
+2. [System architecture](#system-architecture)
+3. [Agent loop](#agent-loop)
+4. [Registry-driven model routing](#registry-driven-model-routing)
+5. [Tools and skills](#tools-and-skills)
+6. [Governance and safety](#governance-and-safety)
+7. [Evidence and provenance](#evidence-and-provenance)
+8. [Evaluation](#evaluation)
+9. [Engineering impact](#engineering-impact)
+10. [Limitations](#limitations)
+11. [Take-home](#take-home)
+12. [References](#references)
+
+## The problem
+
+A general-purpose agent can call tools, but biomedical work creates additional failure modes:
+
+- routing a splicing question to a generic sequence-likelihood model;
+- spending GPU resources before the user approves a plan;
+- rerunning inference when saved results already exist;
+- mixing model predictions with database annotations or literature evidence;
+- losing the model version, input parameters, or artifact lineage;
+- interpreting a research prediction as diagnostic or therapeutic evidence;
+- loading patient or proprietary data into an unapproved execution context.
+
+The design goal was therefore:
+
+> Keep flexible scientific reasoning in the model, but move permissions, routing contracts, execution boundaries, state, and verification into deterministic code.
+
+## System architecture
+
+```text
+Scientist
+   │
+   ▼
+React/Vite workbench
+   chat • approvals • resources • jobs • tables • tracks • figures
+   │  REST + server-sent events
+   ▼
+FastAPI agent API
+   sessions • skills • models • jobs • reports
+   │
+   ▼
+Agent control plane
+   Bedrock tool-use loop
+   canonical task state
+   policy and plan gate
+   bounded tool runtime
+   verifier and traces
+   │
+   ├── Capability plane
+   │     23 tool packages
+   │     15 workflow skills
+   │     13 model registry cards
+   │
+   └── Domain runtime
+         sequence context • model adapters • references
+         evidence connectors • viewers • analysis • reports
+```
+
+The language model is the orchestrator, not the system of record. Durable task state, approvals, jobs, reports, and provenance live outside the prompt.
+
+![OncoS2F capability inventory.](/figures/07_oncos2f_inventory.png)
+
+## Agent loop
+
+OncoS2F uses two operating patterns.
+
+### ReAct for bounded, read-oriented work
+
+For clarification, discovery, registry inspection, saved-result viewing, and reference lookup:
+
+```text
+reason → select narrow tool → observe structured result → continue or answer
+```
+
+### Plan–Execute–Verify for consequential work
+
+Compute, generated artifacts, external effects, and multi-step biomedical analysis require:
+
+```text
+understand task
+   → normalize inputs
+   → propose explicit plan
+   → wait for current approval
+   → execute gated tools
+   → verify outputs
+   → label evidence and caveats
+   → return artifacts and provenance
+```
+
+Approval is tied to the current plan. A previously approved session cannot silently authorize a new computation after resume.
+
+## Registry-driven model routing
+
+Model behavior is not hard-coded into the main prompt. Each model card declares:
+
+- supported task and input types;
+- available outputs;
+- variant classes and molecular modalities;
+- context and parameter requirements;
+- runtime and result adapters;
+- model-specific workflow skill;
+- limitations and unsupported use.
+
+The registry currently represents nine genomic model families and **13 configurations**, including five cell-specific chromatin models.
+
+Routing follows declared capability:
+
+```text
+requested task
+  ∩ supported input
+  ∩ required output
+  ∩ variant class
+  ∩ tissue/modality scope
+  → eligible model set
+```
+
+If one model clearly matches, the router can select it. If regulatory, splicing, embedding, coding, or generative interpretations remain ambiguous, the agent asks a clarification question instead of choosing a universal fallback.
+
+All model compute enters through one canonical tool. This keeps approval, staging, dry-run behavior, provenance, and error handling consistent across models.
+
+## Tools and skills
+
+### Tools are narrow capabilities
+
+Tool packages describe:
+
+- input/output schema;
+- permission class;
+- risk level;
+- approval requirement;
+- callable or viewer-only status;
+- deterministic executor.
+
+Examples include plan proposal, resource discovery, model selection, genomic-reference lookup, job monitoring, saved-score loading, approved analysis, and report generation.
+
+### Skills are bounded workflow knowledge
+
+Skills contain scientific workflow guidance, references, deterministic scripts, and “do not use” boundaries for tasks such as:
+
+- variant-effect prediction;
+- attribution and embeddings;
+- cross-model comparison;
+- variant prioritization;
+- genetic annotation;
+- GWAS-to-function analysis;
+- literature and trial synthesis;
+- longitudinal disease analysis;
+- result visualization and reporting.
+
+Skill scripts cannot bypass policy. They execute only through an approved, gated tool.
+
+This separation made the system extensible without turning the main prompt into an unreviewable collection of biomedical instructions.
+
+## Governance and safety
+
+The execution rule can be summarized as:
+
+```text
+allowed(tool, task) =
+    declared_tool
+  ∧ permitted_data_class
+  ∧ within_read_or_compute_budget
+  ∧ (not_gated ∨ current_plan_approved)
+```
+
+Key boundaries include:
+
+- deny-first handling for unknown or side-effecting actions;
+- research-use language by default;
+- blocking patient/PHI data without an explicitly approved local policy;
+- explicit review for proprietary cohorts and sensitive sequence-design work;
+- path confinement for local resource reads;
+- bounded skill and resource context;
+- structured, JSON-safe tool failures;
+- append-only trace events;
+- post-tool verification before biological interpretation.
+
+These controls live in code, so they hold whether or not the model complies with its prompt.
+
+## Evidence and provenance
+
+OncoS2F keeps evidence layers separate:
+
+```text
+raw model output
+    ≠ derived score
+    ≠ database annotation
+    ≠ retrieved literature
+    ≠ agent hypothesis
+    ≠ clinical conclusion
+```
+
+Model jobs preserve:
+
+- normalized input;
+- selected model and version;
+- task mode and parameters;
+- job and artifact status;
+- raw outputs before derived analysis;
+- source identifiers for external evidence;
+- generated tables, tracks, figures, and reports.
+
+Saved-result viewers are deliberately separate from compute. Asking to display an existing score table or track profile should load the artifact—not rerun an expensive model.
+
+## Evaluation
+
+I added deterministic tests around the behaviors the prompt depends on.
+
+### Backend verification
+
+The current backend suite passes **107 of 107 tests**. Coverage includes:
+
+- plan and approval gates;
+- stale-approval reset;
+- tool registry and executor consistency;
+- dynamic tool selection;
+- resource path confinement;
+- variant parsing;
+- model routing and scope behavior;
+- saved-result presentation without recompute;
+- session ownership;
+- upload and code-execution boundaries;
+- deployment and pipeline-progress contracts.
+
+### Golden agent behavior
+
+All **6 of 6 golden cases** pass. These cases verify behaviors such as:
+
+- model inference proposes a plan before compute;
+- viewing saved results does not invoke model inference;
+- model selection reads registry metadata;
+- explicit embedding requests remain on the requested task;
+- saved embedding analysis reuses existing artifacts.
+
+### Frontend verification
+
+The React/Vite production build completed successfully, transforming **899 modules** into a deployable bundle.
+
+![Deterministic OncoS2F validation results.](/figures/07_oncos2f_validation.png)
+
+These tests do not prove scientific accuracy. They verify that the agent obeys its execution and routing contracts.
+
+## Engineering impact
+
+OncoS2F turns multiple research components into a coherent platform:
+
+1. **Natural language to valid model work.** Scientists can describe a question without manually assembling every API payload.
+2. **One governed compute boundary.** New models reuse the same approval, staging, trace, and artifact contracts.
+3. **Registry-based extensibility.** Adding a model primarily requires a model card, adapter, skill, and tests—not rewriting the loop.
+4. **Reproducible outputs.** Scores, tracks, embeddings, figures, and reports remain linked to inputs and model versions.
+5. **Visible scientific boundaries.** Predictions and evidence remain labeled as research hypotheses.
+
+The platform is especially useful when the challenge is no longer “can we run one model?” but “can we route, compare, inspect, and reproduce work across a changing model ecosystem?”
+
+## Limitations
+
+- The golden behavior set contains six cases and should expand with adversarial and scientific-quality evaluations.
+- Scientific model performance must be validated separately from agent control behavior.
+- Local development metadata uses file-backed state; multi-worker production requires a transactional database.
+- Production still needs stronger RBAC, organization-wide audit search, cost budgets, rate limits, and durable asynchronous job recovery.
+- External biomedical connectors require source-specific authentication, pagination, citation, and error contracts.
+- Patient, proprietary, clinical, and biosecurity-sensitive workflows remain blocked unless an approved deployment policy is configured.
+- OncoS2F is not a diagnostic, treatment-selection, or regulatory-grade system.
+
+## Take-home
+
+- I built a full-stack biomedical agent spanning a streaming workbench, tool-use control plane, model registry, workflow skills, and genomic compute runtime.
+- The system routes across **13 model configurations**, **23 tool packages**, and **15 skills**.
+- Expensive or durable work requires a current, explicit plan approval.
+- Raw predictions, derived results, external evidence, and hypotheses remain separate and traceable.
+- **107 backend tests and 6 golden behavior cases pass**, and the production frontend builds successfully.
+- The central design principle is simple: let the model reason, but make the runtime own authority.
+
+## References
+
+1. Yao, S. et al. [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629). *ICLR* (2023).
+2. Model Context Protocol. [Core specification: tools, resources, and prompts](https://modelcontextprotocol.io/specification/2025-03-26/basic/index).
+3. Amazon Web Services. [Inference and tool use with the Amazon Bedrock Converse API](https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html).
+4. FastAPI. [Server-Sent Events](https://fastapi.tiangolo.com/tutorial/server-sent-events/).
+5. Avsec, Ž. et al. [Advancing regulatory variant effect prediction with AlphaGenome](https://doi.org/10.1038/s41586-025-10014-0). *Nature* (2026).
+6. Brixi, G. et al. [Genome modelling and design across all domains of life with Evo 2](https://doi.org/10.1038/s41586-026-10176-5). *Nature* (2026).
+7. Jung, A. J. et al. [Enigma: An efficient model for deciphering regulatory genomics](https://doi.org/10.64898/2025.12.18.694875). bioRxiv (2025).

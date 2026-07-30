@@ -3,11 +3,32 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ---------------------------------------------------------------------------
+   Design system — "scientific instrument"
+   One signal accent (cyan) + one secondary (violet) on a cool neutral ramp.
+   Dark is the primary mode; light is a calibrated inverse, not an afterthought.
+   Never hardcode colours in components — use these tokens.
+--------------------------------------------------------------------------- */
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --font-sans: var(--font-sans-stack);
+  --font-display: var(--font-display-stack);
+  --font-mono: var(--font-mono-stack);
+
+  /* signal accents */
+  --color-signal: var(--signal);
+  --color-signal-soft: var(--signal-soft);
+  --color-signal-foreground: var(--signal-foreground);
+  --color-secondary-signal: var(--secondary-signal);
+
+  /* surfaces */
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-grid-line: var(--grid-line);
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -37,173 +58,289 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* motion — one easing vocabulary for the whole site */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* ---------------------------- LIGHT (paper) ---------------------------- */
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 0.5rem;
+
+  --font-sans-stack: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display-stack:
+    var(--font-plus-jakarta), var(--font-inter), ui-sans-serif, sans-serif;
+  --font-mono-stack: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  /* Warm ivory and soft ink. Every neutral carries a little yellow so the page
+     reads as paper rather than as a screen. */
+  --background: oklch(0.968 0.007 85);
+  --foreground: oklch(0.185 0.008 60);
+
+  --surface: oklch(0.988 0.005 85);
+  --surface-raised: oklch(0.945 0.009 82);
+  --grid-line: oklch(0.185 0.008 60 / 7%);
+
+  /* Two accents that belong to the same family: antique bronze and a deep
+     rose. They sit adjacent on the wheel, so a gradient between them stays
+     harmonious instead of turning muddy the way blue→purple does. */
+  --signal: oklch(0.56 0.09 68);
+  --signal-soft: oklch(0.56 0.09 68 / 12%);
+  --signal-foreground: oklch(0.985 0.005 85);
+  --secondary-signal: oklch(0.53 0.13 25);
+
+  --card: oklch(0.988 0.005 85);
+  --card-foreground: oklch(0.185 0.008 60);
+  --popover: oklch(0.988 0.005 85);
+  --popover-foreground: oklch(0.185 0.008 60);
+  --primary: oklch(0.22 0.008 60);
+  --primary-foreground: oklch(0.97 0.007 85);
+  --secondary: oklch(0.932 0.01 82);
+  --secondary-foreground: oklch(0.22 0.008 60);
+  --muted: oklch(0.932 0.01 82);
+  --muted-foreground: oklch(0.45 0.013 70);
+  --accent: oklch(0.925 0.012 80);
+  --accent-foreground: oklch(0.22 0.008 60);
+  --destructive: oklch(0.52 0.17 27);
+  --border: oklch(0.185 0.008 60 / 12%);
+  --input: oklch(0.185 0.008 60 / 15%);
+  --ring: oklch(0.56 0.09 68);
+
+  --chart-1: oklch(0.56 0.09 68);
+  --chart-2: oklch(0.53 0.13 25);
+  --chart-3: oklch(0.52 0.07 145);
+  --chart-4: oklch(0.45 0.06 250);
+  --chart-5: oklch(0.62 0.1 100);
+
+  --sidebar: oklch(0.988 0.005 85);
+  --sidebar-foreground: oklch(0.185 0.008 60);
+  --sidebar-primary: oklch(0.56 0.09 68);
+  --sidebar-primary-foreground: oklch(0.985 0.005 85);
+  --sidebar-accent: oklch(0.925 0.012 80);
+  --sidebar-accent-foreground: oklch(0.22 0.008 60);
+  --sidebar-border: oklch(0.185 0.008 60 / 12%);
+  --sidebar-ring: oklch(0.56 0.09 68);
 }
 
+/* ---------------------------- DARK (ink & champagne) ----------------------------
+   Deep warm ink rather than blue-black, lit by champagne gold. Gold on near-black
+   is the oldest elegant pairing there is, and it makes the particle field read as
+   candlelight instead of as a terminal. */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: oklch(0.148 0.008 60);
+  --foreground: oklch(0.945 0.012 85);
+
+  --surface: oklch(0.185 0.009 60);
+  --surface-raised: oklch(0.225 0.011 62);
+  --grid-line: oklch(0.945 0.012 85 / 8%);
+
+  --signal: oklch(0.8 0.095 80);
+  --signal-soft: oklch(0.8 0.095 80 / 14%);
+  --signal-foreground: oklch(0.16 0.01 60);
+  --secondary-signal: oklch(0.74 0.11 28);
+
+  --card: oklch(0.185 0.009 60);
+  --card-foreground: oklch(0.945 0.012 85);
+  --popover: oklch(0.195 0.01 60);
+  --popover-foreground: oklch(0.945 0.012 85);
+  --primary: oklch(0.8 0.095 80);
+  --primary-foreground: oklch(0.16 0.01 60);
+  --secondary: oklch(0.25 0.011 60);
+  --secondary-foreground: oklch(0.945 0.012 85);
+  --muted: oklch(0.25 0.011 60);
+  --muted-foreground: oklch(0.74 0.015 78);
+  --accent: oklch(0.27 0.013 62);
+  --accent-foreground: oklch(0.945 0.012 85);
+  --destructive: oklch(0.64 0.16 25);
+  --border: oklch(0.945 0.012 85 / 12%);
+  --input: oklch(0.945 0.012 85 / 15%);
+  --ring: oklch(0.8 0.095 80);
+
+  --chart-1: oklch(0.8 0.095 80);
+  --chart-2: oklch(0.74 0.11 28);
+  --chart-3: oklch(0.72 0.08 150);
+  --chart-4: oklch(0.66 0.07 250);
+  --chart-5: oklch(0.82 0.11 100);
+
+  --sidebar: oklch(0.185 0.009 60);
+  --sidebar-foreground: oklch(0.945 0.012 85);
+  --sidebar-primary: oklch(0.8 0.095 80);
+  --sidebar-primary-foreground: oklch(0.16 0.01 60);
+  --sidebar-accent: oklch(0.27 0.013 62);
+  --sidebar-accent-foreground: oklch(0.945 0.012 85);
+  --sidebar-border: oklch(0.945 0.012 85 / 12%);
+  --sidebar-ring: oklch(0.8 0.095 80);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+    /* 17px base. The default 16 is a browser convention, not a reading
+       optimum — a point up measurably reduces effort at these line lengths. */
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Display carries real weight and tightens as it grows. Large type needs
+     negative tracking, or the counters open up and the word reads loose. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display-stack);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.04;
+  }
+
+  /* Section headings sit smaller, so they need less optical correction and a
+     touch less weight to avoid shouting over the body copy. */
+  h2,
+  h3 {
+    font-weight: 700;
+    letter-spacing: -0.022em;
+    line-height: 1.14;
+  }
+
+  ::selection {
+    background: var(--signal);
+    color: var(--signal-foreground);
   }
 }
 
-/* Custom animations for the home page */
+@layer components {
+  /* Monospace eyebrow used for section labels and metadata. */
+  .label-mono {
+    font-family: var(--font-mono-stack);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  /* Faint engineering grid — the "instrument" texture. */
+  .grid-texture {
+    background-image:
+      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+
+  /* Gradient wash for the name. Oversized background so GSAP can drift the
+     position and the metal appears to catch the light as it moves.
+
+     Painted colour first, transparent only inside the @supports guard: if
+     background-clip:text is unavailable, `color: transparent` on its own would
+     erase the name entirely. Never make text invisible without a guarantee
+     that something will paint it back. */
+  .text-gradient-signal {
+    color: var(--signal);
+  }
+
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .text-gradient-signal {
+      background-image: linear-gradient(
+        100deg,
+        var(--signal) 0%,
+        var(--secondary-signal) 42%,
+        var(--signal) 84%
+      );
+      background-size: 220% 100%;
+      background-position: 0% 50%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      /* Descenders clip without a little breathing room. */
+      padding-bottom: 0.08em;
+    }
+  }
+
+  /* Link underline that wipes in from the left on hover. */
+  .link-wipe {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1px;
+    transition: background-size 0.28s var(--ease-out-quart);
+  }
+  .link-wipe:hover,
+  .link-wipe:focus-visible {
+    background-size: 100% 1px;
+  }
+}
+
 @layer utilities {
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
+  /* Masked line reveal — the wrapper clips, the child rises.
+     There is deliberately no CSS that hides these: each motion component arms
+     its own from-state in useGSAP, pre-paint. Content must never depend on JS
+     to become readable. */
+  .reveal-mask {
+    overflow: hidden;
+    display: block;
   }
-  
-  .animate-float-delayed {
-    animation: float 6s ease-in-out infinite;
-    animation-delay: -2s;
-  }
-  
-  .animate-gradient {
-    background-size: 200% 200%;
-    animation: gradient 4s ease infinite;
-  }
-  
-  .animate-fade-in-up {
-    animation: fadeInUp 0.8s ease-out forwards;
-  }
-  
-  .animate-fade-in-up-delayed {
-    animation: fadeInUp 0.8s ease-out forwards;
-    animation-delay: 0.2s;
-    opacity: 0;
-  }
-  
-  .animate-scale-in {
-    animation: scaleIn 0.5s ease-out forwards;
+  [data-reveal-line] {
+    display: block;
+    will-change: transform;
   }
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes gradient {
+/* Travelling tick inside the scroll cue's rule. */
+@keyframes slide {
   0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
+    transform: translateX(-100%);
   }
   100% {
-    background-position: 0% 50%;
+    transform: translateX(300%);
   }
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Line clamping utility */
+/* Lenis owns the scroll; disable native smooth so they don't fight. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
 .line-clamp-4 {
   display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Anyone who asks for less motion gets none of it, and no hidden content. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -5,29 +5,101 @@ year: 2024
 venue: "Oncogene"
 doi: "https://doi.org/10.1038/s41388-023-02900-6"
 pdfUrl: "https://www.nature.com/articles/s41388-023-02900-6"
-# codeUrl: "https://github.com/sample/research-code"
 videoUrl: "https://youtu.be/eGLsrNAQSw4"
-slidesUrl: "/slides/sample-publication.pdf"
-tags: ["Cancer", "RNA-seq", "ATAC-seq"]
+tags: ["Cancer", "RNA-seq", "Proteomics"]
 featured: false
 ---
 
-# Sample Research Publication
+Acral lentiginous melanoma arises on the palms, soles and nail beds, and it
+behaves like a different disease from the melanomas that appear on sun-exposed
+skin. Outcomes are worse. Only about 20% of cases carry the *BRAF* V600E/K
+mutation that makes targeted therapy work elsewhere, against roughly 50% in
+other cutaneous melanoma, and immune checkpoint blockade is less effective.
+Patients are left with few options.
 
-This is the main content of the publication. You can include detailed explanations, methodology, results, and conclusions here.
+More than 60% of ALMs carry an alteration in the CDK4/6 pathway, which made
+CDK4/6 inhibition an obvious thing to try. A phase II trial of palbociclib
+returned a median progression-free survival of 2.2 months. The drug is not
+missing its target — something is escaping it.
 
-## Abstract
+*This is collaborative wet-lab work led by the Rebecca lab at Johns Hopkins. My
+contribution was the statistical analysis.*
 
-This is a placeholder for the abstract content.
+## Selecting patients by sequencing does not work here
 
-## Methodology
+Before the resistance question, a result that changes trial design.
 
-Describe your research methodology here...
+Trial eligibility for CDK4/6 inhibitors in ALM has rested on the genetic status
+of CDK4 pathway nodes — *CDK4* gain, *CCND1* gain, *CDKN2A* loss. Across a
+cohort of 75 ALM patients with survival information, none of those alterations
+was significantly associated with overall survival. In TCGA, across 89 melanoma
+patients with paired protein and copy number data, cyclin D1 protein correlated
+with neither *CCND1* copy number nor mRNA.
 
-## Results
+The same disconnect held in the cell line panel: amplifications did not reliably
+produce elevated protein, and baseline protein did not predict sensitivity to
+the drug. Neither did the biomarkers proposed elsewhere — MCM7, SH2B3, LZTR1,
+CRKL.
 
-Present your findings and results...
+So the sequencing result that gets a patient into the trial does not tell you
+whether the pathway is actually running. That gap is worth taking seriously
+before enrolling anyone on genotype alone.
 
-## Conclusion
+## What escapes
 
-Summarize the key takeaways and future work...
+CDK4/6 inhibition does what it should. Palbociclib suppressed p-Rb, FOXM1, PLK1
+and cyclin A dose-dependently across the panel. But the effect was mostly
+cytostatic — a subpopulation persisted even at non-physiological drug
+concentrations, and after about three weeks of continuous exposure resistant
+colonies were growing and EdU incorporation had returned.
+
+The mechanism turns out to be a released brake. CDK4/6 inhibition lowers DUSP4,
+the phosphatase that restrains ERK. Within 72 hours phospho-ERK rises and
+cyclin D1 with it — restoring the very protein the drug was meant to shut down.
+This happened regardless of *BRAF* or *NRAS* mutation status and regardless of
+copy number, so it is not a consequence of an existing MAPK driver.
+
+Two manipulations close the loop. Overexpressing DUSP4 abolished the ERK
+activation and the cyclin D1 rebound, and made the drug work better. Silencing
+DUSP4 made it work worse. Silencing cyclin D1 restored the arrest that CDK4/6
+inhibition alone could not hold.
+
+## Acquired resistance lands in the same place
+
+Cell lines carried through weeks to months of chronic palbociclib converge on
+the same node: elevated phospho-ERK relative to their parental lines.
+
+What is notable is what was *not* found. No new mutations in *AKT1*, *FGFR2* or
+*NRAS*, and no *HER2* mutations of the kind reported in endocrine-resistant
+breast cancer. Resistance here is pathway plasticity rather than a newly
+acquired driver — which is encouraging, because a rewired pathway can be
+targeted with drugs that already exist.
+
+That makes ERK hyperactivation the shared exit for both the fast adaptive
+response and the slow acquired one. Hence "unified".
+
+## Blocking the exit
+
+Adding the MEK inhibitor trametinib resensitized both therapy-naive and
+resistant cells, in culture, in 3D spheroids and in mice — including a
+patient-derived xenograft from a metastatic ALM and xenografts grown from the
+acquired-resistant lines. The combination beat either single agent.
+
+Reverse-phase protein arrays on tumors at endpoint showed 46 proteins
+differentially expressed under the combination, resolving into three coherent
+programs: DNA repair capacity down (CENP-A, PARP, RPA32) alongside more
+double-strand breaks, cell cycle machinery down (cyclin B1, PLK1, E2F1), and
+apoptosis up (BAK, BID, BIM, cleaved caspase 7, with BCL2A1 reduced). The cells
+are not merely arrested. They are dying.
+
+One practical detail: the resistant tumors kept their vulnerability to MEK
+inhibition only while CDK4/6 inhibitor pressure was maintained. Dropping the
+first drug when adding the second would give up the effect.
+
+## Caveats
+
+The cell line panel is small, which the authors say plainly — these results
+generate hypotheses for a larger study more than they settle the question.
+*RB1* deletion appeared in one resistant line, so a second escape route may
+exist alongside the MAPK one. And the correlative human data is retrospective,
+so the case against genotype-based stratification needs a prospective test.

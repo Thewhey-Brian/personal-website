@@ -1,0 +1,248 @@
+---
+title: "DNA Foundation Models Are Not Interchangeable: A Practical Routing Guide"
+summary: "A survey of 40 genomic models and a small hands-on comparison of three, on how training objective, context, outputs, and operational cost shape which model suits a given genomics workflow."
+status: "completed"
+startDate: "2026-07-28"
+endDate: "2026-07-28"
+stack:
+  - "Python"
+  - "PyTorch"
+  - "AWS SageMaker"
+  - "Genomic Foundation Models"
+  - "Sequence-to-Function"
+tags:
+  - "AI/ML Engineering & Research"
+  - "deep learning"
+  - "genomics"
+  - "foundation models"
+  - "model evaluation"
+  - "MLOps"
+featured: true
+---
+
+> **Public data only.** This post uses public model information and public, well-characterized variants. Internal infrastructure names, account details, and storage paths have been removed.
+
+# DNA Foundation Models Are Not Interchangeable
+
+“Which DNA foundation model is best?” sounds like a benchmarking question. In practice, it is a **task-routing question**.
+
+A genomic language model can estimate whether a sequence looks plausible. A sequence-to-function model can predict how that sequence may change expression, splicing, chromatin, or 3D contacts. Those are related capabilities, but they are not substitutes.
+
+I surveyed **40 DNA models**, put **13 model configurations** behind a common interface, and then ran three of them over the same ten public cancer variants. Ten variants is a sanity check, not a benchmark — what follows is the routing heuristic I now use when picking a model for a task. The argument rests on architecture and outputs; the experiment just makes the differences concrete.
+
+## Table of contents
+
+1. [The problem](#the-problem)
+2. [What I built](#what-i-built)
+3. [A useful taxonomy](#a-useful-taxonomy)
+4. [How the architectures scale](#how-the-architectures-scale)
+5. [Three-model comparison](#three-model-comparison)
+6. [Results](#results)
+7. [Decision framework](#decision-framework)
+8. [Limitations](#limitations)
+9. [Take-home](#take-home)
+10. [References](#references)
+
+## The problem
+
+The DNA-model landscape expanded from short BERT-style encoders to generative, megabase-context models in roughly five years. The reviewed systems span approximately **7 million to 40 billion parameters** and **0.5 kilobases to 1 megabase of context**.
+
+Headline scale hides the decisions that matter in production:
+
+- Does the model learn from raw sequence or measured functional-genomics tracks?
+- Does it accept a sequence, a genomic coordinate, or both?
+- Does it return likelihoods, embeddings, tissue-specific tracks, or generated sequence?
+- Can its output be stored and analyzed economically at cohort scale?
+- Does the benchmark match the biological question?
+
+![Scale and timeline of 40 DNA and genomic models.](/figures/01_model_scale_timeline.png)
+
+## What I built
+
+The work had three connected parts:
+
+1. **Field map.** I curated 40 models with architecture, tokenizer, context length, parameter count, training data, licensing, outputs, and primary references.
+2. **Common inference interface.** I put scoring and embedding requests behind one interface across 13 model configurations, covering both genomic language models and sequence-to-function predictors.
+3. **Small hands-on comparison.** I ran Carbon-8B, Evo2-7B, and Enigma over ten public variants using paired reference and alternate inputs, comparing score behavior, embedding shifts, latency, input ergonomics, and artifact size. The sample is far too small for ranking; it is there to expose practical differences in how the systems behave.
+
+```text
+Scientific question
+       │
+       ├── Is this sequence plausible or generatable?
+       │        └── genomic language model
+       │             likelihood • embedding • generation
+       │
+       └── What molecular function may change, and where?
+                └── sequence-to-function model
+                     RNA • splice • chromatin • contacts • tissue
+```
+
+## A useful taxonomy
+
+### Family 1: self-supervised genomic language models
+
+These models learn sequence grammar from unlabeled DNA using masked-token or next-token objectives.
+
+For an autoregressive model, a sequence score is built from:
+
+```text
+log P(x) = Σᵢ log P(xᵢ | x₍<ᵢ₎)
+```
+
+A zero-shot variant score can then compare alternate and reference sequence:
+
+```text
+ΔLL = log P(xALT) − log P(xREF)
+```
+
+Typical strengths:
+
+- reusable embeddings;
+- zero-shot sequence plausibility;
+- fine-tuning backbones;
+- sequence generation and design.
+
+Typical limitation: the model was not directly trained to predict tissue-specific assays.
+
+### Family 2: supervised sequence-to-function models
+
+These models learn a mapping from DNA to measured functional tracks:
+
+```text
+fθ: DNA sequence → {RNA, splice, ATAC, DNase, ChIP, contact-map tracks}
+```
+
+Variant effects are evaluated as:
+
+```text
+Δtrack = fθ(xALT) − fθ(xREF)
+```
+
+Typical strengths:
+
+- mechanistic, assay-level outputs;
+- spatial localization of the effect;
+- tissue and cell-context interpretation.
+
+Typical limitation: they are predictors of molecular assays, not general sequence generators.
+
+![Taxonomy of genomic language models and sequence-to-function models.](/figures/01_model_taxonomy.png)
+
+## How the architectures scale
+
+Long genomic context creates an engineering problem: dense self-attention costs approximately `O(L²)` in sequence length.
+
+The field has converged on several responses:
+
+| Operator | Main idea | Approximate sequence cost | Best fit |
+|---|---|---:|---|
+| CNN | Local shared motif filters | `O(L)` | motifs, splice sites, chromatin |
+| Self-attention | Content-based global lookup | `O(L²)` | precise long-range interactions |
+| Hyena | Gated implicit long convolution | `O(L log L)` | long-context language modeling |
+| Mamba/SSM | Input-selective recurrent state | `O(L)` | long sequences with bounded state |
+| Hybrid | Mostly efficient mixing plus sparse attention | sub-quadratic | scale plus associative recall |
+
+The important point is not that one operator wins. Biological sequence contains **local motifs, distal regulatory interactions, strand symmetry, and evolutionary constraints**. Architecture should reflect the signal being modeled.
+
+## Three-model comparison
+
+I compared:
+
+| Model | Training objective | Native output | Tissue aware? | Generative? |
+|---|---|---|---:|---:|
+| Carbon-8B | autoregressive DNA modeling | likelihood + pooled embedding | No | Yes |
+| Evo2-7B | autoregressive genome modeling | likelihood + pooled embedding | No | Yes |
+| Enigma | sequence-to-function prediction | positional embeddings + assay tracks | Yes | No |
+
+For each public variant, I computed:
+
+```text
+Likelihood shift:       ΔLL = LLALT − LLREF
+Embedding shift:        ‖zALT − zREF‖₂
+Functional-track shift: Δt = tALT − tREF
+```
+
+This was not designed as a clinical accuracy benchmark: ten known variants are too few, and the models optimize different objectives. It was designed to answer a more operational question: **what information does each model actually provide, and at what cost?**
+
+## Results
+
+### 1. Models with similar objectives behaved similarly
+
+Carbon and Evo2 ranked embedding-shift magnitude with **Spearman ρ = 0.89** (`p < 0.001`). This is strong agreement for two independently trained autoregressive genomic models.
+
+The shared pattern did not make their outputs mechanistically interpretable. A large change in sequence likelihood or embedding position does not specify whether expression, splicing, chromatin accessibility, or 3D contacts changed.
+
+### 2. Functional supervision changed the answer
+
+Enigma returned tissue- and assay-aware deltas. It could identify a splice-junction signal in a relevant tissue or an RNA-track change in a regulatory context—an output that sequence likelihood alone cannot supply.
+
+The practical distinction is:
+
+```text
+gLM answer:  "The alternate sequence is more or less compatible with learned DNA grammar."
+s2f answer:  "The alternate sequence is predicted to change this molecular track in this context."
+```
+
+### 3. Output design created an 8,000× storage difference
+
+Carbon and Evo2 returned compact, pooled 4,096-dimensional vectors of roughly **16 KB per variant**. Enigma’s native per-position representation across its full window produced a compressed artifact of approximately **140 MB per variant**—more than **8,000× larger**.
+
+This is not automatically a disadvantage. A positional embedding preserves spatial information that a pooled vector discards. It does mean that pooling, regional extraction, or track-first analysis must be designed before cohort-scale use.
+
+### 4. Input ergonomics mattered
+
+The sequence language models required caller-supplied reference and alternate sequences. The sequence-to-function system accepted genomic coordinates directly and fetched the corresponding reference context.
+
+That difference determines whether a model is a research component or a clean service inside a variant pipeline.
+
+## Decision framework
+
+| Need | Recommended model role |
+|---|---|
+| Zero-shot sequence plausibility | genomic language model |
+| Compact embeddings for downstream ML | pooled gLM embedding |
+| Sequence generation or design | autoregressive gLM |
+| Tissue-aware regulatory interpretation | sequence-to-function model |
+| Splicing, RNA, chromatin, or contact hypotheses | sequence-to-function model |
+| Coding missense interpretation | include a protein/structure-specialized baseline |
+| Production routing | use a model registry with capability, context, license, and cost metadata |
+
+My default workflow is now:
+
+```text
+Variant class → scientific question → strongest specialized baseline
+              → matching foundation model → calibrated comparison
+              → interpretable evidence package
+```
+
+## Limitations
+
+- The three-model experiment used ten public variants and cannot estimate clinical sensitivity or specificity.
+- Context windows and embedding pooling were not identical across systems.
+- A pooled whole-window embedding is often a **locus fingerprint**, not a clean variant representation.
+- Reported model benchmarks use different datasets, splits, metrics, and leakage controls.
+- Model predictions generate hypotheses; experimental evidence remains the ground truth.
+
+## Take-home
+
+The highest-impact outcome was not choosing a universal winner. It was building a repeatable way to choose the **right role**:
+
+- use genomic language models for likelihood, reusable representations, and generation;
+- use sequence-to-function models for spatial, assay-specific, tissue-aware effects;
+- compare against a strong specialized baseline;
+- measure latency, storage, and input ergonomics alongside accuracy;
+- treat “foundation model” as a capability hypothesis, not a guarantee.
+
+This framing turns a fast-moving model zoo into an engineering decision system.
+
+## References
+
+1. Avsec, Ž. et al. [Advancing regulatory variant effect prediction with AlphaGenome](https://doi.org/10.1038/s41586-025-10014-0). *Nature* (2026).
+2. Brixi, G. et al. [Genome modelling and design across all domains of life with Evo 2](https://doi.org/10.1038/s41586-026-10176-5). *Nature* (2026).
+3. Nguyen, E. et al. [Sequence modeling and design from molecular to genome scale with Evo](https://doi.org/10.1126/science.ado9336). *Science* (2024).
+4. Avsec, Ž. et al. [Effective gene expression prediction from sequence by integrating long-range interactions](https://doi.org/10.1038/s41592-021-01252-x). *Nature Methods* (2021).
+5. Linder, J. et al. [Predicting RNA-seq coverage from DNA sequence as a unifying model of gene regulation](https://doi.org/10.1038/s41588-024-02053-6). *Nature Genetics* (2025).
+6. Nguyen, E. et al. [HyenaDNA: Long-range genomic sequence modeling at single nucleotide resolution](https://arxiv.org/abs/2306.15794). *NeurIPS* (2023).
+7. Gu, A. and Dao, T. [Mamba: Linear-time sequence modeling with selective state spaces](https://arxiv.org/abs/2312.00752) (2023).
+8. Hugging Face. [Carbon: open genomic language models](https://github.com/huggingface/carbon) (2026).
+9. Ding, D. et al. [Enigma: An efficient model for deciphering regulatory genomics](https://doi.org/10.64898/2025.12.18.694875) (2025).

@@ -217,9 +217,9 @@ Our results align with limitations from the AlphaGenome paper itself (Cheng et a
 
 For AlphaGenome to function as "synthetic TWAS," several advances would be needed:
 
-- **Haplotype scoring**: scoring common haplotypes rather than individual variants to capture LD-mediated aggregation
+- **Haplotype scoring**: score common haplotypes, not individual variants, to capture LD-mediated aggregation
 - **Cell-type deconvolution**: weighting biosamples by cell-type composition using single-cell references
-- **Splicing tracks**: many TWAS genes may operate via sQTLs rather than eQTLs
+- **Splicing tracks**: many TWAS genes may act through sQTLs, not eQTLs
 - **Trait expansion**: testing on IBD, Crohn's disease, and other well-powered GWAS to assess generalizability
 
 ---
@@ -235,7 +235,7 @@ For AlphaGenome to function as "synthetic TWAS," several advances would be neede
 | No heart tissue enrichment for cardiac trait | Pleiotropic regulation or sub-bulk cell-type specificity |
 | Gene-level rho < 0.2 | Cannot serve as "synthetic TWAS" at current resolution |
 
-AlphaGenome variant effect scores capture weak but real biological signal that complements statistical genetics — particularly chromatin scores for fine-mapping prioritization. But the gap between sequence-based prediction and genotype-trained models remains substantial. The most promising path forward may not be better models, but better integration: using AlphaGenome's chromatin scores as priors for statistical fine-mapping, rather than as standalone predictors.
+AlphaGenome variant effect scores capture weak but real biological signal that complements statistical genetics — particularly chromatin scores for fine-mapping prioritization. But the gap between sequence-based prediction and genotype-trained models remains substantial. The most promising path forward may not be better models, but better integration: using AlphaGenome's chromatin scores as priors for statistical fine-mapping, not as standalone predictors.
 
 ---
 

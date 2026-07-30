@@ -5,29 +5,110 @@ year: 2024
 venue: "The American Journal of Human Genetics"
 doi: "https://doi.org/10.1016/j.ajhg.2024.07.012"
 pdfUrl: "https://www.cell.com/action/showPdf?pii=S0002-9297(24)00256-8"
-# codeUrl: "https://github.com/sample/research-code"
 videoUrl: "https://youtu.be/BBqrIKg9idU"
-slidesUrl: "/slides/sample-publication.pdf"
 tags: ["Cancer", "TWAS", "PWAS"]
 featured: false
 ---
 
-# Sample Research Publication
+*Second author, with the NCI's Integrative Tumor Epidemiology Branch. My
+contribution was the analysis and interpretation of the data.*
 
-This is the main content of the publication. You can include detailed explanations, methodology, results, and conclusions here.
+The largest GWAS of renal cell carcinoma — 29,020 cases against 835,670
+controls — found 63 susceptibility regions. That is a good haul of coordinates
+and a poor haul of biology. Most of the variants sit in noncoding sequence, and
+a region is not a mechanism.
 
-## Abstract
+This study takes those summary statistics and asks which *genes* and which
+*proteins* carry the signal, for RCC overall and for its two major histologic
+subtypes.
 
-This is a placeholder for the abstract content.
+## Four kidneys and forty-eight tissues
 
-## Methodology
+Which reference transcriptome you use decides what you can find, so we used
+four: GTEx kidney cortex, kidney tubules, and the TCGA clear-cell and papillary
+tumor transcriptomes. Normal tissue and tumor tissue regulate genes
+differently, and running both makes the difference visible.
 
-Describe your research methodology here...
+Individually the four panels returned 21, 48, 90 and 28 genes. Thirty-eight
+were significant in at least two panels — the set worth trusting.
 
-## Results
+Five genes came up in all four. Two of them, *CASP9* and *TMEM163*, map to known
+GWAS regions. The other three do not: *SULT1A2*, *PPIL3* and *HLF* have no
+genome-wide significant variant anywhere within a megabase of the transcription
+start site. They exist only as an accumulation of weak signals that TWAS
+aggregates and single-variant testing discards. *HLF* is a Tier-1 gene in the
+COSMIC cancer census.
 
-Present your findings and results...
+We then meta-analyzed across 48 GTEx tissues using a Cauchy combination, which
+holds its type-I error under correlation, and cross-checked against UTMOST.
+This added 403 genes, and among them *VHL* and *EPAS1* — the most frequently
+mutated gene in RCC and the gene encoding HIF-2α. Finding the two best-known
+genes in kidney cancer through an untargeted scan is the sanity check you want
+before believing anything else on the list.
 
-## Conclusion
+## Splitting the subtypes
 
-Summarize the key takeaways and future work...
+Clear-cell RCC accounts for over 75% of cases, so results for "RCC" are largely
+results for ccRCC. Analyzing the subtypes separately is what exposes the
+differences.
+
+*PGAP3* associated with ccRCC and not with RCC overall. Papillary RCC is rarer
+and harder — 2,193 cases — and this is among the first studies to identify genes
+for it, including *INTS8*, a reported prognostic marker with no GWAS locus.
+Three genes, *CASP9*, *IRF5* and *PLEKHA6*, are shared by both subtypes.
+
+## Adding proteins
+
+This is the first PWAS for RCC. Using plasma protein prediction models from
+INTERVAL and ARIC, we found 13 protein associations, six of which also appeared
+in the TWAS.
+
+Every one of them maps to a GWAS-significant locus — no protein-only
+discoveries. Plasma proteomic reference panels are far smaller than
+transcriptomic ones, and several of the prediction models explain little
+heritability, so these results carry more caution than the TWAS. The papillary
+analysis had too few cases to return anything.
+
+## Are the novel genes real
+
+The genes found only by TWAS are the interesting ones and the ones most likely
+to be noise. They need independent support.
+
+Using published ATAC-seq from RCC tumors and HIF ChIP-seq from RCC cell lines,
+we tested whether the *cis*-regulatory regions of the 145 RCC-associated genes
+are enriched for regulatory features, against a null built by shuffling regions
+across the genome 500,000 times.
+
+They are. 78 of 145 had an active enhancer or promoter within 50 kb of the TSS,
+and 38 had a HIF binding site — HIF being the pathway RCC runs on. *SULT1A2*
+and *CDA*, both TWAS-only, were among them.
+
+That is the argument for these genes. Their regulatory variants never reached
+genome-wide significance individually, but they sit in genuine regulatory
+elements bound by the right transcription factors, and their cumulative effect
+on expression is what the TWAS picks up.
+
+## What RCC shares
+
+Expression-mediated genetic correlation showed shared genetic contribution with
+breast cancer, and more weakly with bladder and prostate cancer. Ovarian cancer
+showed none.
+
+A bi-directional regression supported causal effects of BMI and hypertension on
+RCC through genetically regulated expression, with no evidence in the reverse
+direction — consistent with the epidemiology, and now with a proposed molecular
+route. Smoking, systolic and diastolic blood pressure showed no such effect,
+which does not rule them out; it means this particular approach, working through
+gene expression, does not detect them.
+
+## Limits
+
+Most participants in the GWAS and most donors of the reference tissue are of
+European ancestry, so ancestry-specific signals may be missed and the findings
+may not generalize.
+
+The analysis covers *cis* effects only, within 500 kb of the TSS, so distal
+regulation is invisible to it.
+
+And everything here is computational. These are prioritized candidates for
+laboratory work, which is what the title says and what the list is for.

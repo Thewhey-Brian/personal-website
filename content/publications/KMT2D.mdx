@@ -5,29 +5,105 @@ year: 2024
 venue: "Cell Reports"
 doi: "https://doi.org/10.1016/j.celrep.2024.114174"
 pdfUrl: "https://www.cell.com/action/showPdf?pii=S2211-1247(24)00502-3"
-# codeUrl: "https://github.com/sample/research-code"
 videoUrl: "https://youtu.be/nQrFzAEBK1c"
-slidesUrl: "/slides/sample-publication.pdf"
-tags: ["Cancer", "RNA-seq", "ATAC-seq"]
-featured: false
+tags: ["Cancer", "RNA-seq", "ChIP-seq"]
+featured: true
 ---
 
-# Sample Research Publication
+*Co-first author. My contribution was the computational analysis — the ChIP-seq
+and RNA-seq work behind Figures 2, 3 and 5.*
 
-This is the main content of the publication. You can include detailed explanations, methodology, results, and conclusions here.
+More than 70% of breast cancers depend on the estrogen receptor, and about 40%
+of the ER+/HER2− ones carry an alteration in the PI3K pathway. That pairing is
+why alpelisib, a PI3Kα inhibitor, is approved alongside anti-estrogen therapy.
 
-## Abstract
+The trouble is that blocking PI3K makes ER signaling *stronger*, and the tumor
+escapes through the pathway the other drug is meant to control. Our lab had
+previously traced how: the PI3K effectors AKT and SGK phosphorylate the
+chromatin modifier KMT2D at S1331, which keeps it off the chromatin. Inhibit
+PI3K and that brake comes off — KMT2D is recruited, ER-dependent gene programs
+switch on, and the tumor grows. The drug creates its own resistance mechanism.
 
-This is a placeholder for the abstract content.
+This paper asks what else is controlling that switch.
 
-## Methodology
+## A second mark, one residue away
 
-Describe your research methodology here...
+Mass spectrometry on immunoprecipitated KMT2D turned up mono- and
+di-methylation at K1330 — directly adjacent to the S1331 phosphosite. Two
+regulatory marks on neighbouring residues of a 5,537-amino-acid protein is not
+a coincidence worth ignoring.
 
-## Results
+Screening recombinant lysine methyltransferases identified SMYD2 as the enzyme.
+K1330A and K1330R mutants were not methylated, in vitro or in cells, and
+knocking down or pharmacologically inhibiting SMYD2 reduced the mark.
 
-Present your findings and results...
+The two modifications talk to each other in both directions. AKT1 phosphorylates
+S1331 with lower catalytic efficiency on peptides that are methylated at K1330
+or mutated there. SMYD2 methylates phospho-S1331 KMT2D but cannot touch the
+phospho-dead S1331A mutant.
 
-## Conclusion
+What methylation does *not* do is change KMT2D's enzymatic activity — the
+K1330A/R mutants methylate H3K4 as well as wild-type. So this is not about the
+enzyme. It is about where KMT2D goes and what it brings with it.
 
-Summarize the key takeaways and future work...
+## Where KMT2D goes
+
+ChIP-seq of KMT2D in MCF7 cells, with inducible SMYD2 knockdown, with and
+without alpelisib, gives the direct test.
+
+Alpelisib increased KMT2D chromatin binding, as the earlier model predicts.
+Removing SMYD2 attenuated that increase — genome-wide, and specifically at ER
+and FOXA1 loci, including canonical targets like *GREB1* and *IGFBP4*. Motif
+analysis of the affected peaks returned ERE, FOXA1, AP-1, GRHL2 and TEAD.
+CUT&RUN showed SMYD2 and KMT2D co-occupying chromatin at sites enriched for
+estrogen response and forkhead motifs.
+
+Interaction proteomics filled in the mechanism: components of the INO80
+remodeling complex, ESCRT and histone acetyltransferase complexes associate
+differently with wild-type KMT2D than with the methyl-dead mutant. The mark
+appears to govern which cofactors come along.
+
+RNA-seq matched. Of the 3,995 genes responding to PI3K inhibition, 1,248 — over
+30% — were altered by SMYD2 knockdown. Gene set enrichment put estrogen
+response among the top signatures negatively regulated by SMYD2 loss, along with
+proliferation programs, and the canonical ER targets *MYC*, *GREB1*, *PGR* and
+*IGFBP4* were attenuated.
+
+## Proving it runs through this one residue
+
+SMYD2 methylates many substrates, so sensitising cells by removing SMYD2 does
+not establish that KMT2D is the relevant one. The clean experiment is a CRISPR
+knock-in of K1330A — methyl-dead at that site alone, SMYD2 otherwise intact.
+
+The knock-in cells were more sensitive to alpelisib, to the AKT inhibitor
+capivasertib and to fulvestrant, and their tumors grew significantly more
+slowly in mice. By RNA-seq the knock-in phenocopied SMYD2 knockdown: 2,158
+shared differentially expressed genes at baseline and 1,564 under alpelisib.
+
+A meaningful part of what SMYD2 does to therapeutic response in these cells
+runs through a single lysine on KMT2D.
+
+## Why it might matter clinically
+
+SMYD2 knockdown or inhibition sensitized MCF7 and T47D cells to alpelisib,
+capivasertib, fulvestrant and the approved combinations. It held in
+patient-derived organoids from three ER+/*PIK3CA*-mutant tumors, where SMYD2
+inhibitor plus alpelisib beat either alone. In xenografts, combining SMYD2
+knockdown with alpelisib produced durable regression where alpelisib alone only
+slowed growth.
+
+The patient data points the same way. In TCGA and METABRIC, ER+ tumors with low
+SMYD2 showed lower ER transcriptional activity. Roughly 70% of breast cancers
+carry an SMYD2 alteration, mostly copy gain or amplification, and amplification
+was associated with reduced overall survival.
+
+SMYD2 inhibitors have been modest as single agents. This work suggests the
+combination is where they belong.
+
+## Limits
+
+The mechanism is worked out in cell lines and organoids, with mouse xenografts
+for the in vivo claim, so the human evidence is correlative. The survival
+association with SMYD2 amplification is retrospective. And SMYD2 has plenty of
+other substrates — p53, ERα, EZH2, STAT3, RUNX1 — so the K1330A knock-in shows
+this axis carries much of the effect without showing it carries all of it.

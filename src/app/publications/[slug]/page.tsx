@@ -1,224 +1,203 @@
-import { notFound } from "next/navigation"
-import { allPublications } from "contentlayer/generated"
-import { Mdx } from "@/components/mdx-components"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { RelatedContent } from "@/components/related-content"
-import { ArrowLeft, ExternalLink, FileText, Code, Presentation, Video, Calendar, Building2 } from "lucide-react"
-import Link from "next/link"
-import { Metadata } from "next"
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { Metadata } from "next";
+import { allPublications } from "contentlayer/generated";
+import {
+  Code,
+  ExternalLink,
+  FileText,
+  Presentation,
+  Video,
+} from "lucide-react";
+
+import { Mdx } from "@/components/mdx-components";
+import { RelatedContent } from "@/components/related-content";
+import {
+  BackLink,
+  Callout,
+  MetaStrip,
+  ResourceLinks,
+  TagRow,
+  type Resource,
+} from "@/components/sections/detail-shell";
+import { doiUrl, embedUrl } from "@/lib/links";
+import { jsonLd, publicationSchema } from "@/lib/schema";
 
 interface PublicationPageProps {
-  params: Promise<{
-    slug: string
-  }>
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
-  return allPublications.map((publication) => ({
-    slug: publication.slug,
-  }))
+  return allPublications.map((publication) => ({ slug: publication.slug }));
 }
 
 export async function generateMetadata({
   params,
 }: PublicationPageProps): Promise<Metadata> {
-  const { slug } = await params
-  const publication = allPublications.find(
-    (publication) => publication.slug === slug
-  )
-
-  if (!publication) {
-    return {}
-  }
+  const { slug } = await params;
+  const publication = allPublications.find((p) => p.slug === slug);
+  if (!publication) return {};
 
   return {
-    title: `${publication.title} - Publications`,
-    description: publication.abstract,
-  }
+    title: publication.title,
+    description: publication.abstract.slice(0, 200),
+    alternates: { canonical: `https://www.xinyuguo.com${publication.url}` },
+    openGraph: {
+      type: "article",
+      title: publication.title,
+      description: publication.abstract.slice(0, 200),
+      url: `https://www.xinyuguo.com${publication.url}`,
+    },
+  };
 }
 
-export default async function PublicationPage({ params }: PublicationPageProps) {
-  const { slug } = await params
-  const publication = allPublications.find(
-    (publication) => publication.slug === slug
-  )
+export default async function PublicationPage({
+  params,
+}: PublicationPageProps) {
+  const { slug } = await params;
+  const publication = allPublications.find((p) => p.slug === slug);
 
-  if (!publication) {
-    notFound()
-  }
+  if (!publication) notFound();
+
+  const resources: Resource[] = [
+    publication.pdfUrl && {
+      label: "Read the PDF",
+      href: publication.pdfUrl,
+      icon: FileText,
+      primary: true,
+    },
+    // doiUrl handles frontmatter that already stores a full URL; the old code
+    // prefixed unconditionally and produced https://doi.org/https://doi.org/…
+    publication.doi && {
+      label: "DOI",
+      href: doiUrl(publication.doi),
+      icon: ExternalLink,
+    },
+    publication.codeUrl && {
+      label: "Code",
+      href: publication.codeUrl,
+      icon: Code,
+    },
+    publication.slidesUrl && {
+      label: "Slides",
+      href: publication.slidesUrl,
+      icon: Presentation,
+    },
+    publication.videoUrl && {
+      label: "Video",
+      href: publication.videoUrl,
+      icon: Video,
+    },
+  ].filter(Boolean) as Resource[];
+
+  // Null when the URL isn't an embeddable host, so we never render a dead
+  // frame — the plain video link above still works.
+  const video = publication.videoUrl ? embedUrl(publication.videoUrl) : null;
+
+  const others = allPublications
+    .filter((p) => p.slug !== publication.slug)
+    .sort((a, b) => b.year - a.year)
+    .slice(0, 2);
 
   return (
-    <div className="container mx-auto px-4 py-16">
-      <div className="mx-auto max-w-4xl">
-        {/* Back button */}
-        <Button variant="ghost" asChild className="mb-8">
-          <Link href="/publications">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Publications
-          </Link>
-        </Button>
+    <article>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLd(publicationSchema(publication)),
+        }}
+      />
 
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-start justify-between mb-4">
-            <h1 className="text-3xl font-bold tracking-tight leading-tight">
-              {publication.title}
-            </h1>
-            {publication.featured && (
-              <Badge className="ml-4">Featured</Badge>
-            )}
-          </div>
-          
-          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-4">
-            <div className="flex items-center gap-1">
-              <Calendar className="h-4 w-4" />
-              {publication.year}
-            </div>
-            <div className="flex items-center gap-1">
-              <Building2 className="h-4 w-4" />
-              {publication.venue}
-            </div>
-          </div>
+      <header className="container mx-auto max-w-4xl px-6 pb-12 pt-28 md:pt-32">
+        <BackLink href="/publications" label="Publications" />
 
-          <div className="flex flex-wrap gap-2 mb-6">
-            {publication.tags.map((tag) => (
-              <Badge key={tag} variant="secondary">
-                {tag}
-              </Badge>
-            ))}
-          </div>
-
-          {/* Links */}
-          <div className="flex flex-wrap gap-3">
-            {publication.pdfUrl && (
-              <Button asChild>
-                <Link href={publication.pdfUrl} target="_blank">
-                  <FileText className="mr-2 h-4 w-4" />
-                  PDF
-                </Link>
-              </Button>
+        <div className="mt-9">
+          <MetaStrip
+            items={[String(publication.year), publication.venue].filter(
+              Boolean,
             )}
-            {publication.codeUrl && (
-              <Button variant="outline" asChild>
-                <Link href={publication.codeUrl} target="_blank">
-                  <Code className="mr-2 h-4 w-4" />
-                  Code
-                </Link>
-              </Button>
-            )}
-            {publication.slidesUrl && (
-              <Button variant="outline" asChild>
-                <Link href={publication.slidesUrl} target="_blank">
-                  <Presentation className="mr-2 h-4 w-4" />
-                  Slides
-                </Link>
-              </Button>
-            )}
-            {publication.videoUrl && (
-              <Button variant="outline" asChild>
-                <Link href={publication.videoUrl} target="_blank">
-                  <Video className="mr-2 h-4 w-4" />
-                  Video
-                </Link>
-              </Button>
-            )}
-            {publication.doi && (
-              <Button variant="outline" asChild>
-                <Link href={`https://doi.org/${publication.doi}`} target="_blank">
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  DOI
-                </Link>
-              </Button>
-            )}
-          </div>
+          />
         </div>
 
-        <Separator className="mb-8" />
+        <h1 className="mt-5 max-w-3xl text-[2.25rem] leading-[1.1] sm:text-5xl">
+          {publication.title}
+        </h1>
 
-        {/* Video */}
-        {publication.videoUrl && (
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Video className="h-5 w-5" />
-                Video
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="aspect-video">
-                <iframe
-                  src={publication.videoUrl}
-                  title={`Video: ${publication.title}`}
-                  className="w-full h-full rounded-lg"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-            </CardContent>
-          </Card>
+        {publication.tags.length > 0 && (
+          <div className="mt-7">
+            <TagRow tags={publication.tags} />
+          </div>
         )}
 
-        {/* Abstract */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Abstract</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground leading-relaxed">
-              {publication.abstract}
-            </p>
-          </CardContent>
-        </Card>
+        <div className="mt-9">
+          <ResourceLinks resources={resources} />
+        </div>
+      </header>
 
-        {/* MDX Content */}
-        <div className="prose prose-gray dark:prose-invert max-w-none">
+      <div className="container mx-auto max-w-4xl px-6 pb-24">
+        <Callout label="Abstract">
+          <p>{publication.abstract}</p>
+        </Callout>
+
+        {video && (
+          <div className="mt-12">
+            <span className="label-mono">Video</span>
+            <div className="mt-4 aspect-video overflow-hidden rounded-xl border border-border bg-surface">
+              <iframe
+                src={video}
+                title={`Video: ${publication.title}`}
+                className="h-full w-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="prose prose-neutral mt-14 max-w-none dark:prose-invert prose-headings:font-display prose-a:text-signal">
           <Mdx code={publication.body.code} publication={publication} />
         </div>
 
-        {/* Related Content */}
-        <div className="my-12">
-          <RelatedContent contentId={publication.slug} contentType="publication" />
+        <div className="mt-16">
+          <RelatedContent
+            contentId={publication.slug}
+            contentType="publication"
+          />
         </div>
 
-        {/* Navigation to other publications */}
-        <div className="mt-16 border-t pt-8">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Other Publications</h3>
-            <Button variant="outline" asChild>
-              <Link href="/publications">View All</Link>
-            </Button>
-          </div>
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
-            {allPublications
-              .filter(p => p.slug !== publication.slug)
-              .slice(0, 2)
-              .map((otherPublication) => (
-                <Card key={otherPublication.slug} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-4">
-                    <Link href={otherPublication.url} className="block">
-                      <h4 className="font-medium leading-5 mb-2 hover:text-primary transition-colors">
-                        {otherPublication.title}
-                      </h4>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {otherPublication.venue} • {otherPublication.year}
-                      </p>
-                      <div className="flex flex-wrap gap-1">
-                        {otherPublication.tags.slice(0, 3).map((tag) => (
-                          <Badge key={tag} variant="outline" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </Link>
-                  </CardContent>
-                </Card>
+        {others.length > 0 && (
+          <div className="mt-20 border-t border-border pt-10">
+            <div className="flex items-baseline justify-between gap-4">
+              <span className="label-mono">Other publications</span>
+              <Link
+                href="/publications"
+                className="link-wipe font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
+              >
+                View all →
+              </Link>
+            </div>
+
+            <ul className="mt-4 border-t border-border">
+              {others.map((other) => (
+                <li key={other.slug}>
+                  <Link
+                    href={other.url}
+                    className="group block border-b border-border py-6 transition-colors duration-500 hover:bg-signal-soft"
+                  >
+                    <span className="label-mono !text-[10px]">
+                      {other.year} <span className="opacity-40">/</span>{" "}
+                      {other.venue}
+                    </span>
+                    <h3 className="mt-2 text-lg leading-snug transition-transform duration-500 ease-out group-hover:translate-x-1.5">
+                      {other.title}
+                    </h3>
+                  </Link>
+                </li>
               ))}
+            </ul>
           </div>
-        </div>
+        )}
       </div>
-    </div>
-  )
+    </article>
+  );
 }

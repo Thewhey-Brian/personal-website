@@ -1,0 +1,266 @@
+---
+title: "Teaching Sequence-to-Function Models to Read Structural Variants"
+summary: "A structural-variant encoding study translated deletions, duplications, inversions, breakends, and gene fusions into matched REF/ALT DNA windows for AlphaGenome and Enigma."
+status: "completed"
+startDate: "2026-07-28"
+endDate: "2026-07-28"
+stack:
+  - "Python"
+  - "AlphaGenome"
+  - "Enigma"
+  - "Structural Variants"
+  - "GRCh38"
+tags:
+  - "AI/ML Engineering & Research"
+  - "structural variation"
+  - "cancer genomics"
+  - "sequence-to-function"
+  - "gene fusion"
+  - "multimodal AI"
+featured: true
+---
+
+> **Disclosure note.** This post uses a public cancer-cell-line structural-variant truth set and public fusion examples. No patient-derived internal records, credentials, cloud resources, or proprietary sample identifiers are included.
+
+# Teaching Sequence-to-Function Models to Read Structural Variants
+
+Sequence-to-function models naturally compare two fixed-length DNA windows. A structural variant (SV) is not naturally a fixed-length substitution: it may delete megabases, duplicate a segment, reverse an interval, or join two chromosomes.
+
+The core research problem was therefore not simply “run the model on SVs.” It was:
+
+> **How should each rearrangement be translated into biologically valid reference and alternate DNA sequences?**
+
+I designed an SV encoder, built matched AlphaGenome and Enigma inference workflows, and evaluated **77 public structural variants across five SV classes**. The completed v2 release contains **107 encoded hypotheses in each model** after a sequence-construction audit and targeted rerun.
+
+## Table of contents
+
+1. [Problem](#problem)
+2. [Evaluation set](#evaluation-set)
+3. [Encoder design](#encoder-design)
+4. [Model scoring](#model-scoring)
+5. [Results](#results)
+6. [What the audit changed](#what-the-audit-changed)
+7. [Impact](#impact)
+8. [Limitations and next steps](#limitations-and-next-steps)
+9. [Take-home](#take-home)
+10. [References](#references)
+
+## Problem
+
+Small-variant inference usually replaces one allele inside a shared window:
+
+```text
+REF window: ... A C G T [G] A T C ...
+ALT window: ... A C G T [A] A T C ...
+```
+
+For an SV, the alternate sequence may have a different topology:
+
+```text
+deletion:    left flank | right flank
+duplication: left flank | copy | copy | right flank
+inversion:   left flank | reverse-complement(interval) | right flank
+breakend:    retained side A | retained side B
+```
+
+If the sequence construction is wrong, a precise model will return a precise answer to the wrong biological question.
+
+## Evaluation set
+
+The working set contained:
+
+- **65 non-insertion somatic SVs** from the public COLO829 cancer-cell-line truth resource;
+- **12 public, curated gene-fusion configurations**;
+- **77 modeled events** in total.
+
+![Composition of the public structural-variant evaluation set.](/figures/05_sv_composition.png)
+
+| SV class | Events |
+|---|---:|
+| Deletion | 38 |
+| Breakend/translocation | 13 |
+| Fusion | 12 |
+| Duplication | 7 |
+| Inversion | 7 |
+
+Insertions were not included because a valid alternate window requires the inserted bases, not only an SV type or length.
+
+AlphaGenome used up to **1,048,576 bp** of context; Enigma used **524,288 bp**.
+
+## Encoder design
+
+### Deletion
+
+For an event that fits in one window:
+
+```text
+REF = left flank + deleted segment + right flank
+ALT = left flank + shifted downstream sequence
+
+REF: xxxxx dddd xxxxx
+ALT: xxxxx      xxxxx
+```
+
+Long deletions use a breakpoint-junction fallback. They should not be truncated and presented as though the complete event fit inside the model context.
+
+### Tandem duplication
+
+```text
+REF = left flank + one copy + right flank
+ALT = left flank + copy + copy + right flank
+
+REF: xxxxx [dup]      xxxxx
+ALT: xxxxx [dup][dup] xxxxx
+```
+
+Reversing reference and alternate here would model copy loss, not duplication.
+
+### Inversion
+
+```text
+REF = left flank + forward interval + right flank
+ALT = left flank + reverse-complement(interval) + right flank
+
+REF: xxxxx 1234 xxxxx
+ALT: xxxxx 4321 xxxxx
+```
+
+### Breakends and fusions
+
+For a two-breakend event, both derivative hypotheses may matter:
+
+```text
+REF1 = native window around breakend 1
+REF2 = native window around breakend 2
+
+ALT primary    = retained side 1 + retained side 2
+ALT reciprocal = retained side 2 + retained side 1
+```
+
+The reciprocal product is a hypothesis, not a guarantee that the second derivative exists, is stable, or is expressed.
+
+### Regulatory hijack
+
+When the direction of fusion biology is established:
+
+```text
+REF = native target-gene context
+ALT = 5′ regulatory context + 3′ target-gene body
+```
+
+This asks whether moving a target gene next to a different regulatory environment changes predicted molecular output.
+
+### A deliberate exclusion
+
+I removed an earlier “expressed fusion junction” encoder. A spliced cDNA fusion is a transcript hypothesis, while AlphaGenome and Enigma consume **genomic DNA**. Mixing the two representations creates an invalid input even if the resulting sequence looks plausible.
+
+## Model scoring
+
+Each encoder produced matched sequences:
+
+```text
+Δm = summarym(fm(xALT) − fm(xREF))
+```
+
+where:
+
+- `m` is AlphaGenome or Enigma;
+- `fm` returns RNA, splice, DNase, ATAC, or other tracks;
+- `summarym` aggregates the relevant track around the event.
+
+The comparison focused on:
+
+- mean absolute RNA delta;
+- effect direction;
+- AlphaGenome–Enigma sign agreement;
+- primary versus reciprocal derivative behavior;
+- track-level profiles for mechanistic inspection.
+
+## Results
+
+### Fusion derivative junctions produced the largest RNA effects
+
+| Encoder and event class | AlphaGenome mean `|ΔRNA|` | Enigma mean `|ΔRNA|` | n |
+|---|---:|---:|---:|
+| Primary derivative, fusion | 3.69 | 3.72 | 12 |
+| Primary derivative, somatic breakend | 2.26 | 2.48 | 13 |
+| Regulatory hijack, fusion | 1.34 | 1.37 | 5 |
+| Local deletion/duplication | 0.67 | 0.68 | 45 |
+| Local inversion | 0.26 | 0.24 | 7 |
+
+The near-identical mean effects for primary fusion derivatives were encouraging because the models differ in implementation and training.
+
+### Direction agreement was strongest for high-effect hypotheses
+
+- regulatory hijack: **100%** sign agreement (`n = 5`);
+- primary derivative: **96%** (`n = 25`);
+- reciprocal derivative: **80%** (`n = 25`).
+
+![Cross-model sign agreement by SV hypothesis.](/figures/05_sv_model_agreement.png)
+
+The lower reciprocal agreement is biologically plausible: which partner is centered changes local regulatory context, and the reciprocal product may be weaker or absent.
+
+## What the audit changed
+
+During review, I found that local-event sequence construction needed stricter, type-specific definitions.
+
+The v2 audit:
+
+- encoded short deletions as complete deletions;
+- encoded duplications as true tandem gains;
+- centered complete inversions when they fit;
+- retained breakpoint fallback for oversized events;
+- removed transcript-like fusion inputs;
+- identified **50 local-event windows** for targeted rerun;
+- reran all 50 corrected local events and merged them with the unaffected derivative hypotheses;
+- produced a combined v2 release with **77 SVs and 107 runnable windows per model**.
+
+The correction preserved the strong derivative-junction findings and added valid local DEL/DUP/INV results. Recomputing questionable outputs is cheaper than building conclusions on an incorrect counterfactual.
+
+## Impact
+
+The reusable contribution is the representation layer:
+
+```text
+VCF/BND record
+   → orientation-aware SV interpretation
+   → model-specific fixed-length REF/ALT windows
+   → multimodal track deltas
+   → cross-model evidence package
+```
+
+That layer can support:
+
+- fusion prioritization;
+- regulatory-hijack hypotheses;
+- splice and RNA-effect inspection;
+- comparison of primary and reciprocal derivatives;
+- benchmark construction for future SV-aware foundation models.
+
+## Limitations and next steps
+
+- The derivative-junction set is small and enriched for strong public fusions.
+- Sign agreement does not measure calibration or biological accuracy.
+- Locus-matched negative junctions are still needed for AUROC and precision–recall analysis.
+- Local DEL/DUP and inversion effects were weaker and reached approximately 71% sign agreement, so they require larger benchmarks before strong conclusions.
+- Tissue mapping is approximate for some public examples.
+- S2F models predict genomic regulatory consequences; they do not directly model transcript stability, nonsense-mediated decay, clonality, or treatment response.
+- Future work should expand the fusion cohort and validate top hypotheses with expression or chromatin assays.
+
+## Take-home
+
+- Structural-variant inference begins with a **valid genomic counterfactual**, not a model call.
+- Type-specific encoders are required for deletions, duplications, inversions, breakends, and regulatory hijacks.
+- AlphaGenome and Enigma showed **96% direction agreement** on 25 primary derivative junctions.
+- Fusion derivatives produced the strongest average RNA effects in both models.
+- The encoder audit triggered a complete 50-window rerun and a merged v2 release.
+
+The larger lesson is broadly applicable to AI for biology: representation choices define the scientific question before the neural network sees the data.
+
+## References
+
+1. Espejo Valle-Inclan, J. et al. [A multi-platform reference for somatic structural variation detection](https://doi.org/10.1016/j.xgen.2022.100139). *Cell Genomics* (2022).
+2. Espejo Valle-Inclan, J. et al. [COLO829 somatic structural-variant truth set](https://doi.org/10.5281/zenodo.5019338). Zenodo.
+3. Avsec, Ž. et al. [Advancing regulatory variant effect prediction with AlphaGenome](https://doi.org/10.1038/s41586-025-10014-0). *Nature* (2026).
+4. Ding, D. et al. [Enigma: An efficient model for deciphering regulatory genomics](https://doi.org/10.64898/2025.12.18.694875) (2025).
+5. Mertens, F., Johansson, B., Fioretos, T. and Mitelman, F. [The emerging complexity of gene fusions in cancer](https://doi.org/10.1038/nrc3947). *Nature Reviews Cancer* (2015).

@@ -1,53 +1,59 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
-import { Badge } from './ui/badge'
-import { Sparkles, ArrowRight, Loader2 } from 'lucide-react'
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Badge } from "./ui/badge";
+import { Sparkles, ArrowRight, Loader2 } from "lucide-react";
 
 interface RelatedItem {
-  type: 'publication' | 'project'
-  id: string
-  title: string
-  url: string
-  similarity: number
-  tags?: string[]
+  type: "publication" | "project";
+  id: string;
+  title: string;
+  url: string;
+  similarity: number;
+  tags?: string[];
 }
 
 interface RelatedContentProps {
-  contentId: string
-  contentType: 'publication' | 'project'
-  className?: string
+  contentId: string;
+  contentType: "publication" | "project";
+  className?: string;
 }
 
-export function RelatedContent({ contentId, contentType, className = "" }: RelatedContentProps) {
-  const [related, setRelated] = useState<RelatedItem[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+export function RelatedContent({
+  contentId,
+  contentType,
+  className = "",
+}: RelatedContentProps) {
+  const [related, setRelated] = useState<RelatedItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchRelated() {
       try {
-        setLoading(true)
-        const response = await fetch(`/api/related?id=${contentId}&type=${contentType}`)
+        setLoading(true);
+        const response = await fetch(
+          `/api/related?id=${contentId}&type=${contentType}`,
+        );
 
         if (!response.ok) {
-          throw new Error('Failed to fetch related content')
+          throw new Error("Failed to fetch related content");
         }
 
-        const data = await response.json()
-        setRelated(data.related || [])
+        const data = await response.json();
+        setRelated(data.related || []);
       } catch (err) {
-        console.error('Error fetching related content:', err)
-        setError('Unable to load recommendations')
+        console.error("Error fetching related content:", err);
+        setError("Unable to load recommendations");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    fetchRelated()
-  }, [contentId, contentType])
+    fetchRelated();
+  }, [contentId, contentType]);
 
   if (loading) {
     return (
@@ -64,18 +70,18 @@ export function RelatedContent({ contentId, contentType, className = "" }: Relat
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (error || related.length === 0) {
-    return null // Don't show widget if no recommendations
+    return null; // Don't show widget if no recommendations
   }
 
   return (
     <Card className={className}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Sparkles className="h-5 w-5 text-purple-500" />
+          <Sparkles className="h-5 w-5 text-signal" />
           You Might Also Like
         </CardTitle>
       </CardHeader>
@@ -90,7 +96,12 @@ export function RelatedContent({ contentId, contentType, className = "" }: Relat
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <Badge variant={item.type === 'publication' ? 'default' : 'secondary'} className="text-xs">
+                    <Badge
+                      variant={
+                        item.type === "publication" ? "default" : "secondary"
+                      }
+                      className="text-xs"
+                    >
                       {item.type}
                     </Badge>
                     {item.similarity > 80 && (
@@ -122,5 +133,5 @@ export function RelatedContent({ contentId, contentType, className = "" }: Relat
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -1,33 +1,115 @@
 ---
 title: "Cell-Autonomous Cxcl1 Sustains Tolerogenic Circuitries and Stromal Inflammation via Neutrophil-Derived TNF in Pancreatic Cancer"
-abstract: "TWe have shown that KRAS–TP53 genomic coalteration is associated with immune-excluded microenvironments, chemoresistance, and poor survival in pancreatic ductal adenocarcinoma (PDAC) patients. By treating KRAS–TP53 cooperativity as a model for high-risk biology, we now identify cell-autonomous Cxcl1 as a key mediator of spatial T-cell restriction via interactions with CXCR2 neutrophilic myeloid-derived suppressor cells in human PDAC using imaging mass cytometry. Silencing of cell-intrinsic Cxcl1 in LSL-Kras;Trp53;Pdx-1(KPC) cells reprograms the trafficking and functional dynamics of neutrophils to overcome T-cell exclusion and controls tumor growth in a T cell–dependent manner. Mechanistically, neutrophil-derived TNF is a central regulator of this immunologic rewiring, instigating feed-forward Cxcl1 overproduction from tumor cells and cancer-associated fibroblasts (CAF), T-cell dysfunction, and inflammatory CAF polarization via transmembrane TNF–TNFR2 interactions. TNFR2 inhibition disrupts this circuitry and improves sensitivity to chemotherapy in vivo. Our results uncover cancer cell–neutrophil cross-talk in which context-dependent TNF signaling amplifies stromal inflammation and immune tolerance to promote therapeutic resistance in PDAC."
+abstract: "We have shown that KRAS–TP53 genomic coalteration is associated with immune-excluded microenvironments, chemoresistance, and poor survival in pancreatic ductal adenocarcinoma (PDAC) patients. By treating KRAS–TP53 cooperativity as a model for high-risk biology, we now identify cell-autonomous Cxcl1 as a key mediator of spatial T-cell restriction via interactions with CXCR2 neutrophilic myeloid-derived suppressor cells in human PDAC using imaging mass cytometry. Silencing of cell-intrinsic Cxcl1 in LSL-Kras;Trp53;Pdx-1(KPC) cells reprograms the trafficking and functional dynamics of neutrophils to overcome T-cell exclusion and controls tumor growth in a T cell–dependent manner. Mechanistically, neutrophil-derived TNF is a central regulator of this immunologic rewiring, instigating feed-forward Cxcl1 overproduction from tumor cells and cancer-associated fibroblasts (CAF), T-cell dysfunction, and inflammatory CAF polarization via transmembrane TNF–TNFR2 interactions. TNFR2 inhibition disrupts this circuitry and improves sensitivity to chemotherapy in vivo. Our results uncover cancer cell–neutrophil cross-talk in which context-dependent TNF signaling amplifies stromal inflammation and immune tolerance to promote therapeutic resistance in PDAC."
 year: 2023
 venue: "Cancer Discovery"
 doi: "https://doi.org/10.1158/2159-8290.CD-22-1046"
 pdfUrl: "https://pmc.ncbi.nlm.nih.gov/articles/PMC10259764/pdf/nihms-1880552.pdf"
-# codeUrl: "https://github.com/sample/research-code"
 videoUrl: "https://youtu.be/2YWfNd-Kf38"
-slidesUrl: "/slides/sample-publication.pdf"
-tags: ["Cancer", "RNA-seq", "ATAC-seq"]
+tags: ["Cancer", "RNA-seq", "single cell", "ChIP-seq"]
 featured: false
 ---
 
-# Sample Research Publication
+*Collaborative work led by the Datta lab at the University of Miami. I
+contributed to the computational analysis.*
 
-This is the main content of the publication. You can include detailed explanations, methodology, results, and conclusions here.
+Pancreatic ductal adenocarcinoma resists almost everything, and three things
+are usually blamed: an undruggable genome dominated by co-occurring *KRAS* and
+*TP53* mutations, myeloid cells that suppress the T-cell response, and
+inflammatory fibroblasts that make the stroma hostile.
 
-## Abstract
+Those are usually studied separately. This paper argues they are one circuit,
+and finds the wire connecting them.
 
-This is a placeholder for the abstract content.
+## Starting from a spatial observation
 
-## Methodology
+Tumors carrying both *KRAS* and *TP53* alterations have worse survival and
+immune-excluded microenvironments. Looking for what the cancer cells themselves
+do to cause that, CXCL1 — a secreted neutrophil chemoattractant — stood out as
+overexpressed in the co-altered tumors, in cell line transcriptomes, in
+single-cell and single-nucleus data from patients, and in mouse models.
 
-Describe your research methodology here...
+Its receptor, CXCR2, sits almost exclusively on neutrophilic myeloid-derived
+suppressor cells.
 
-## Results
+Imaging mass cytometry on human tumors makes the consequence visible. Across
+roughly 73,000 cells, CXCL1-expressing tumor islands and CXCR2+ MDSCs sit
+directly against each other — a median of about 7 μm apart. CD8+ T cells are
+excluded from those neighborhoods, sitting some 95 μm away. The tumor recruits
+a cell type that keeps T cells out, and you can see the arrangement in tissue.
 
-Present your findings and results...
+## Upstream and downstream
 
-## Conclusion
+Upstream, *KRAS* and *TP53* mutations cooperate to drive CXCL1 through CREB.
+Phospho-kinome arrays put CREB at Ser133 as the top hyperphosphorylated
+transcription factor in co-altered cells; a CREB inhibitor cut CXCL1
+transcription and secretion; and ChIP-seq showed CREB and RNA Pol-II co-bound
+at the *Cxcl1* promoter.
 
-Summarize the key takeaways and future work...
+Downstream, CRISPR deletion of *Cxcl1* in tumor cells reduced tumor weight and
+metastasis and extended median survival from 21 days to 48. In mice lacking CD8+
+T cells, that benefit disappeared — so the effect runs through adaptive immunity
+rather than through tumor cell growth.
+
+## The MDSCs are reprogrammed, not just unrecruited
+
+The obvious reading is that deleting the chemokine removes the gradient and the
+MDSCs stay away. An adoptive transfer experiment says otherwise.
+
+Labelled MDSCs from control tumor-bearing mice trafficked to control tumors and
+not to *Cxcl1*-deleted ones, as expected. But MDSCs taken from *Cxcl1*-deleted
+tumor-bearing mice failed to traffic even into tumors with intact CXCL1.
+
+Their migratory capacity is altered, independent of the gradient in front of
+them. Their suppressive machinery is too: lower *Arg1*, *Ido* and *Mpo*, lower
+arginase activity, and a loss of the "activated" transcriptional module. T cells
+co-cultured with them recovered IFN-γ release.
+
+## TNF, from an unexpected source
+
+RNA sequencing of MDSCs sorted from tumors nominated TNF as the top upstream
+regulator, acting through a CXCR2–MAP3K8–TNF node. Blocking any step in that
+chain cut TNF expression by more than half.
+
+The source is the surprise. In human single-cell data and in patient blood, the
+highest TNF expression was in neutrophilic MDSCs, above every other cell type.
+TNF's tolerogenic role in cancer has generally been attributed to the stroma.
+
+And the signal is delivered by contact. Co-culture drove more than a fivefold
+increase in CXCL1 only when the cells touched — separate them in a transwell and
+it vanished. Membrane-bound TNF signalling through TNFR2 is what matters here,
+which is why a soluble-TNF inhibitor did nothing while a TNFR2-capable one
+worked.
+
+That closes a feed-forward loop: tumor CXCL1 recruits MDSCs, MDSC membrane TNF
+drives more CXCL1 from tumor cells and fibroblasts, which recruits more MDSCs.
+
+## Where the paradox sits
+
+Blocking the CXCL1–CXCR2 axis reduces TNF signalling across the whole tumor and
+*improves* antitumor immunity. TNF is supposed to be inflammatory and
+antitumor. Here the MDSC-restricted pool of it is doing the opposite, which is
+worth holding onto: the same cytokine reads differently depending on which cell
+makes it and how it is presented.
+
+The same axis drives the fibroblasts. MDSCs induced roughly 40-fold *Il6* in
+cancer-associated fibroblasts; TNFR2 inhibition cut that by two-thirds, shifted
+the fibroblast population away from the inflammatory phenotype, reduced collagen
+deposition, and lowered STAT3 activation in the tumor cells.
+
+## The therapeutic result
+
+TNFR2 inhibition alone did not extend survival. Gemcitabine and paclitaxel alone
+did not extend survival. Together they nearly doubled median survival, from 25
+days to 44, with less metastasis and no added toxicity.
+
+The circuit is not a growth driver you can hit directly. It is the thing that
+makes chemotherapy fail, and removing it lets the chemotherapy work.
+
+## Caveats
+
+The functional work is in genetically engineered mouse models; the human data
+is descriptive — expression, spatial arrangement and correlation. Etanercept
+blocks more than tmTNF–TNFR2, so the in vivo results are less specific than the
+co-culture experiments that identified the mechanism. And no chemotherapy trial
+in PDAC has yet tested this combination.

@@ -5,29 +5,139 @@ year: 2024
 venue: "Human Genetics and Genomics Advances"
 doi: "https://doi.org/10.1016/j.xhgg.2024.100283"
 pdfUrl: "https://www.cell.com/action/showPdf?pii=S2666-2477(24)00022-8"
-# codeUrl: "https://github.com/sample/research-code"
+codeUrl: "https://github.com/Thewhey-Brian/CSTWAS"
 videoUrl: "https://youtu.be/wSmjzx9Q3fY"
-slidesUrl: "/slides/sample-publication.pdf"
 tags: ["TWAS", "Meta-analysis"]
-featured: false
+featured: true
 ---
 
-# Sample Research Publication
+Most variants that GWAS turns up sit in noncoding regions, so knowing the
+position rarely tells you what the variant does. Transcriptome-wide association
+studies close part of that gap: using a reference eQTL panel, you impute a
+gene's genetically regulated expression from nearby variants, then test that
+predicted expression against the trait. A hit names a gene, which is a far more
+useful object than a coordinate.
 
-This is the main content of the publication. You can include detailed explanations, methodology, results, and conclusions here.
+The complication is that expression is tissue-specific, and GTEx offers 48
+tissues. Testing every tissue-gene pair separately pays a steep
+multiple-testing price. Aggregating across all tissues avoids that price and
+exploits the substantial eQTL sharing between related tissues, which is why
+methods like UTMOST, MultiXcan and FUSION-OMNIBUS exist.
 
-## Abstract
+Both strategies struggle in the same place. When a gene is active in only a few
+tissues, testing separately leaves each signal too weak to survive correction,
+and aggregating buries those few real signals under forty-odd null ones. You
+also learn nothing about *where* the gene acts — these methods return a p value
+and stop, which is unfortunate, because the tissue set is often the part a
+biologist actually wants.
 
-Integrating results from genome-wide association studies (GWASs) and studies of molecular phenotypes such as gene expressions can improve our understanding of the biological functions of trait-associated variants and can help prioritize candidate genes for downstream analysis.
+## The idea
 
-## Methodology
+Search over subsets. Instead of committing in advance to one tissue or to all of
+them, let the data pick the group of tissues that carries the association.
 
-Describe your research methodology here...
+Starting from per-tissue gene-based p values $p_1, \dots, p_T$ (from FUSION or
+S-PrediXcan), convert each to a z score, $z_j = \Phi^{-1}(p_j)$. For a subset
+$B$ of tissues, the evidence pooled over that subset is $\sum_{j \in B} z_j /
+\sqrt{|B|}$, and the test statistic is the best any subset achieves:
 
-## Results
+$$
+T(H) = \max_{B \subseteq H} \frac{\sum_{j \in B} z_j}{\sqrt{|B|}}
+$$
 
-Present your findings and results...
+The subset attaining that maximum is the output we care about alongside the p
+value: the tissues in which the gene appears to be activated.
 
-## Conclusion
+Written this way the statistic is unusable — $2^T - 1$ subsets, and $T = 48$.
+But the maximizing subset is always a prefix of the z scores sorted in
+decreasing order. So sort once and take running sums:
 
-Summarize the key takeaways and future work...
+$$
+T_i = \frac{z_{(1)} + z_{(2)} + \dots + z_{(i)}}{\sqrt{i}}, \qquad
+T(H) = \max_{i} T_i
+$$
+
+That is $O(T\log T)$, and the exponential search disappears.
+
+## Getting a p value
+
+The tissue-specific z scores are correlated, because the tissues are. The null
+distribution therefore needs the covariance matrix $\widehat{V_H}$ of the
+per-tissue statistics, which we estimate once per gene by simulation, sample
+from repeatedly, and compare against the observed statistic.
+
+Resampling has a floor: you cannot resolve a p value far below one over the
+number of draws, and exome-wide significance sits at $2.5 \times 10^{-6}$. For
+the extreme tail we fit a generalized Pareto distribution to the upper region of
+the null draws and extrapolate. Because $\widehat{V_H}$ depends only on the gene
+and the reference panel, it is computed once and reused — the R package ships
+pre-computed matrices for GTEx v7 and v8, so running CSTWAS needs nothing beyond
+GWAS summary statistics.
+
+## Does it hold up
+
+Simulations used real UK Biobank genotypes for realistic LD, 100,000 unrelated
+individuals, and two genes with different tissue coverage: *APOE* (24 tissues)
+and *ABO* (45).
+
+Type-I error is well calibrated. Across thresholds from $10^{-4}$ down to
+$2.5 \times 10^{-6}$, the ratio of empirical to nominal error stayed within
+0.98–1.02 for both genes. Worth checking carefully, since a maximum over subsets
+is exactly the kind of statistic that goes anti-conservative when the null is
+handled sloppily.
+
+Power behaves as designed. With few associated tissues, CSTWAS is clearly ahead
+of minP, ACAT, FUSION-OMNIBUS and UTMOST. As the number of associated tissues
+grows the advantage narrows and then reverses: when a gene is active nearly
+everywhere, methods that aggregate across all tissues do as well or better.
+That is the honest trade. CSTWAS is built for the sparse regime, and the sparse
+regime is where the standard tools were already weakest.
+
+## Three traits
+
+**Bipolar disorder** (PGC, 29,764 cases and 169,118 controls). 205 genes reached
+exome-wide significance, 55 of them found by CSTWAS alone. *NTM* is the case
+worth dwelling on: the tissue-specific scan's strongest signal was heart left
+ventricle, which is not a promising lead for a psychiatric disorder. CSTWAS
+returned a tissue set including brain anterior cingulate cortex BA24, cervical
+spinal cord and tibial nerve — individually too weak to survive correction,
+jointly significant, and a far more sensible story. Across the trait, CSTWAS
+recovered 57 of the 67 loci found tissue-specifically and added enough of its
+own to reach 82.
+
+**Breast cancer** (17,881 cases, 410,350 controls). 37 significant genes, 11
+unique to CSTWAS, including *FAT4*, a tumor suppressor in triple-negative
+disease, and *FGF7*. *ORC2* repeated the *NTM* pattern — the tissue-specific
+peak was colon sigmoid, while CSTWAS assembled breast mammary tissue, ovary and
+whole blood.
+
+**Serum urate** (457,690 individuals across five ancestry groups). 243
+significant genes, 44 unique. For *LRRC16A*, CSTWAS surfaced colon transverse
+and thyroid, both known to matter for urate handling and both missed
+tissue-specifically, plausibly because their reference panels are small.
+
+The pattern across all three: high concordance with tissue-specific TWAS — 70%
+to 92% of its loci recovered — plus a set of additional genes and, for every
+hit, a tissue set to interpret it with.
+
+## Where it falls short
+
+Highly correlated tissues are hard to tell apart. The brain regions in a
+selected set should be read as a group, not as a ranking; selection consistency
+under strong correlation needs more work.
+
+Ancestry mismatch between the GWAS and the transcriptomic reference panel can
+inflate false discoveries, and the pre-computed matrices assume European LD.
+
+The ordered-z shortcut that makes the search tractable also discards the
+direction of effect, so a tissue set can mix protective and risk-increasing
+signals. Incorporating direction and magnitude is the obvious next step.
+
+And CSTWAS will miss a tissue-specific signal when the gene has no prediction
+model in most tissues — there is little to pool.
+
+## Software
+
+The R package, with pre-computed correlation matrices for GTEx v7 and v8, is at
+[github.com/Thewhey-Brian/CSTWAS](https://github.com/Thewhey-Brian/CSTWAS). It
+takes GWAS summary statistics as input and needs no individual-level data.

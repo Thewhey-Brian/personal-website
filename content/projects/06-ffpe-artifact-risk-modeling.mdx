@@ -1,0 +1,271 @@
+---
+title: "When Sequence Is Not Enough: Modeling FFPE Artifact Risk"
+summary: "A group-held-out study across public multi-caller data and a de-identified matched FF/FFPE cohort showed that read-level technical evidence—not DNA sequence alone—is the key signal for FFPE artifact-risk modeling."
+status: "completed"
+startDate: "2026-07-28"
+endDate: "2026-07-28"
+stack:
+  - "Python"
+  - "scikit-learn"
+  - "Gradient Boosting"
+  - "Random Forests"
+  - "PyTorch"
+  - "Sequence Transformer"
+  - "Evo 2"
+  - "Somatic Variant Calling"
+tags:
+  - "AI/ML Engineering & Research"
+  - "cancer genomics"
+  - "FFPE"
+  - "machine learning"
+  - "quality control"
+  - "foundation models"
+featured: true
+---
+
+> **Disclosure note.** Public SEQC2 data are the reproducible benchmark. Translation results from a matched FF/FFPE cohort are rounded and aggregate-only. Patient/sample identifiers, exact variants, sequencing-run identifiers, filenames, and storage or infrastructure details have been removed. Proxy labels are not molecular or clinical truth.
+
+# When Sequence Is Not Enough
+
+Formalin-fixed, paraffin-embedded (FFPE) tissue makes archival tumor material available for genomic analysis, but fixation can damage DNA. Some damage survives variant calling and appears as a plausible somatic variant.
+
+The tempting AI question is: “Can a large DNA model recognize the artifact from sequence context?”
+
+Our experiments showed why that framing is incomplete. A real mutation and a fixation artifact at the same locus with the same reference and alternate alleles produce the **same alternate DNA sequence**. The information that separates them lives primarily in the reads: strand and orientation imbalance, base quality, read position, allele fraction, and caller evidence.
+
+I built and evaluated an FFPE-risk modeling workflow across a public multi-caller benchmark and a de-identified matched fresh-frozen/FFPE cohort. The work produced a practical classifier, an operating-policy analysis, and an important negative result for frozen DNA foundation-model embeddings.
+
+## Table of contents
+
+1. [Problem](#problem)
+2. [Label design](#label-design)
+3. [Public benchmark](#public-benchmark)
+4. [Modeling approach](#modeling-approach)
+5. [Results](#results)
+6. [Why the DNA foundation model did not help](#why-the-dna-foundation-model-did-not-help)
+7. [Operating policy](#operating-policy)
+8. [Product impact](#product-impact)
+9. [Limitations](#limitations)
+10. [Take-home](#take-home)
+11. [References](#references)
+
+## Problem
+
+FFPE artifact filtering is asymmetric:
+
+- missing an artifact can create a false biological story;
+- removing a real variant can erase clinically important evidence.
+
+Accuracy at a default threshold is therefore not enough. A useful system must answer:
+
+> At a required retention of likely-real variants, what fraction of artifact-enriched calls can be flagged for review?
+
+## Label design
+
+### Public benchmark labels
+
+The public anchor was the SEQC2 tumor-normal reference system, which provides deeply characterized somatic truth calls across assay and computational conditions.
+
+Calls in high-confidence regions were labeled:
+
+```text
+y = 0  if supported by the reference truth set
+y = 1  if an FFPE call was not supported by the truth set
+```
+
+This is stronger than labels from unmatched clinical samples, but still has a noise floor near detection limits.
+
+### Matched-cohort proxy labels
+
+For translation, matched fresh-frozen (FF) and FFPE samples from the same tumors enabled:
+
+```text
+FF-concordant call → likely-real proxy
+FFPE-only call      → artifact-enriched proxy
+```
+
+These are **technical proxies**. Tumor heterogeneity, sampling, coverage, and subclonality can make a real variant appear in only one preparation.
+
+## Public benchmark
+
+I unified:
+
+- **587 variant-call files**;
+- **five callers**;
+- **six assay conditions**;
+- **three aligners**;
+- **54.9 million raw rows**;
+- **18.6 million labeled rows** after removing uncertain labels.
+
+Evaluation was group-held-out by physical sample token. No sample could contribute rows to both training and test sets.
+
+This is essential: row-random splitting would let the model learn sample- or workflow-specific fingerprints and overstate generalization.
+
+## Modeling approach
+
+### Feature groups
+
+The model used evidence available at or near variant calling:
+
+- alternate and reference read counts;
+- depth and variant allele fraction;
+- caller confidence;
+- strand or read-pair orientation imbalance;
+- base and mapping quality;
+- local substitution context;
+- assay, caller, and aligner metadata when available.
+
+### Models
+
+I compared:
+
+- histogram gradient-boosted trees;
+- random forests;
+- a small sequence-context transformer fused with numeric features;
+- frozen Evo2 likelihood and embeddings;
+- published FFPE-filtering approaches where the available inputs allowed a meaningful comparison.
+
+### Evaluation
+
+The primary metrics were:
+
+```text
+ROC AUC  = ranking quality across thresholds
+AUPRC    = precision–recall quality for the artifact class
+F1       = harmonic mean of artifact precision and recall
+Retention = TN / (TN + FP) for likely-real proxies
+```
+
+## Results
+
+### Public multi-caller benchmark
+
+| Model | F1 | ROC AUC | AUPRC | Likely-real retention |
+|---|---:|---:|---:|---:|
+| Full feature model | 0.852 | **0.959** | **0.920** | 0.943 |
+| Caller-agnostic reduced model | 0.768 | **0.928** | **0.858** | 0.933 |
+
+![Public SEQC2 multi-caller benchmark.](/figures/06_ffpe_public_benchmark.png)
+
+The performance drop in the reduced model quantifies a deployment trade-off. Caller metadata improves discrimination, but caller-agnostic features are easier to transfer across pipelines.
+
+### Mechanistic ablation
+
+In a narrower public experiment, removing the dominant caller-confidence score reduced F1 by only about **0.003**. The apparent importance of that field was largely redundant with mechanistic read-level evidence.
+
+This was a useful model-review lesson:
+
+> High permutation importance does not prove a feature is load-bearing; correlated evidence must be removed and the model retrained.
+
+### De-identified matched-cohort translation
+
+In the full, pre-filter aggregate of **more than 85,000 calls**, the tree ensemble reached **ROC AUC 0.923**, while the sequence-context transformer reached **0.919**.
+
+After current production-style filters, the remaining deployment population was approximately:
+
+- **16,700 calls**;
+- **12,200 FF-concordant, likely-real proxies**;
+- **4,500 FFPE-only, artifact-enriched proxies**.
+
+The harder post-filter model reached **leave-one-patient-out ROC AUC 0.790**. This lower number is the more relevant deployment estimate: easy artifacts had already been removed upstream.
+
+## Why the DNA foundation model did not help
+
+On a stratified pilot, frozen Evo2 features achieved:
+
+| Feature set | ROC AUC |
+|---|---:|
+| Mechanistic read/caller features | **0.810** |
+| Evo2 delta embedding + likelihood | **0.493** |
+| Evo2 plus mechanistic features | **0.776** |
+
+Evo2 alone was indistinguishable from random ranking.
+
+The reason is information-theoretic, not a failure of scale:
+
+```text
+Hreal:      locus L, REF→ALT, observed from a true mutation
+Hartifact:  locus L, REF→ALT, observed from fixation damage
+
+Sequence input under both hypotheses = identical ALT sequence
+```
+
+A model receiving only the resulting reference/alternate sequence cannot infer how the observed base arose. Adding a larger context window or a more expressive embedding head does not restore evidence that was never present in the input.
+
+Useful signals instead include:
+
+```text
+P(artifact | reads, orientation, quality, VAF, caller, context)
+```
+
+The negative result prevented further investment in a category-mismatched foundation-model approach and redirected effort to the evidence that can actually solve the problem.
+
+## Operating policy
+
+A classifier becomes useful only when tied to a retention policy.
+
+For a threshold `τ`:
+
+```text
+Flag as FFPE-risk if P(artifact | evidence) ≥ τ
+```
+
+In the post-filter matched cohort:
+
+- at **90% likely-real retention**, the model flagged **55.8%** of artifact-enriched proxies;
+- at **95% retention**, it flagged **24.3%**;
+- at **99% retention**, it flagged **3.3%**.
+
+![Retention–artifact-flagging trade-off.](/figures/06_ffpe_operating_point.png)
+
+There is no universally correct threshold. A review-support tool may tolerate more flags than an automatic filter.
+
+## Product impact
+
+The recommended deployment pattern is additive:
+
+```text
+Variant caller
+    → existing hard filters
+    → calibrated FFPE-risk score
+    → visible evidence and reason codes
+    → expert review
+```
+
+The score should:
+
+- annotate, never silently delete;
+- expose its operating threshold;
+- retain caller and assay provenance;
+- report calibration drift by batch and workflow;
+- preserve the original call and evidence;
+- be prospectively validated before clinical use.
+
+This creates a practical bridge between ML research and diagnostic-quality engineering: the model optimizes review effort while preserving human and pipeline controls.
+
+## Limitations
+
+- FF-concordant and FFPE-only classes are proxy labels.
+- The matched-cohort result is retrospective and rounded for publication safety.
+- Performance varies by caller, assay, aligner, and filtering stage.
+- Cross-caller transfer should not be assumed when feature definitions differ.
+- Published comparator tools require different input evidence; VCF-only comparisons can be incomplete.
+- The operating point requires prospective validation and clinical/QC governance.
+- This system estimates technical artifact risk, not pathogenicity or actionability.
+
+## Take-home
+
+- The public multi-caller model reached **ROC AUC 0.959** and **AUPRC 0.920** with group-held-out evaluation across 18.6 million labeled rows.
+- The post-filter matched-cohort task was harder but operationally relevant: **AUC 0.790**.
+- At **90% likely-real retention**, the score flagged **55.8%** of residual artifact-enriched proxies.
+- A frozen genomic foundation model performed at chance because sequence alone does not contain variant-provenance evidence.
+- The responsible product is a calibrated risk annotation with provenance and expert review—not an autonomous deletion rule.
+
+## References
+
+1. Fang, L. T. et al. [Establishing community reference samples, data and call sets for benchmarking cancer mutation detection using whole-genome sequencing](https://doi.org/10.1038/s41587-021-00993-6). *Nature Biotechnology* (2021).
+2. Sahraeian, S. M. E. et al. [Achieving robust somatic mutation detection with deep learning models derived from reference data sets of a cancer sample](https://doi.org/10.1186/s13059-021-02592-9). *Genome Biology* (2022).
+3. Heo, D. et al. [DEEPOMICS FFPE identifies DNA-sequencing artifacts from FFPE tissue with deep learning](https://doi.org/10.1038/s41598-024-53167-0). *Scientific Reports* (2024).
+4. Cebeci, E. et al. [FFPolish: a machine-learning-based method for refining FFPE somatic variant calls](https://doi.org/10.3389/fgene.2022.834764). *Frontiers in Genetics* (2022).
+5. Frankell, A. M. et al. [Enabling whole-genome sequencing analysis from FFPE specimens in clinical oncology](https://doi.org/10.1038/s41467-025-65654-7). *Nature Communications* (2025).
+6. Brixi, G. et al. [Genome modelling and design across all domains of life with Evo 2](https://doi.org/10.1038/s41586-026-10176-5). *Nature* (2026).

@@ -1,254 +1,198 @@
-import { notFound } from "next/navigation"
-import { allProjects } from "contentlayer/generated"
-import { Mdx } from "@/components/mdx-components"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { RelatedContent } from "@/components/related-content"
-import { ArrowLeft, ExternalLink, Github, Calendar, User, Clock, CheckCircle, Circle } from "lucide-react"
-import Link from "next/link"
-import { Metadata } from "next"
-import { format } from "date-fns"
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { Metadata } from "next";
+import { format } from "date-fns";
+import { allProjects } from "contentlayer/generated";
+import { ExternalLink, Github } from "lucide-react";
+
+import { Mdx } from "@/components/mdx-components";
+import { RelatedContent } from "@/components/related-content";
+import {
+  BackLink,
+  Callout,
+  MetaStrip,
+  ResourceLinks,
+  TagRow,
+  type Resource,
+} from "@/components/sections/detail-shell";
 
 interface ProjectPageProps {
-  params: Promise<{
-    slug: string
-  }>
+  params: Promise<{ slug: string }>;
 }
 
+const STATUS_LABEL: Record<string, string> = {
+  completed: "Completed",
+  "in-progress": "In progress",
+  planned: "Planned",
+};
+
 export async function generateStaticParams() {
-  return allProjects.map((project) => ({
-    slug: project.slug,
-  }))
+  return allProjects.map((project) => ({ slug: project.slug }));
 }
 
 export async function generateMetadata({
   params,
 }: ProjectPageProps): Promise<Metadata> {
-  const { slug } = await params
-  const project = allProjects.find(
-    (project) => project.slug === slug
-  )
-
-  if (!project) {
-    return {}
-  }
+  const { slug } = await params;
+  const project = allProjects.find((p) => p.slug === slug);
+  if (!project) return {};
 
   return {
-    title: `${project.title} - Projects`,
+    title: project.title,
     description: project.summary,
+    // Detail pages are the content worth ranking, and until now they were the
+    // only pages with no canonical.
+    alternates: { canonical: `https://www.xinyuguo.com${project.url}` },
+    openGraph: {
+      type: "article",
+      title: project.title,
+      description: project.summary,
+      url: `https://www.xinyuguo.com${project.url}`,
+    },
+  };
+}
+
+function dateRange(project: (typeof allProjects)[number]): string | null {
+  if (!project.startDate && !project.endDate) return null;
+  const fmt = (d: string) => format(new Date(d), "MMM yyyy");
+
+  if (project.startDate && project.endDate) {
+    const from = fmt(project.startDate);
+    const to = fmt(project.endDate);
+    // Single-month work would otherwise read "Jul 2026 — Jul 2026".
+    return from === to ? from : `${from} — ${to}`;
   }
-}
-
-const statusIcons = {
-  completed: CheckCircle,
-  "in-progress": Clock,
-  planned: Circle,
-}
-
-const statusLabels = {
-  completed: "Completed",
-  "in-progress": "In Progress", 
-  planned: "Planned",
-}
-
-const statusVariants = {
-  completed: "default" as const,
-  "in-progress": "secondary" as const,
-  planned: "outline" as const,
+  if (project.startDate) {
+    return project.status === "in-progress"
+      ? `${fmt(project.startDate)} — present`
+      : fmt(project.startDate);
+  }
+  return fmt(project.endDate!);
 }
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
-  const { slug } = await params
-  const project = allProjects.find(
-    (project) => project.slug === slug
-  )
+  const { slug } = await params;
+  const project = allProjects.find((p) => p.slug === slug);
 
-  if (!project) {
-    notFound()
-  }
+  if (!project) notFound();
 
-  const StatusIcon = statusIcons[project.status]
+  const resources: Resource[] = [
+    project.demoUrl && {
+      label: "View demo",
+      href: project.demoUrl,
+      icon: ExternalLink,
+      primary: true,
+    },
+    project.repoUrl && {
+      label: "Source code",
+      href: project.repoUrl,
+      icon: Github,
+    },
+  ].filter(Boolean) as Resource[];
+
+  const meta = [
+    STATUS_LABEL[project.status] ?? project.status,
+    dateRange(project),
+    project.role,
+    `${project.readingTime} min read`,
+  ].filter(Boolean) as string[];
+
+  const others = allProjects.filter((p) => p.slug !== project.slug).slice(0, 2);
 
   return (
-    <div className="container mx-auto px-4 py-16">
-      <div className="mx-auto max-w-4xl">
-        {/* Back button */}
-        <Button variant="ghost" asChild className="mb-8">
-          <Link href="/projects">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Projects
-          </Link>
-        </Button>
+    <article>
+      <header className="container mx-auto max-w-4xl px-6 pb-12 pt-28 md:pt-32">
+        <BackLink href="/projects" label="Projects" />
 
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-start justify-between mb-4">
-            <h1 className="text-3xl font-bold tracking-tight leading-tight">
-              {project.title}
-            </h1>
-            <div className="flex items-center gap-2 ml-4">
-              {project.featured && (
-                <Badge>Featured</Badge>
-              )}
-              <Badge variant={statusVariants[project.status]}>
-                <StatusIcon className="mr-1 h-3 w-3" />
-                {statusLabels[project.status]}
-              </Badge>
-            </div>
-          </div>
-          
-          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-4">
-            {project.role && (
-              <div className="flex items-center gap-1">
-                <User className="h-4 w-4" />
-                {project.role}
-              </div>
-            )}
-            {(project.startDate || project.endDate) && (
-              <div className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                {project.startDate && format(new Date(project.startDate), "MMM yyyy")}
-                {project.startDate && project.endDate && " - "}
-                {project.endDate ? format(new Date(project.endDate), "MMM yyyy") : 
-                 (project.startDate && project.status === "in-progress" && "Present")}
-              </div>
-            )}
-          </div>
-
-          <p className="text-lg text-muted-foreground mb-6">
-            {project.summary}
-          </p>
-
-          {/* Links */}
-          <div className="flex flex-wrap gap-3 mb-6">
-            {project.demoUrl && (
-              <Button asChild>
-                <Link href={project.demoUrl} target="_blank">
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  Live Demo
-                </Link>
-              </Button>
-            )}
-            {project.repoUrl && (
-              <Button variant="outline" asChild>
-                <Link href={project.repoUrl} target="_blank">
-                  <Github className="mr-2 h-4 w-4" />
-                  Source Code
-                </Link>
-              </Button>
-            )}
-          </div>
-
-          {/* Tech stack and tags */}
-          <div className="space-y-4">
-            {project.stack.length > 0 && (
-              <div>
-                <h3 className="text-sm font-medium mb-2">Tech Stack</h3>
-                <div className="flex flex-wrap gap-2">
-                  {project.stack.map((tech) => (
-                    <Badge key={tech} variant="secondary">
-                      {tech}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {project.tags.length > 0 && (
-              <div>
-                <h3 className="text-sm font-medium mb-2">Tags</h3>
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <Badge key={tag} variant="outline">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+        <div className="mt-9">
+          <MetaStrip items={meta} />
         </div>
 
-        <Separator className="mb-8" />
+        <h1 className="mt-5 max-w-3xl text-[2.25rem] leading-[1.1] sm:text-5xl">
+          {project.title}
+        </h1>
 
-        {/* Project images */}
-        {project.images.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Screenshots</h2>
-            <div className="grid gap-4 md:grid-cols-2">
-              {project.images.map((image, index) => (
-                <div key={index} className="aspect-video bg-muted rounded-lg overflow-hidden">
-                  <div className="flex h-full items-center justify-center text-muted-foreground">
-                    <span>Image {index + 1}</span>
-                  </div>
-                </div>
-              ))}
+        {project.tags.length > 0 && (
+          <div className="mt-7">
+            <TagRow tags={project.tags} />
+          </div>
+        )}
+
+        {resources.length > 0 && (
+          <div className="mt-9">
+            <ResourceLinks resources={resources} />
+          </div>
+        )}
+      </header>
+
+      <div className="container mx-auto max-w-4xl px-6 pb-24">
+        <Callout label="Summary">
+          <p>{project.summary}</p>
+        </Callout>
+
+        {project.stack.length > 0 && (
+          <div className="mt-12">
+            <span className="label-mono">Stack</span>
+            <div className="mt-4">
+              <TagRow tags={project.stack} />
             </div>
           </div>
         )}
 
-        {/* MDX Content */}
-        <div className="prose prose-gray dark:prose-invert max-w-none">
+        {project.images.length > 0 && (
+          <div className="mt-12 grid gap-4 sm:grid-cols-2">
+            {project.images.map((src) => (
+              <img
+                key={src}
+                src={src}
+                alt={`${project.title} screenshot`}
+                className="w-full rounded-xl border border-border"
+                loading="lazy"
+              />
+            ))}
+          </div>
+        )}
+
+        <div className="prose prose-neutral mt-14 max-w-none dark:prose-invert prose-headings:font-display prose-a:text-signal">
           <Mdx code={project.body.code} />
         </div>
 
-        {/* Related Content */}
-        <div className="my-12">
+        <div className="mt-16">
           <RelatedContent contentId={project.slug} contentType="project" />
         </div>
 
-        {/* Navigation to other projects */}
-        <div className="mt-16 border-t pt-8">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Other Projects</h3>
-            <Button variant="outline" asChild>
-              <Link href="/projects">View All</Link>
-            </Button>
+        {others.length > 0 && (
+          <div className="mt-20 border-t border-border pt-10">
+            <div className="flex items-baseline justify-between gap-4">
+              <span className="label-mono">Other projects</span>
+              <Link
+                href="/projects"
+                className="link-wipe font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
+              >
+                View all →
+              </Link>
+            </div>
+
+            <ul className="mt-4 border-t border-border">
+              {others.map((other) => (
+                <li key={other.slug}>
+                  <Link
+                    href={other.url}
+                    className="group block border-b border-border py-6 transition-colors duration-500 hover:bg-signal-soft"
+                  >
+                    <span className="label-mono !text-[10px]">
+                      {STATUS_LABEL[other.status] ?? other.status}
+                    </span>
+                    <h3 className="mt-2 text-lg leading-snug transition-transform duration-500 ease-out group-hover:translate-x-1.5">
+                      {other.title}
+                    </h3>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
-            {allProjects
-              .filter(p => p.slug !== project.slug)
-              .slice(0, 2)
-              .map((otherProject) => {
-                const OtherStatusIcon = statusIcons[otherProject.status]
-                return (
-                  <Card key={otherProject.slug} className="hover:shadow-md transition-shadow">
-                    <CardContent className="p-4">
-                      <Link href={otherProject.url} className="block">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium leading-5 hover:text-primary transition-colors">
-                            {otherProject.title}
-                          </h4>
-                          <Badge variant={statusVariants[otherProject.status]} className="text-xs">
-                            <OtherStatusIcon className="mr-1 h-2 w-2" />
-                            {statusLabels[otherProject.status]}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
-                          {otherProject.summary}
-                        </p>
-                        <div className="flex flex-wrap gap-1">
-                          {otherProject.stack.slice(0, 3).map((tech) => (
-                            <Badge key={tech} variant="outline" className="text-xs">
-                              {tech}
-                            </Badge>
-                          ))}
-                          {otherProject.stack.length > 3 && (
-                            <Badge variant="outline" className="text-xs">
-                              +{otherProject.stack.length - 3} more
-                            </Badge>
-                          )}
-                        </div>
-                      </Link>
-                    </CardContent>
-                  </Card>
-                )
-              })}
-          </div>
-        </div>
+        )}
       </div>
-    </div>
-  )
+    </article>
+  );
 }

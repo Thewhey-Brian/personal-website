@@ -1,5 +1,4 @@
 import { allPublications, allProjects } from 'contentlayer/generated'
-import { supabase } from './supabase'
 
 export interface SiteContent {
   publications: Array<{
@@ -24,13 +23,8 @@ export interface SiteContent {
     repoUrl?: string
     demoUrl?: string
     featured?: boolean
-  }>
-  photos: Array<{
-    id: string
-    caption?: string
-    album?: string
-    tags?: string[]
-    imageUrl: string
+    startDate?: string
+    endDate?: string
   }>
   siteInfo: {
     name: string
@@ -54,7 +48,7 @@ export async function getSiteContent(): Promise<SiteContent> {
     year: pub.year,
     venue: pub.venue,
     tags: pub.tags,
-    url: `/publications/${pub._raw.flattenedPath}`,
+    url: pub.url,
     pdfUrl: pub.pdfUrl,
     featured: pub.featured
   }))
@@ -67,30 +61,14 @@ export async function getSiteContent(): Promise<SiteContent> {
     status: project.status,
     stack: project.stack,
     tags: project.tags,
-    url: `/projects/${project._raw.flattenedPath}`,
+    url: project.url,
     repoUrl: project.repoUrl,
     demoUrl: project.demoUrl,
-    featured: project.featured
+    featured: project.featured,
+    startDate: project.startDate,
+    endDate: project.endDate
   }))
 
-  // Get photos from Supabase (with fallback)
-  let photos: SiteContent['photos'] = []
-  try {
-    const { data } = await supabase
-      .from('photos')
-      .select('id, caption, album, tags, image_url')
-      .limit(50)
-    
-    photos = (data || []).map(photo => ({
-      id: photo.id,
-      caption: photo.caption,
-      album: photo.album,
-      tags: photo.tags,
-      imageUrl: photo.image_url
-    }))
-  } catch (error) {
-    console.warn('Could not fetch photos:', error)
-  }
 
   // Site owner information
   const siteInfo = {
@@ -113,7 +91,6 @@ export async function getSiteContent(): Promise<SiteContent> {
   return {
     publications,
     projects,
-    photos,
     siteInfo
   }
 }
@@ -121,7 +98,6 @@ export async function getSiteContent(): Promise<SiteContent> {
 export function generateContentSummary(content: SiteContent): string {
   const pubCount = content.publications.length
   const projectCount = content.projects.length
-  const photoCount = content.photos.length
   const featuredPubs = content.publications.filter(p => p.featured).length
   const featuredProjects = content.projects.filter(p => p.featured).length
 
@@ -139,7 +115,6 @@ Location: ${content.siteInfo.location}
 Content Overview:
 - ${pubCount} publications (${featuredPubs} featured)${recentPub ? `, most recent: "${recentPub.title}" (${recentPub.year})` : ''}
 - ${projectCount} projects (${featuredProjects} featured, ${activeProjects} active)
-- ${photoCount} photos across various albums
 - Research areas: ${content.siteInfo.researchAreas.join(', ')}
 
 Key Skills: ${content.siteInfo.skills.join(', ')}

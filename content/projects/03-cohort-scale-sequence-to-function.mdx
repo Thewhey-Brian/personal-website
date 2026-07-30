@@ -1,0 +1,228 @@
+---
+title: "Beyond Consequence Labels: Cohort-Scale Sequence-to-Function Interpretation"
+summary: "A dual-model workflow used AlphaGenome and Enigma to add functional evidence to variants missed by conventional high/moderate consequence labels, expanding the reviewable space while preserving clinical guardrails."
+status: "completed"
+startDate: "2026-07-28"
+endDate: "2026-07-28"
+stack:
+  - "Python"
+  - "AlphaGenome"
+  - "Enigma"
+  - "Variant Effect Prediction"
+  - "Functional Genomics"
+tags:
+  - "Research & Analysis"
+  - "computational biology"
+  - "sequence-to-function"
+  - "cancer genomics"
+  - "variant interpretation"
+  - "multimodal AI"
+featured: true
+---
+
+> **Disclosure note.** All patient and sample identifiers, genomic coordinates, exact internal candidate variants, filenames, and cloud locations have been removed. Results are reported only as cohort-level aggregates. Candidate tiers are research-prioritization outputs, not clinical classifications.
+
+# Beyond Consequence Labels
+
+Conventional variant annotation is excellent at answering questions such as “does this change a coding sequence?” It is much less direct at answering:
+
+- Does a noncoding variant alter an enhancer or promoter?
+- Does a synonymous change perturb splicing?
+- Which tissue or molecular assay shows the strongest predicted effect?
+- Do independent sequence-to-function models support the same mechanism?
+
+I built a cohort-scale workflow that used **AlphaGenome** and **Enigma** as complementary evidence layers. Across **6,087 evaluated variants**, AlphaGenome added functional signal to **2,554 variants outside conventional snpEff HIGH/MODERATE consequence labels—42% of the comparison cohort**.
+
+The correct claim is not “42% more actionable variants.” The correct claim is: **the workflow expanded the reviewable space and added mechanism-oriented evidence.**
+
+## Table of contents
+
+1. [Goal](#goal)
+2. [Workflow](#workflow)
+3. [Scoring methods](#scoring-methods)
+4. [Validation before scaling](#validation-before-scaling)
+5. [Cohort results](#cohort-results)
+6. [Candidate prioritization](#candidate-prioritization)
+7. [Impact](#impact)
+8. [Limitations](#limitations)
+9. [Take-home](#take-home)
+10. [References](#references)
+
+## Goal
+
+The goal was to turn a long variant list into a smaller, interpretable set of hypotheses without pretending model scores are experimental or clinical truth.
+
+The workflow needed to:
+
+- preserve the original annotation and review process;
+- evaluate reference and alternate alleles consistently;
+- combine evidence across RNA, splicing, chromatin, and regulatory modalities;
+- validate scoring logic on known public examples;
+- measure overlap between independent models;
+- expose thresholds and uncertainty.
+
+## Workflow
+
+```text
+Variant cohort
+    │
+    ├── Conventional annotation
+    │      ├── HIGH / MODERATE
+    │      └── LOW / noncoding
+    │
+    ├── AlphaGenome REF/ALT inference
+    │      └── RNA • splice • chromatin • TF • contacts
+    │
+    ├── Enigma REF/ALT inference
+    │      └── tissue-aware RNA • splice • ATAC • DNase
+    │
+    └── Evidence integration
+           ├── model overlap
+           ├── annotation-database review
+           ├── mechanism-consistency checks
+           └── research-priority tier
+```
+
+My contribution included data harmonization, batch inference, model-specific score normalization, validation panels, cross-model comparison, prioritization logic, and dashboards for review.
+
+## Scoring methods
+
+### Generic sequence-to-function delta
+
+For model output `f`, a variant effect is:
+
+```text
+Δ = f(xALT) − f(xREF)
+```
+
+The sign gives direction and the magnitude gives predicted effect strength. The output must still be interpreted in the context of assay, tissue, and genomic location.
+
+### Enigma expression and chromatin scores
+
+For a track window with pseudocount `ε`:
+
+```text
+scoreQTL = log₂(Σ fALT + ε) − log₂(Σ fREF + ε)
+```
+
+### Enigma splicing score
+
+For junction `j` and position `p`:
+
+```text
+scoresQTL = max(j,p) |log₂((fALT[j,p] + ε) / (fREF[j,p] + ε))|
+```
+
+### Evidence union
+
+Let `A` be variants with AlphaGenome signal outside the conventional high/moderate set, and `E` the corresponding Enigma set:
+
+```text
+Reviewable sequence-to-function set: U = A ∪ E
+Model-supported overlap:            O = A ∩ E
+```
+
+This set logic matters. Requiring both models increases specificity but discards complementary signals. Taking the union expands recall but requires stronger review controls.
+
+## Validation before scaling
+
+Before interpreting the cohort, I tested whether the scoring and extraction code reproduced published mechanisms.
+
+### Public mechanism checks
+
+- **TAL1 boundary perturbation:** the model predicted approximately **88% loss of CTCF signal** and a **143% increase in cross-boundary contact**, consistent with disruption of an insulated neighborhood. The absence of a downstream RNA increase was retained as a limitation, not hidden.
+- **Metabolic multi-omics panel:** **7 of 7** expected directions were concordant across RNA and regulatory readouts.
+- **Splicing panel:** **5 of 5** known examples were directionally concordant.
+- **Cross-model splicing:** Enigma’s paper-defined sQTL score correlated with AlphaGenome splice-junction effects at **Spearman ρ = 0.62** on splice variants.
+
+![Mechanism-level validation summary.](/figures/03_validation_summary.png)
+
+These are mechanism-level checks. Wet-lab assays remain the ground truth.
+
+## Cohort results
+
+### AlphaGenome expanded the reviewable space
+
+Of 6,087 evaluated variants:
+
+- **2,554** had AlphaGenome functional signal outside snpEff HIGH/MODERATE labels;
+- this represented **42%** of the comparison cohort;
+- signals included enhancer, promoter, splice, transcription-factor, UTR, and synonymous contexts.
+
+### The models were complementary
+
+Within the sequence-to-function-expanded set:
+
+- **681** variants had AlphaGenome-only signal;
+- **1,873** had signal from both AlphaGenome and Enigma;
+- **271** had Enigma-only signal;
+- the union contained **2,825** variants.
+
+Enigma supported **73.3%** of the AlphaGenome-expanded set.
+
+![AlphaGenome and Enigma evidence overlap.](/figures/03_s2f_overlap.png)
+
+The shared set is useful for high-confidence review. The model-specific sets are equally informative: they show where different training data, tissues, tracks, or scoring functions create genuinely different evidence.
+
+## Candidate prioritization
+
+A model score by itself is not a candidate tier. I combined:
+
+- effect magnitude and direction;
+- support from one or both models;
+- match between predicted modality and local annotation;
+- known cancer-gene context;
+- absence or presence in existing annotation resources;
+- reviewability of the proposed mechanism.
+
+The aggregate prioritization produced:
+
+- **122** high-confidence, annotation-database-negative research candidates;
+- **56** top-tier candidates;
+- **68** strong candidates;
+- **676** mechanistically plausible candidates.
+
+Exact variants and coordinates are intentionally omitted. These tiers prioritize research review; they do not establish pathogenicity, actionability, diagnosis, or treatment selection.
+
+## Impact
+
+The project changed variant interpretation in three ways:
+
+1. **From label to mechanism.** Instead of a single categorical consequence, a variant could be reviewed in terms of a predicted splice, RNA, chromatin, or contact effect.
+2. **From one model to evidence triangulation.** Independent model agreement became a measurable confidence feature.
+3. **From ad hoc review to a reproducible pipeline.** Thresholds, modalities, model versions, and evidence provenance could be carried into a review dashboard.
+
+The near-term product opportunity is an **additive evidence layer**:
+
+```text
+Existing annotation + model-derived mechanism + database evidence + expert review
+```
+
+It should not silently replace existing annotations or autonomous clinical judgment.
+
+## Limitations
+
+- The cohort analysis is retrospective.
+- Functional predictions are not wet-lab validation.
+- Thresholds influence both the overlap and the size of the reviewable set.
+- Models share some training resources; agreement is not complete statistical independence.
+- Sequence context alone cannot represent tumor purity, clonality, assay quality, or treatment response.
+- Candidate enrichment does not estimate clinical utility without prospective review and outcome-linked validation.
+
+## Take-home
+
+- Sequence-to-function models can surface functional hypotheses beyond coding consequence labels.
+- AlphaGenome added signal to **42%** of the evaluated cohort outside conventional high/moderate annotations.
+- Enigma supported **73.3%** of that expanded set and contributed additional model-specific signals.
+- Public mechanism checks established that the pipeline extracted biologically coherent effects before it was scaled.
+- The responsible output is a ranked, traceable evidence layer—not a list of newly “actionable” variants.
+
+## References
+
+1. Avsec, Ž. et al. [Advancing regulatory variant effect prediction with AlphaGenome](https://doi.org/10.1038/s41586-025-10014-0). *Nature* (2026).
+2. Ding, D. et al. [Enigma: An efficient model for deciphering regulatory genomics](https://doi.org/10.64898/2025.12.18.694875) (2025).
+3. Cingolani, P. et al. [A program for annotating and predicting the effects of single nucleotide polymorphisms, SnpEff](https://doi.org/10.4161/fly.19695). *Fly* (2012).
+4. Hnisz, D. et al. [Activation of proto-oncogenes by disruption of chromosome neighborhoods](https://doi.org/10.1126/science.aad9024). *Science* (2016).
+5. Musunuru, K. et al. [From noncoding variant to phenotype via SORT1 at the 1p13 cholesterol locus](https://doi.org/10.1038/nature09266). *Nature* (2010).
+6. Luksan, O. et al. [In silico, in vitro, and in vivo characterization of variants in the OTC gene](https://pmc.ncbi.nlm.nih.gov/articles/PMC7388160/) (2020).
+7. Avsec, Ž. et al. [Effective gene expression prediction from sequence by integrating long-range interactions](https://doi.org/10.1038/s41592-021-01252-x). *Nature Methods* (2021).

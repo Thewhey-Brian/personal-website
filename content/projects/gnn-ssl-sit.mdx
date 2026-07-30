@@ -179,7 +179,7 @@ This exploratory study has important limitations that constrain conclusions:
 - No downstream task evaluation for actual biological utility
 - Small dataset (2,560 spots) may not reveal scalability issues
 
-**Interpretation Challenges**: High Moran's I could reflect beneficial spatial structure or excessive smoothing. High Silhouette doesn't guarantee biological relevance. Therefore, these metrics primarily identify differences in learned representations rather than definitively ranking method quality.
+**Interpretation Challenges**: High Moran's I could reflect beneficial spatial structure or excessive smoothing. High Silhouette doesn't guarantee biological relevance. So these metrics mainly surface differences in the learned representations; they do not settle which method is better.
 
 ### Potential Hybrid Approaches
 
@@ -208,7 +208,7 @@ Given different strengths of each method family, combining approaches may be pro
 ### Open Questions
 
 1. Why does BYOL-SAGEConv show such balanced behavior across metrics?
-2. Can we design metrics that better reflect biological utility rather than statistical properties?
+2. Can we design metrics that track biological utility, not just statistical properties?
 3. How do methods perform on rare cell types not well-represented in the dataset?
 4. What is the minimal dataset size needed for each method to perform effectively?
 5. Can we predict which method suits a given tissue type a priori?

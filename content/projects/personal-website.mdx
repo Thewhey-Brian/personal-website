@@ -1,53 +1,84 @@
 ---
 title: "Personal Website Project"
-summary: "A modern personal website with AI-powered content search and interactive knowledge graphs"
+summary: "This site — a research portfolio with a grounded AI assistant, a local search index, and a motion system built to stay out of the reader's way"
 status: "in-progress"
-role: "Full-stack Developer"
-stack: ["Next.js", "TypeScript", "Tailwind CSS", "Supabase", "Contentlayer"]
-repoUrl: "https://github.com/sample/personal-website"
-demoUrl: "https://sample-website.vercel.app"
+role: "Design and engineering"
+stack: ["Next.js", "TypeScript", "Tailwind CSS", "Contentlayer", "GSAP"]
+repoUrl: "https://github.com/Thewhey-Brian/personal-website"
+demoUrl: "https://www.xinyuguo.com"
 tags: ["web development", "AI", "full-stack"]
 featured: false
+order: 100
 startDate: "2025-01-12"
 ---
 
-# Personal Website Project
+You are looking at it. The source is on GitHub.
 
-This project showcases a modern approach to building personal academic websites with integrated AI capabilities.
+An academic site has one job: let someone work out what you do, decide whether
+it is any good, and get in touch. Most of the decisions here follow from that,
+and a few of them came from getting it wrong first.
 
-## Overview
+## Content as files
 
-The website features:
-- Git-based content management
-- AI-powered search and chat
-- Interactive knowledge graphs
-- Responsive design with dark mode
+Publications and projects are MDX files in the repository. Contentlayer types
+them at build time, so a missing `venue` or a malformed date fails the build
+instead of rendering an empty span in production. Adding a paper means adding a
+file.
 
-## Technology Stack
+Everything is statically generated. There is no database, no CMS, and no
+runtime dependency that can expire and take a page down with it.
 
-- **Frontend**: Next.js with App Router, React, TypeScript
-- **Styling**: Tailwind CSS, shadcn/ui components  
-- **Content**: MDX with Contentlayer for static generation
-- **Database**: Supabase with pgvector for embeddings
-- **Deployment**: Vercel for automatic deployments
+## Search without a vector database
 
-## Key Features
+The original build ran semantic search on Supabase with pgvector. It broke —
+the free-tier project was reclaimed, DNS stopped resolving, and search returned
+errors on a site with eighteen documents.
 
-### Content Management
-- Markdown/MDX files in Git for publications and projects
-- Automatic content indexing and embedding generation
-- Support for rich media including images, videos, and PDFs
+The replacement is a local index: field-weighted TF-IDF with prefix matching
+and a cosine-similarity pass for "related work". Eighteen documents do not need
+approximate nearest neighbours. It runs in memory, costs nothing, answers
+instantly, and cannot break when someone else's service changes.
 
-### AI Agent
-- Context-aware chat interface on every page
-- Semantic search across all content
-- Graph visualization tools
-- Media preview capabilities
+## An assistant that admits what it does not know
 
-## Architecture
+The site has a chat assistant, Locus, grounded in the same content the pages
+render.
 
-The application follows a modern JAMstack approach with:
-1. Static generation for optimal performance
-2. Dynamic API routes for search and AI features  
-3. Edge functions for content processing
-4. CDN distribution for global availability
+The version I inherited had a real failure mode: the prompt described a
+`search_content` tool that was never wired up, so the model cheerfully reported
+searches it had not run. Confident fabrication on a research site is worse than
+no assistant. Now the corpus is inlined in the prompt, the model has no tools
+and is told so, and when something is not covered the answer is one sentence:
+that is not on the site.
+
+It runs on a small model with the request validated, rate-limited per IP, and
+capped on output. Roughly sixty cents per thousand messages.
+
+## Motion with one rule
+
+The interactions use GSAP: a hero timeline, scroll-linked parallax, a character
+whose eyes track the cursor.
+
+One rule governs all of it, learned by breaking the site three times in the
+same way. **Content renders visible by default.** Motion components set their
+own from-state inside `useGSAP`, which runs before paint. Nothing is hidden in
+CSS waiting for JavaScript to reveal it — because if that JavaScript fails, the
+visitor gets a blank page where a name should be, and no error to explain it.
+Everything degrades to legible.
+
+`prefers-reduced-motion` skips the animation entirely.
+
+## Invisible work
+
+Structured data — `Person`, `WebSite`, `ScholarlyArticle` — so a crawler can
+tell a researcher's site from a blog. Canonicals on every page. An RSS feed. A
+search page kept out of the index, since it generates unbounded near-duplicate
+URLs from a query parameter.
+
+None of it is visible to a reader. All of it decides whether a reader arrives.
+
+## Still open
+
+Per-page share images, so a link to a paper previews as that paper. Co-author
+lists in frontmatter, which the publication pages should display and the
+structured data should carry. And the ordinary work of keeping it current.

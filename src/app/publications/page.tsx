@@ -1,155 +1,81 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import { allPublications } from "contentlayer/generated"
-import { PublicationCard } from "@/components/publication-card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Search, Filter } from "lucide-react"
+import { useMemo, useState } from "react";
+import { allPublications } from "contentlayer/generated";
+
+import { FilterBar } from "@/components/sections/filter-bar";
+import { PublicationCard } from "@/components/publication-card";
 
 export default function PublicationsPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedTags, setSelectedTags] = useState<string[]>([])
-  const [sortBy, setSortBy] = useState<"year" | "title">("year")
+  const [query, setQuery] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  // Get all unique tags
   const allTags = useMemo(() => {
-    const tags = new Set<string>()
-    allPublications.forEach(pub => 
-      pub.tags.forEach(tag => tags.add(tag))
-    )
-    return Array.from(tags).sort()
-  }, [])
+    const tags = new Set<string>();
+    allPublications.forEach((pub) => pub.tags.forEach((t) => tags.add(t)));
+    return Array.from(tags).sort();
+  }, []);
 
-  // Filter and sort publications
-  const filteredPublications = useMemo(() => {
-    const filtered = allPublications.filter(publication => {
-      const matchesSearch = !searchQuery || 
-        publication.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        publication.abstract.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        publication.venue.toLowerCase().includes(searchQuery.toLowerCase())
-      
-      const matchesTags = selectedTags.length === 0 ||
-        selectedTags.some(tag => publication.tags.includes(tag))
-      
-      return matchesSearch && matchesTags
-    })
+  const items = useMemo(() => {
+    const q = query.trim().toLowerCase();
 
-    // Sort publications
-    filtered.sort((a, b) => {
-      if (sortBy === "year") {
-        return b.year - a.year // Newest first
-      } else {
-        return a.title.localeCompare(b.title)
-      }
-    })
+    return allPublications
+      .filter((pub) => {
+        const matchesQuery =
+          !q ||
+          pub.title.toLowerCase().includes(q) ||
+          pub.abstract.toLowerCase().includes(q) ||
+          pub.venue.toLowerCase().includes(q);
 
-    return filtered
-  }, [searchQuery, selectedTags, sortBy])
+        const matchesTags =
+          selectedTags.length === 0 ||
+          selectedTags.some((tag) => pub.tags.includes(tag));
 
-  const toggleTag = (tag: string) => {
-    setSelectedTags(prev => 
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
-    )
-  }
+        return matchesQuery && matchesTags;
+      })
+      .sort((a, b) => b.year - a.year);
+  }, [query, selectedTags]);
 
-  const clearFilters = () => {
-    setSearchQuery("")
-    setSelectedTags([])
-  }
+  const toggleTag = (tag: string) =>
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
+    );
 
   return (
-    <div className="container mx-auto px-4 py-16">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight mb-2">Publications</h1>
-        <p className="text-muted-foreground">
-          Research publications and academic work ({allPublications.length} total)
-        </p>
-      </div>
+    <div className="container mx-auto max-w-6xl px-6 pb-24 pt-28 md:pt-32">
+      <header className="mb-10 flex flex-wrap items-baseline justify-between gap-3">
+        <h1 className="text-4xl sm:text-5xl">Publications</h1>
+        <span className="font-mono text-xs text-muted-foreground">
+          {allPublications.length} total
+        </span>
+      </header>
 
-      {/* Filters */}
-      <div className="mb-8 space-y-4">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search publications..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant={sortBy === "year" ? "default" : "outline"}
-              onClick={() => setSortBy("year")}
-              size="sm"
-            >
-              By Year
-            </Button>
-            <Button
-              variant={sortBy === "title" ? "default" : "outline"}
-              onClick={() => setSortBy("title")}
-              size="sm"
-            >
-              By Title
-            </Button>
-          </div>
-        </div>
+        <FilterBar
+          query={query}
+          onQueryChange={setQuery}
+          placeholder="Search titles, abstracts, venues…"
+          tags={allTags}
+          selectedTags={selectedTags}
+          onToggleTag={toggleTag}
+          resultCount={items.length}
+          totalCount={allPublications.length}
+          noun="publications"
+        />
 
-        {/* Tag filters */}
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Filter className="h-4 w-4" />
-            <span className="text-sm font-medium">Filter by tags:</span>
-            {(searchQuery || selectedTags.length > 0) && (
-              <Button variant="ghost" size="sm" onClick={clearFilters}>
-                Clear all
-              </Button>
-            )}
+        {items.length === 0 ? (
+          <div className="border-y border-border py-20 text-center">
+            <p className="text-lg text-muted-foreground">Nothing matches that.</p>
+            <p className="mt-1 font-mono text-xs text-muted-foreground/70">
+              Try clearing a filter
+            </p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {allTags.map((tag) => (
-              <Badge
-                key={tag}
-                variant={selectedTags.includes(tag) ? "default" : "secondary"}
-                className="cursor-pointer hover:bg-primary/80 transition-colors"
-                onClick={() => toggleTag(tag)}
-              >
-                {tag}
-              </Badge>
+        ) : (
+          <div className="grid gap-5 sm:grid-cols-2">
+            {items.map((pub) => (
+              <PublicationCard key={pub.url} publication={pub} />
             ))}
           </div>
-        </div>
-      </div>
-
-      {/* Results */}
-      <div className="mb-4">
-        <p className="text-sm text-muted-foreground">
-          {filteredPublications.length === allPublications.length
-            ? `Showing all ${allPublications.length} publications`
-            : `Showing ${filteredPublications.length} of ${allPublications.length} publications`}
-        </p>
-      </div>
-
-      {/* Publications grid */}
-      {filteredPublications.length > 0 ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredPublications.map((publication) => (
-            <PublicationCard key={publication.slug} publication={publication} />
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">No publications match your search criteria.</p>
-          <Button className="mt-4" onClick={clearFilters}>
-            Clear filters
-          </Button>
-        </div>
-      )}
+        )}
     </div>
-  )
+  );
 }
