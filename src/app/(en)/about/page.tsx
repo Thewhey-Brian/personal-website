@@ -10,6 +10,11 @@ export const metadata: Metadata = {
     "Learn about Xinyu Guo's background in computational biology, education at USC and Johns Hopkins, and research interests in genomics and AI.",
   alternates: {
     canonical: "https://www.xinyuguo.com/about",
+    languages: {
+      en: "https://www.xinyuguo.com/about",
+      "zh-CN": "https://www.xinyuguo.com/zh/about",
+      "x-default": "https://www.xinyuguo.com/about",
+    },
   },
 };
 

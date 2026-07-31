@@ -18,7 +18,18 @@ import { ASSISTANT, SUGGESTED_PROMPTS } from "@/lib/assistant";
 import { AssistantFace } from "./assistant-face";
 import { useAssistantChat } from "./use-assistant-chat";
 
-export function AssistantChat({ className = "" }: { className?: string }) {
+export function AssistantChat({
+  className = "",
+  // Locale-supplied strings. The assistant's *name* stays "Locus" in both
+  // locales — it is a proper noun, and a renamed assistant reads as a
+  // different product.
+  tagline = ASSISTANT.tagline,
+  cta = ASSISTANT.cta,
+}: {
+  className?: string;
+  tagline?: string;
+  cta?: string;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -60,13 +71,13 @@ export function AssistantChat({ className = "" }: { className?: string }) {
       <div className={`fixed bottom-6 right-6 z-50 ${className}`}>
         <button
           onClick={() => setIsOpen(true)}
-          aria-label={ASSISTANT.cta}
+          aria-label={cta}
           className="group flex items-center rounded-full border border-border bg-surface/90 p-2 shadow-lg backdrop-blur transition-all duration-300 hover:border-signal/50 hover:pr-4 hover:shadow-xl"
         >
           <AssistantFace size={40} />
           {/* Label unfurls on hover; the organism stays the hero at rest. */}
           <span className="max-w-0 overflow-hidden whitespace-nowrap font-mono text-xs text-muted-foreground transition-all duration-300 group-hover:ml-2 group-hover:max-w-[9rem]">
-            {ASSISTANT.cta}
+            {cta}
           </span>
         </button>
       </div>
@@ -109,7 +120,7 @@ export function AssistantChat({ className = "" }: { className?: string }) {
                   </span>
                 </div>
                 <p className="truncate font-mono text-[10px] text-muted-foreground">
-                  {ASSISTANT.tagline}
+                  {tagline}
                 </p>
               </div>
             )}

@@ -20,6 +20,17 @@ const Publication = defineDocumentType(() => ({
       type: "string",
       required: true,
     },
+    // Chinese front-door fields. Optional on purpose: a paper added without a
+    // translation falls back to English on /zh rather than breaking the build
+    // or rendering an empty title.
+    titleZh: {
+      type: "string",
+      required: false,
+    },
+    summaryZh: {
+      type: "string",
+      required: false,
+    },
     year: {
       type: "number",
       required: true,
@@ -83,6 +94,14 @@ const Project = defineDocumentType(() => ({
     summary: {
       type: "string",
       required: true,
+    },
+    titleZh: {
+      type: "string",
+      required: false,
+    },
+    summaryZh: {
+      type: "string",
+      required: false,
     },
     status: {
       type: "enum",

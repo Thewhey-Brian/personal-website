@@ -8,21 +8,37 @@ import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
 import {
+  DEFAULT_LOCALE,
+  LOCALE_LABEL,
+  localePath,
+  switchLocalePath,
+  type Locale,
+} from "@/i18n/config";
+import { getMessages } from "@/i18n/messages";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const navigation = [
-  { name: "About", href: "/about" },
-  { name: "Publications", href: "/publications" },
-  { name: "Projects", href: "/projects" },
-  { name: "Contact", href: "/contact" },
-];
-
-export function Navbar() {
+export function Navbar({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
   const pathname = usePathname();
+  const t = getMessages(locale);
+
+  const navigation = [
+    { name: t.nav.about, href: localePath("/about", locale) },
+    { name: t.nav.publications, href: localePath("/publications", locale) },
+    { name: t.nav.projects, href: localePath("/projects", locale) },
+    { name: t.nav.contact, href: localePath("/contact", locale) },
+  ];
+
+  const other: Locale = locale === "en" ? "zh" : "en";
+  // A plain <a>, not next/link: the two locales are separate root layouts, so
+  // React cannot client-navigate between them. A full load is what has to
+  // happen anyway, and an anchor makes that explicit.
+  const otherHref = switchLocalePath(pathname ?? "/", other);
+
   const { setTheme, resolvedTheme } = useTheme();
   const [scrolled, setScrolled] = React.useState(false);
   const [mounted, setMounted] = React.useState(false);
@@ -48,10 +64,10 @@ export function Navbar() {
     >
       <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <Link
-          href="/"
+          href={localePath("/", locale)}
           className="font-display text-lg tracking-tight transition-opacity hover:opacity-70"
         >
-          Xinyu Guo
+          {locale === "zh" ? "郭昕育" : "Xinyu Guo"}
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
@@ -82,6 +98,15 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-1">
+          <a
+            href={otherHref}
+            hrefLang={other === "zh" ? "zh-CN" : "en"}
+            aria-label={t.nav.toggleLanguage}
+            className="rounded-full px-3 py-1.5 font-mono text-xs tracking-[0.08em] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          >
+            {LOCALE_LABEL[other]}
+          </a>
+
           <Button
             variant="ghost"
             size="icon"
@@ -109,7 +134,7 @@ export function Navbar() {
                 className="h-9 w-9 rounded-full md:hidden"
               >
                 <Menu className="h-[18px] w-[18px]" />
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">{t.nav.openMenu}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" sideOffset={8} className="w-48">

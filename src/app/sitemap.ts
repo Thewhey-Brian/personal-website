@@ -25,38 +25,47 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/projects`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/publications`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    ...projects,
-    ...publications,
+  // The five pages that exist in both locales. Each entry declares the other
+  // locale as an alternate, which is how a crawler learns the two URLs are the
+  // same page rather than duplicate content.
+  const bilingual: {
+    path: string;
+    changeFrequency: "weekly" | "monthly";
+    priority: number;
+  }[] = [
+    { path: "", changeFrequency: "weekly", priority: 1 },
+    { path: "/about", changeFrequency: "monthly", priority: 0.9 },
+    { path: "/projects", changeFrequency: "weekly", priority: 0.8 },
+    { path: "/publications", changeFrequency: "weekly", priority: 0.8 },
+    { path: "/contact", changeFrequency: "monthly", priority: 0.7 },
   ];
+
+  const shared = bilingual.flatMap(({ path, changeFrequency, priority }) => {
+    const en = `${baseUrl}${path}` || baseUrl;
+    const zh = `${baseUrl}/zh${path}`;
+    const languages = { en, "zh-CN": zh };
+
+    return [
+      {
+        url: en,
+        lastModified: new Date(),
+        changeFrequency,
+        priority,
+        alternates: { languages },
+      },
+      {
+        url: zh,
+        lastModified: new Date(),
+        changeFrequency,
+        // Slightly below the English equivalent: the Chinese pages summarise,
+        // the English ones carry the full text.
+        priority: Math.max(0.1, priority - 0.1),
+        alternates: { languages },
+      },
+    ];
+  });
+
+  // Detail pages are English-only by design, so they carry no alternates —
+  // advertising a Chinese URL that 404s is worse than advertising none.
+  return [...shared, ...projects, ...publications];
 }

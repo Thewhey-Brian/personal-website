@@ -8,6 +8,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 
 import { Magnetic } from "@/components/motion/reveal";
+import { DEFAULT_LOCALE, localePath, type Locale } from "@/i18n/config";
+import { getMessages } from "@/i18n/messages";
 import ParticleNetwork from "@/components/particle-network";
 import { prefersReducedMotion } from "@/lib/motion";
 import { CursorLight } from "./cursor-light";
@@ -97,8 +99,9 @@ function useTypewriter(
   return text;
 }
 
-export function Hero() {
-  const typed = useTypewriter(ROLES);
+export function Hero({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
+  const t = getMessages(locale);
+  const typed = useTypewriter([...t.hero.roles]);
   const root = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -243,7 +246,7 @@ export function Hero() {
           >
             <span className="h-px w-10 bg-signal" aria-hidden="true" />
             <span className="label-mono">
-              Ph.D. Candidate · Computational Biology · USC
+              {t.hero.eyebrow}
             </span>
           </div>
 
@@ -280,17 +283,17 @@ export function Hero() {
 
             <h1
               className="text-[3.5rem] leading-[0.98] sm:text-[5rem] lg:text-[6.5rem] xl:text-[7.5rem]"
-              aria-label="Hi, I'm Xinyu Guo"
+              aria-label={t.hero.ariaName}
             >
               <span className="reveal-mask block" aria-hidden="true">
                 <span data-hero-word className="block">
-                  Hi, I&apos;m
+                  {t.hero.greeting}
                 </span>
               </span>
               <span className="reveal-mask block" aria-hidden="true">
                 <span data-hero-word className="block">
                   <span data-hero-gradient className="text-gradient-signal">
-                    Xinyu Guo
+                    {t.hero.name}
                   </span>
                 </span>
               </span>
@@ -300,7 +303,7 @@ export function Hero() {
           {/* Fixed height so nothing shifts as characters are typed. */}
           <div data-hero data-hero-role className="mt-8 flex h-12 items-center">
             <span className="mr-3 font-mono text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground/70">
-              currently
+              {t.hero.currently}
             </span>
             <p className="font-mono text-xl font-semibold text-foreground sm:text-2xl">
               {typed}
@@ -315,15 +318,19 @@ export function Hero() {
               pass — you read the three fields before you read the sentence. */}
           <div data-hero data-hero-copy className="mt-8 max-w-xl">
             <p className="text-[1.375rem] leading-[1.55] text-muted-foreground">
-              Exploring{" "}
+              {t.hero.copyLead}{" "}
               <span className="font-semibold text-foreground">
-                computational biology
+                {t.hero.copyFields[0]}
               </span>
-              , <span className="font-semibold text-foreground">AI/ML</span> and{" "}
+              {locale === "zh" ? "、" : ", "}
               <span className="font-semibold text-foreground">
-                statistical modeling
+                {t.hero.copyFields[1]}
+              </span>
+              {locale === "zh" ? "与" : " and "}
+              <span className="font-semibold text-foreground">
+                {t.hero.copyFields[2]}
               </span>{" "}
-              — decoding genomes by day, debugging code by night.
+              {t.hero.copyTail}
             </p>
           </div>
 
@@ -331,10 +338,10 @@ export function Hero() {
             <div data-hero data-hero-cta>
               <Magnetic>
                 <Link
-                  href="/about"
+                  href={localePath("/about", locale)}
                   className="group inline-flex items-center gap-2 rounded-full bg-signal px-8 py-4 text-base font-semibold text-signal-foreground transition-opacity hover:opacity-90"
                 >
-                  Discover my story
+                  {t.hero.ctaPrimary}
                   <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </Link>
               </Magnetic>
@@ -342,10 +349,10 @@ export function Hero() {
             <div data-hero data-hero-cta>
               <Magnetic>
                 <Link
-                  href="/publications"
+                  href={localePath("/publications", locale)}
                   className="inline-flex items-center rounded-full border border-border px-8 py-4 text-base font-semibold transition-colors hover:bg-accent"
                 >
-                  Research &amp; publications
+                  {t.hero.ctaSecondary}
                 </Link>
               </Magnetic>
             </div>

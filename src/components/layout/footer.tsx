@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { Github, Linkedin, Mail, Twitter } from "lucide-react";
 
+import { DEFAULT_LOCALE, localePath, type Locale } from "@/i18n/config";
+import { getMessages } from "@/i18n/messages";
+
 const socialLinks = [
   { name: "GitHub", href: "https://github.com/Thewhey-Brian", icon: Github },
   { name: "Twitter", href: "https://x.com/BrianXinyu", icon: Twitter },
@@ -12,25 +15,31 @@ const socialLinks = [
   { name: "Email", href: "mailto:xyguo1202@gmail.com", icon: Mail },
 ];
 
-const navLinks = [
-  { name: "About", href: "/about" },
-  { name: "Publications", href: "/publications" },
-  { name: "Projects", href: "/projects" },
-  { name: "Contact", href: "/contact" },
-];
+export function Footer({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
+  const t = getMessages(locale);
 
-export function Footer() {
+  const navLinks = [
+    { name: t.nav.about, href: localePath("/about", locale) },
+    { name: t.nav.publications, href: localePath("/publications", locale) },
+    { name: t.nav.projects, href: localePath("/projects", locale) },
+    { name: t.nav.contact, href: localePath("/contact", locale) },
+  ];
+
   return (
     <footer className="border-t border-border bg-background">
       <div className="container mx-auto max-w-6xl px-6 py-14">
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
           <div>
-            <Link href="/" className="font-display text-2xl tracking-tight">
-              Xinyu Guo
+            <Link
+              href={localePath("/", locale)}
+              className="font-display text-2xl tracking-tight"
+            >
+              {locale === "zh" ? "郭昕育" : "Xinyu Guo"}
             </Link>
             <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
-              Computational biology, machine learning, and the space between
-              them.
+              {locale === "zh"
+                ? "计算生物学、机器学习，以及两者之间的地带。"
+                : "Computational biology, machine learning, and the space between them."}
             </p>
           </div>
 
@@ -49,7 +58,7 @@ export function Footer() {
 
         <div className="mt-12 flex flex-col-reverse items-center gap-6 border-t border-border pt-7 sm:flex-row sm:justify-between">
           <p className="font-mono text-[11px] text-muted-foreground">
-            © {new Date().getFullYear()} Xinyu Guo
+            © {new Date().getFullYear()} {locale === "zh" ? "郭昕育" : "Xinyu Guo"}
           </p>
 
           <div className="flex items-center gap-1">

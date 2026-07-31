@@ -7,7 +7,14 @@ import { SelectedWork } from "@/components/sections/selected-work";
 import { firstSentence } from "@/lib/text";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "https://www.xinyuguo.com" },
+  alternates: {
+    canonical: "https://www.xinyuguo.com",
+    languages: {
+      en: "https://www.xinyuguo.com",
+      "zh-CN": "https://www.xinyuguo.com/zh",
+      "x-default": "https://www.xinyuguo.com",
+    },
+  },
 };
 
 export default function Home() {
