@@ -29,20 +29,27 @@ export const personSchema = {
   familyName: "Guo",
   url: SITE_URL,
   image: `${SITE_URL}/headshot.jpg`,
-  jobTitle: "Ph.D. Candidate in Computational Biology & Bioinformatics",
+  jobTitle: "Postdoctoral Associate, AI for Biology",
   description:
-    "Ph.D. candidate in Computational Biology & Bioinformatics at USC working on genomic foundation models, cancer genomics and scientific AI agents.",
+    "Postdoctoral Associate at Yale University (Ph.D., Computational Biology & Bioinformatics, USC) working on biological foundation models, genomic foundation models, cancer genomics and scientific AI agents.",
   email: "mailto:xyguo1202@gmail.com",
   affiliation: {
     "@type": "CollegeOrUniversity",
-    name: "University of Southern California",
-    url: "https://www.usc.edu",
+    name: "Yale University",
+    url: "https://www.yale.edu",
   },
-  alumniOf: {
-    "@type": "CollegeOrUniversity",
-    name: "Johns Hopkins University",
-    url: "https://www.jhu.edu",
-  },
+  alumniOf: [
+    {
+      "@type": "CollegeOrUniversity",
+      name: "University of Southern California",
+      url: "https://www.usc.edu",
+    },
+    {
+      "@type": "CollegeOrUniversity",
+      name: "Johns Hopkins University",
+      url: "https://www.jhu.edu",
+    },
+  ],
   knowsAbout: [
     "Computational Biology",
     "Bioinformatics",

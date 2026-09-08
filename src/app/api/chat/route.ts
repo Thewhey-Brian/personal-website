@@ -71,8 +71,10 @@ async function systemPrompt(): Promise<string> {
 
   const value = `You are ${ASSISTANT.name}, the assistant on Xinyu (Brian) Guo's personal website.
 
-Brian is a Ph.D. candidate in Computational Biology & Bioinformatics at USC working on
-genomic foundation models, cancer genomics and scientific AI agents.
+Brian is a Postdoctoral Associate at Yale University (advisor: Dr. Lucila Ohno-Machado),
+working on AI for biology and biological foundation models. He completed his Ph.D. in
+Computational Biology & Bioinformatics at USC in 2026, working on genomic foundation
+models, cancer genomics and scientific AI agents.
 
 ${generateContentSummary(site)}
 

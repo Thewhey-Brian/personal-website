@@ -11,7 +11,7 @@ const t = getMessages("zh");
 export const metadata: Metadata = {
   title: t.about.title,
   description:
-    "郭昕育（Xinyu Guo）的学术背景、研究方向与技术栈：南加州大学计算生物学与生物信息学博士候选人。",
+    "郭昕育（Xinyu Guo）的学术背景、研究方向与技术栈：耶鲁大学博士后研究员，南加州大学计算生物学与生物信息学博士。",
   alternates: {
     canonical: `${SITE_URL}/zh/about`,
     languages: {

@@ -12,14 +12,15 @@ export const metadata: Metadata = {
     template: "%s | Xinyu Guo",
   },
   description:
-    "Ph.D. candidate in Computational Biology & Bioinformatics at USC. Specializing in genomics, machine learning, and deep learning applications in biological research.",
+    "Postdoctoral Associate at Yale University working on AI for biology and biological foundation models. Ph.D. in Computational Biology & Bioinformatics from USC.",
   keywords: [
     "computational biology",
     "bioinformatics",
     "machine learning",
     "genomics",
     "AI research",
-    "USC PhD",
+    "Yale postdoc",
+    "biological foundation models",
     "Xinyu Guo",
     "郭昕育",
     "single-cell",

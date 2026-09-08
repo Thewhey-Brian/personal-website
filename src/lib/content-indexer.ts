@@ -73,11 +73,11 @@ export async function getSiteContent(): Promise<SiteContent> {
   // Site owner information
   const siteInfo = {
     name: "Xinyu (Brian) Guo",
-    title: "Ph.D. Candidate in Computational Biology & Bioinformatics",
+    title: "Postdoctoral Associate, AI for Biology (Ph.D., Computational Biology & Bioinformatics, USC)",
     bio: "Passionate researcher focusing on genomics, statistical learning, and deep learning. Building tools that make sense of complex biological data and uncover patterns that drive disease and therapy insights.",
-    location: "Los Angeles, CA",
-    currentRole: "Ph.D. Candidate",
-    university: "University of Southern California",
+    location: "New Haven, CT",
+    currentRole: "Postdoctoral Associate",
+    university: "Yale University",
     skills: ["R", "Python", "SQL", "Java", "PyTorch", "scikit-learn", "Bioconductor"],
     researchAreas: [
       "Computational Biology (single-cell, spatial transcriptomics, genomics)",

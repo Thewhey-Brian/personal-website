@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     template: "%s | 郭昕育 Xinyu Guo",
   },
   description:
-    "南加州大学计算生物学与生物信息学博士候选人，研究方向为基因组基础模型、癌症基因组学与科研 AI 智能体。",
+    "耶鲁大学博士后研究员，研究方向为 AI for Biology 与生物基础模型；南加州大学计算生物学与生物信息学博士。",
   keywords: [
     "郭昕育",
     "Xinyu Guo",
@@ -22,7 +22,8 @@ export const metadata: Metadata = {
     "机器学习",
     "单细胞",
     "空间转录组",
-    "南加州大学",
+    "耶鲁大学",
+    "生物基础模型",
   ],
   authors: [{ name: "郭昕育 Xinyu Guo" }],
   creator: "郭昕育 Xinyu Guo",
@@ -36,7 +37,7 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/zh`,
     title: "郭昕育 Xinyu Guo — 计算生物学与人工智能研究",
     description:
-      "南加州大学计算生物学博士候选人，研究基因组学、人工智能与统计建模。",
+      "耶鲁大学博士后研究员，研究生物基础模型、基因组学与人工智能。",
     siteName: "郭昕育 Xinyu Guo",
     images: [
       {
@@ -51,7 +52,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "郭昕育 Xinyu Guo — 计算生物学与人工智能研究",
     description:
-      "南加州大学计算生物学博士候选人，研究基因组学、人工智能与统计建模。",
+      "耶鲁大学博士后研究员，研究生物基础模型、基因组学与人工智能。",
     images: ["/headshot.jpg"],
   },
   robots: {

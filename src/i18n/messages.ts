@@ -25,7 +25,7 @@ const en = {
   },
 
   hero: {
-    eyebrow: "Ph.D. Candidate · Computational Biology · USC",
+    eyebrow: "Postdoctoral Associate · AI for Biology · Yale",
     greeting: "Hi, I'm",
     name: "Xinyu Guo",
     ariaName: "Hi, I'm Xinyu Guo",
@@ -79,12 +79,17 @@ const en = {
     ],
     experienceList: [
       {
+        when: "2026 — now",
+        what: "Postdoctoral Associate",
+        where: "Yale University — AI for biology & biological foundation models",
+      },
+      {
         when: "Summer 2026",
         what: "AI Research Scientist Intern",
         where: "Abbott Cancer Diagnostics — genomic AI & precision oncology",
       },
       {
-        when: "2022 — now",
+        when: "2022 — 2026",
         what: "Graduate Researcher",
         where: "University of Southern California — biological pathology AI/ML",
       },
@@ -197,7 +202,7 @@ const zh: Messages = {
   },
 
   hero: {
-    eyebrow: "计算生物学博士候选人 · 南加州大学",
+    eyebrow: "博士后研究员 · AI for Biology · 耶鲁大学",
     greeting: "你好，我是",
     name: "郭昕育",
     ariaName: "你好，我是郭昕育",
@@ -245,13 +250,18 @@ const zh: Messages = {
     ],
     experienceList: [
       {
+        when: "2026 — 至今",
+        what: "博士后研究员",
+        where: "耶鲁大学 —— AI for Biology 与生物基础模型",
+      },
+      {
         when: "2026 年夏",
         what: "人工智能研究科学家实习生",
         where:
           "雅培癌症诊断（Abbott Cancer Diagnostics）—— 基因组 AI 与精准肿瘤学",
       },
       {
-        when: "2022 — 至今",
+        when: "2022 — 2026",
         what: "研究生研究员",
         where: "南加州大学 —— 病理生物学方向 AI/ML",
       },

@@ -41,12 +41,17 @@ const TECHNICAL_SKILLS = [
 
 const EXPERIENCE = [
   {
+    when: "2026 — now",
+    what: "Postdoctoral Associate",
+    where: "Yale University — AI for biology & biological foundation models",
+  },
+  {
     when: "Summer 2026",
     what: "AI Research Scientist Intern",
     where: "Abbott Cancer Diagnostics — genomic AI & precision oncology",
   },
   {
-    when: "2022 — now",
+    when: "2022 — 2026",
     what: "Graduate Researcher",
     where: "University of Southern California — biological pathology AI/ML",
   },
