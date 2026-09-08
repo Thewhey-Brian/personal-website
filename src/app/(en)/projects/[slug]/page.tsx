@@ -3,7 +3,9 @@ import Link from "next/link";
 import { Metadata } from "next";
 import { format } from "date-fns";
 import { allProjects } from "contentlayer/generated";
-import { ExternalLink, Github } from "lucide-react";
+import { ExternalLink, Github, Smartphone } from "lucide-react";
+
+import { jsonLd, projectSchema } from "@/lib/schema";
 
 import { Mdx } from "@/components/mdx-components";
 import { RelatedContent } from "@/components/related-content";
@@ -76,12 +78,18 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   if (!project) notFound();
 
+  const isProduct = project.kind === "product";
   const resources: Resource[] = [
     project.demoUrl && {
-      label: "View demo",
+      label: isProduct ? "Official website" : "View demo",
       href: project.demoUrl,
       icon: ExternalLink,
       primary: true,
+    },
+    project.appStoreUrl && {
+      label: "Download on the App Store",
+      href: project.appStoreUrl,
+      icon: Smartphone,
     },
     project.repoUrl && {
       label: "Source code",
@@ -101,6 +109,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   return (
     <article>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd(projectSchema(project)) }}
+      />
       <header className="container mx-auto max-w-4xl px-6 pb-12 pt-28 md:pt-32">
         <BackLink href="/projects" label="Projects" />
 
@@ -108,9 +120,20 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <MetaStrip items={meta} />
         </div>
 
-        <h1 className="mt-5 max-w-3xl text-[2.25rem] leading-[1.1] sm:text-5xl">
-          {project.title}
-        </h1>
+        <div className="mt-5 flex items-start gap-5">
+          {project.logo && (
+            <img
+              src={project.logo}
+              alt={`${project.title} app icon`}
+              width={72}
+              height={72}
+              className="mt-1 h-16 w-16 shrink-0 rounded-2xl border border-border shadow-sm sm:h-[72px] sm:w-[72px]"
+            />
+          )}
+          <h1 className="max-w-3xl text-[2.25rem] leading-[1.1] sm:text-5xl">
+            {project.title}
+          </h1>
+        </div>
 
         {project.tags.length > 0 && (
           <div className="mt-7">

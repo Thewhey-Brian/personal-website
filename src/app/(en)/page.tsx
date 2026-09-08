@@ -28,7 +28,21 @@ export default function Home() {
       meta: [String(pub.year), pub.venue].filter(Boolean),
     }));
 
+  const products: WorkItem[] = allProjects
+    .filter((p) => p.kind === "product")
+    .sort((a, b) => a.order - b.order)
+    .map((project) => ({
+      href: project.url,
+      title: project.title,
+      blurb: firstSentence(project.summary),
+      meta: [
+        project.appStoreUrl ? "App Store" : project.status,
+        ...project.stack.slice(0, 3),
+      ].filter(Boolean),
+    }));
+
   const projects: WorkItem[] = [...allProjects]
+    .filter((p) => p.kind !== "product")
     // Featured first, then whatever else, so the ordering is editable from
     // frontmatter rather than requiring a code change.
     .sort((a, b) => Number(b.featured) - Number(a.featured))
@@ -43,7 +57,7 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <SelectedWork publications={publications} projects={projects} />
+      <SelectedWork products={products} publications={publications} projects={projects} />
     </>
   );
 }

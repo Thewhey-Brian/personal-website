@@ -2,6 +2,15 @@ import { useMDXComponent } from "next-contentlayer2/hooks"
 import Image from "next/image"
 import Link from "next/link"
 
+import {
+  AppStoreBadge,
+  Clip,
+  Facts,
+  Gallery,
+  PhoneRail,
+  ProductHeader,
+} from "@/components/product-showcase"
+
 const components = {
   h1: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h1
@@ -113,6 +122,12 @@ const components = {
   ),
   Image,
   Link,
+  AppStoreBadge,
+  Clip,
+  Facts,
+  Gallery,
+  PhoneRail,
+  ProductHeader,
 }
 
 interface MdxProps {

@@ -8,7 +8,7 @@ import { SITE_URL } from "@/i18n/config";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "郭昕育 Xinyu Guo — 计算生物学与人工智能研究",
+    default: "郭昕育 Xinyu Guo — AI for Biology 研究者与 AI 产品构建者",
     template: "%s | 郭昕育 Xinyu Guo",
   },
   description:
@@ -24,6 +24,11 @@ export const metadata: Metadata = {
     "空间转录组",
     "耶鲁大学",
     "生物基础模型",
+    "AI 智能体",
+    "大语言模型",
+    "AI for Science",
+    "RallyAI",
+    "Doover",
   ],
   authors: [{ name: "郭昕育 Xinyu Guo" }],
   creator: "郭昕育 Xinyu Guo",
@@ -35,7 +40,7 @@ export const metadata: Metadata = {
     locale: "zh_CN",
     alternateLocale: ["en_US"],
     url: `${SITE_URL}/zh`,
-    title: "郭昕育 Xinyu Guo — 计算生物学与人工智能研究",
+    title: "郭昕育 Xinyu Guo — AI for Biology 研究者与 AI 产品构建者",
     description:
       "耶鲁大学博士后研究员，研究生物基础模型、基因组学与人工智能。",
     siteName: "郭昕育 Xinyu Guo",
@@ -50,7 +55,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "郭昕育 Xinyu Guo — 计算生物学与人工智能研究",
+    title: "郭昕育 Xinyu Guo — AI for Biology 研究者与 AI 产品构建者",
     description:
       "耶鲁大学博士后研究员，研究生物基础模型、基因组学与人工智能。",
     images: ["/headshot.jpg"],

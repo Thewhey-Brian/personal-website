@@ -1,4 +1,4 @@
-import type { Publication } from "contentlayer/generated";
+import type { Project, Publication } from "contentlayer/generated";
 
 import { doiUrl } from "./links";
 
@@ -31,7 +31,27 @@ export const personSchema = {
   image: `${SITE_URL}/headshot.jpg`,
   jobTitle: "Postdoctoral Associate, AI for Biology",
   description:
-    "Postdoctoral Associate at Yale University (Ph.D., Computational Biology & Bioinformatics, USC) working on biological foundation models, genomic foundation models, cancer genomics and scientific AI agents.",
+    "AI for biology researcher and builder. Postdoctoral Associate at Yale University (Ph.D., Computational Biology & Bioinformatics, USC) working on biological and genomic foundation models, cancer genomics and scientific AI agents; founder who has shipped AI products (RallyAI, Doover) to the App Store.",
+  hasOccupation: [
+    {
+      "@type": "Occupation",
+      name: "AI Researcher",
+      occupationLocation: { "@type": "City", name: "New Haven, Connecticut" },
+      skills:
+        "Biological foundation models, genomic foundation models, large language models, AI agents, PyTorch, JAX, computer vision, cancer genomics",
+    },
+    {
+      "@type": "Occupation",
+      name: "Founder and product engineer",
+      skills:
+        "iOS (Swift, Core ML), Next.js, TypeScript, AWS, product design, App Store launch",
+    },
+  ],
+  worksFor: {
+    "@type": "CollegeOrUniversity",
+    name: "Yale University",
+    url: "https://www.yale.edu",
+  },
   email: "mailto:xyguo1202@gmail.com",
   affiliation: {
     "@type": "CollegeOrUniversity",
@@ -49,17 +69,32 @@ export const personSchema = {
       name: "Johns Hopkins University",
       url: "https://www.jhu.edu",
     },
+    {
+      "@type": "CollegeOrUniversity",
+      name: "Washington University in St. Louis",
+      url: "https://wustl.edu",
+    },
   ],
   knowsAbout: [
+    "Artificial Intelligence",
+    "Machine Learning",
+    "Biological Foundation Models",
+    "Genomic Foundation Models",
+    "Large Language Models",
+    "AI Agents",
     "Computational Biology",
     "Bioinformatics",
     "Genomics",
-    "Transcriptome-Wide Association Studies",
     "Cancer Genomics",
-    "Machine Learning",
-    "Genomic Foundation Models",
+    "Precision Oncology",
+    "Variant Effect Prediction",
     "Single-Cell Analysis",
     "Spatial Transcriptomics",
+    "Transcriptome-Wide Association Studies",
+    "Computer Vision",
+    "On-Device Machine Learning",
+    "iOS Development",
+    "Product Development",
   ],
   // sameAs is what links this page to the same person elsewhere; it is the
   // single most useful field here for entity resolution.
@@ -122,6 +157,51 @@ export function publicationSchema(publication: Publication) {
       codeRepository: publication.codeUrl,
     }),
     isAccessibleForFree: true,
+  };
+}
+
+/**
+ * A project page. Shipped products are SoftwareApplication (so a crawler
+ * learns there is an installable app with a store listing); research
+ * write-ups are CreativeWork. Both hang off the same Person node.
+ */
+export function projectSchema(project: Project) {
+  const url = `${SITE_URL}${project.url}`;
+  const base = {
+    "@context": "https://schema.org",
+    "@id": `${url}#work`,
+    name: project.title,
+    headline: project.title,
+    description: project.summary,
+    url,
+    author: { "@id": PERSON_ID },
+    creator: { "@id": PERSON_ID },
+    keywords: [...project.tags, ...project.stack].join(", "),
+    inLanguage: "en",
+    ...(project.startDate && { dateCreated: project.startDate }),
+    ...(project.endDate && { datePublished: project.endDate }),
+    ...(project.logo && { image: `${SITE_URL}${project.logo}` }),
+  };
+
+  if (project.kind === "product") {
+    return {
+      ...base,
+      "@type": "SoftwareApplication",
+      applicationCategory: "MobileApplication",
+      operatingSystem: "iOS",
+      ...(project.demoUrl && { sameAs: project.demoUrl }),
+      ...(project.appStoreUrl && {
+        installUrl: project.appStoreUrl,
+        downloadUrl: project.appStoreUrl,
+      }),
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    };
+  }
+
+  return {
+    ...base,
+    "@type": "CreativeWork",
+    ...(project.repoUrl && { codeRepository: project.repoUrl }),
   };
 }
 

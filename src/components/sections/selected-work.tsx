@@ -49,9 +49,11 @@ function Group({
 export type { WorkItem };
 
 export function SelectedWork({
+  products = [],
   publications,
   projects,
 }: {
+  products?: WorkItem[];
   publications: WorkItem[];
   projects: WorkItem[];
 }) {
@@ -63,6 +65,13 @@ export function SelectedWork({
           text="Selected research and things I have built."
           highlight={["research", "built"]}
           className="mb-16 max-w-2xl text-4xl leading-[1.12] sm:text-5xl"
+        />
+
+        <Group
+          eyebrow="Shipped products"
+          items={products}
+          viewAllHref="/projects"
+          viewAllLabel="All projects →"
         />
 
         <Group
@@ -83,8 +92,8 @@ export function SelectedWork({
             gets in touch, so it should not be buried in the footer. */}
         <Reveal className="mt-24 border-t border-border pt-12">
           <p className="max-w-xl font-display text-3xl font-bold leading-snug sm:text-4xl">
-            I&apos;m always glad to talk about genomics, models, or a problem
-            you&apos;re stuck on.
+            Building something at the edge of AI and biology? I&apos;d like to
+            hear about it.
           </p>
           <Link
             href="/contact"

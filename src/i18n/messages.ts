@@ -25,28 +25,29 @@ const en = {
   },
 
   hero: {
-    eyebrow: "Postdoctoral Associate · AI for Biology · Yale",
+    eyebrow: "AI for Biology · Yale · Builder of AI products",
     greeting: "Hi, I'm",
     name: "Xinyu Guo",
     ariaName: "Hi, I'm Xinyu Guo",
     currently: "currently",
     roles: [
-      "Researcher",
-      "Developer",
-      "Photographer",
+      "AI Researcher",
+      "Builder",
+      "Founder",
       "Scientist",
-      "Entrepreneur",
+      "Photographer",
     ],
-    copyLead: "Exploring",
-    copyFields: ["computational biology", "AI/ML", "statistical modeling"],
-    copyTail: "— decoding genomes by day, debugging code by night.",
+    copyLead: "Building",
+    copyFields: ["biological foundation models", "scientific AI agents", "AI products people use"],
+    copyTail: "— from genomes to the App Store.",
     ctaPrimary: "Discover my story",
-    ctaSecondary: "Research & publications",
+    ctaSecondary: "Research & projects",
     scroll: "Scroll",
   },
 
   home: {
-    selectedWork: "Selected research and things I have built.",
+    selectedWork: "Selected research, and things I have shipped.",
+    products: "Shipped products",
     publications: "Publications",
     projects: "Projects",
     viewAll: "View all",
@@ -55,8 +56,8 @@ const en = {
   about: {
     title: "About",
     name: "郭昕育 Xinyu Guo",
-    role: "Researcher & developer",
-    location: "Los Angeles, CA",
+    role: "AI researcher · builder · founder",
+    location: "New Haven, CT",
     downloadCv: "Download CV",
     background: "Background",
     researchAreas: "Research areas",
@@ -64,18 +65,19 @@ const en = {
     experience: "Experience",
     education: "Education",
     bio: [
-      "My research focuses on the intersection of genomics, statistical learning and deep learning, where I build tools that make sense of complex biological data and uncover patterns driving disease and therapy insights.",
-      "I'm especially drawn to new technology — from LLM-powered systems to computer vision pipelines. Every new algorithm is a chance to experiment and build something that bridges science and real-world impact.",
-      "Outside research I stay equally curious: usually behind a camera, chasing moments that say something about the people in them.",
+      "I work on AI for biology: foundation models that read DNA, RNA and single-cell data, and the agents that let scientists use them responsibly. I am a Postdoctoral Associate at Yale with Dr. Lucila Ohno-Machado, after a Ph.D. in Computational Biology & Bioinformatics at USC and a summer at Abbott Cancer Diagnostics evaluating genomic foundation models on real tumor cohorts.",
+      "I also like shipping. I have taken two AI products from idea to the App Store, RallyAI for tennis and Doover for photo editing, doing the modeling, the app, and the launch myself. Research taught me to be careful with claims; building taught me to be fast with everything else. I try to bring both to every team I work with.",
+      "Outside work I am usually behind a camera, chasing moments that say something about the people in them.",
     ],
     researchAreaList: [
-      "Genomic foundation models",
+      "Biological & genomic foundation models",
+      "LLM agents for science & tool use",
       "Cancer genomics & precision oncology",
       "Variant-effect prediction (SNV, SV, fusion)",
       "Single-cell & spatial transcriptomics",
       "Self-supervised & contrastive learning",
-      "GWAS / TWAS & statistical genetics",
-      "Scientific AI agents & tool use",
+      "Computer vision & on-device ML",
+      "Benchmark design & model evaluation",
     ],
     experienceList: [
       {
@@ -132,14 +134,14 @@ const en = {
 
   projects: {
     title: "Projects",
-    subtitle: "Research systems, models and tools I have built.",
+    subtitle: "Research systems, foundation-model evaluations, and AI products I have shipped.",
     empty: "No projects match this filter.",
   },
 
   contact: {
     title: "Get in touch",
     subtitle:
-      "Open to collaborations, research discussions and opportunities in computational biology and AI.",
+      "Open to research collaborations, and to conversations with AI labs, biotech teams and investors building at the intersection of AI and biology.",
     channels: "Channels",
     email: "Email",
     github: "GitHub",
@@ -202,22 +204,23 @@ const zh: Messages = {
   },
 
   hero: {
-    eyebrow: "博士后研究员 · AI for Biology · 耶鲁大学",
+    eyebrow: "AI for Biology · 耶鲁大学 · AI 产品构建者",
     greeting: "你好，我是",
     name: "郭昕育",
     ariaName: "你好，我是郭昕育",
     currently: "当前身份",
-    roles: ["研究者", "开发者", "摄影爱好者", "科学家", "创业者"],
-    copyLead: "研究方向涵盖",
-    copyFields: ["计算生物学", "人工智能与机器学习", "统计建模"],
-    copyTail: "——白天解读基因组，夜里调试代码。",
+    roles: ["AI 研究者", "构建者", "创业者", "科学家", "摄影爱好者"],
+    copyLead: "正在构建",
+    copyFields: ["生物基础模型", "科研 AI 智能体", "真正被使用的 AI 产品"],
+    copyTail: "——从基因组到 App Store。",
     ctaPrimary: "了解我的经历",
-    ctaSecondary: "研究与论文",
+    ctaSecondary: "研究与项目",
     scroll: "向下滚动",
   },
 
   home: {
-    selectedWork: "精选研究与作品。",
+    selectedWork: "精选研究，以及已经上线的作品。",
+    products: "已上线产品",
     publications: "论文",
     projects: "项目",
     viewAll: "查看全部",
@@ -226,8 +229,8 @@ const zh: Messages = {
   about: {
     title: "关于",
     name: "郭昕育 Xinyu Guo",
-    role: "研究者与开发者",
-    location: "美国加州洛杉矶",
+    role: "AI 研究者 · 构建者 · 创业者",
+    location: "美国康涅狄格州纽黑文",
     downloadCv: "下载简历",
     background: "个人简介",
     researchAreas: "研究方向",
@@ -235,18 +238,19 @@ const zh: Messages = {
     experience: "工作经历",
     education: "教育背景",
     bio: [
-      "我的研究处于基因组学、统计学习与深度学习的交叉点，致力于构建能够解析复杂生物数据的工具，从中发现驱动疾病机制与治疗方案的规律。",
-      "我对新技术抱有浓厚兴趣——从基于大语言模型的系统到计算机视觉流程。每一个新算法都是一次实验的机会，也是一次让科学与现实影响力相连接的尝试。",
-      "研究之外，我同样保持好奇：多数时候在相机后面，捕捉那些能够讲述人物故事的瞬间。",
+      "我的研究方向是 AI for Biology：能够读懂 DNA、RNA 与单细胞数据的基础模型，以及让科学家负责任地使用这些模型的智能体。我目前在耶鲁大学担任博士后研究员（导师：Lucila Ohno-Machado 教授），此前在南加州大学获得计算生物学与生物信息学博士学位，并曾在雅培癌症诊断（Abbott Cancer Diagnostics）在真实肿瘤队列上评估基因组基础模型。",
+      "我也喜欢把东西做出来。我独立完成了两款 AI 产品从想法到 App Store 上线的全过程：面向网球的 RallyAI 与面向照片编辑的 Doover，模型、应用与发布都由我一人完成。科研让我对结论保持谨慎，做产品让我在其他一切上保持快速。我希望把这两点都带给每一个与我共事的团队。",
+      "工作之外，我多数时候在相机后面，捕捉那些能够讲述人物故事的瞬间。",
     ],
     researchAreaList: [
-      "基因组基础模型",
+      "生物与基因组基础模型",
+      "面向科研的 LLM 智能体与工具调用",
       "癌症基因组学与精准肿瘤学",
       "变异效应预测（SNV、SV、融合基因）",
-      "单细胞与空间转录组学",
-      "自监督学习与对比学习",
-      "GWAS / TWAS 与统计遗传学",
-      "科研 AI 智能体与工具调用",
+      "单细胞与空间转录组",
+      "自监督与对比学习",
+      "计算机视觉与端侧机器学习",
+      "基准设计与模型评估",
     ],
     experienceList: [
       {
@@ -303,14 +307,14 @@ const zh: Messages = {
 
   projects: {
     title: "项目",
-    subtitle: "我构建的研究系统、模型与工具。",
+    subtitle: "我构建的研究系统、基础模型评估，以及已上线的 AI 产品。",
     empty: "没有符合该筛选条件的项目。",
   },
 
   contact: {
     title: "联系我",
     subtitle:
-      "欢迎就计算生物学与人工智能方向的合作、研究讨论与工作机会与我联系。",
+      "欢迎科研合作，也欢迎正在 AI 与生物交叉领域探索的 AI 实验室、生物科技团队与投资人与我交流。",
     channels: "联系方式",
     email: "邮箱",
     github: "GitHub",

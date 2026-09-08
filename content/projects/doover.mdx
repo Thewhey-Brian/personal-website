@@ -1,0 +1,125 @@
+---
+title: "Doover: an AI photo-art app, from first commit to the App Store in ten days"
+titleZh: "Doover：一款 AI 照片艺术应用，从第一次提交到 App Store 上线只用了十天"
+summaryZh: "iOS 上的 AI 照片艺术应用：15 个手写视觉技能与 41 种风格，由 gpt-image-2 渲染，配合端侧 Core Image 调色流程。独立完成 SwiftUI 客户端、Next.js 后端、AWS 异步渲染队列与 App Store 发布，263 次提交。"
+summary: "An iOS app that gives ordinary photos a second life: 15 hand-written visual skills and 41 looks rendered with gpt-image-2, an on-device Core Image color pipeline, and natural-language refinement. Built solo — SwiftUI client, Next.js backend, AWS render queue, in-app purchases — and shipped to the App Store within ten days of the first commit."
+status: "in-progress"
+kind: "product"
+role: "Solo founder · design, modeling, iOS, backend, launch"
+logo: "/projects/doover/logo.png"
+demoUrl: "https://www.dooverapps.com"
+appStoreUrl: "https://apps.apple.com/us/app/doover-ai/id6800674841"
+startDate: "2026-08-08"
+stack:
+  - "Swift / SwiftUI"
+  - "Core Image · Vision"
+  - "gpt-image-2"
+  - "Next.js"
+  - "AWS ECS · SQS · DynamoDB"
+tags:
+  - "Shipped products"
+  - "generative AI"
+  - "image generation"
+  - "iOS"
+  - "product engineering"
+  - "AI engineering"
+featured: true
+order: -20
+---
+
+<ProductHeader
+  logo="/projects/doover/logo.png"
+  name="Doover: Photo Art Effects"
+  tagline="Your photo, reimagined. Every photo deserves a second life."
+  website="https://www.dooverapps.com"
+  appStore="https://apps.apple.com/us/app/doover-ai/id6800674841"
+>
+  Free tier with 20 credits a month · Plus and Pro subscriptions · iPhone
+</ProductHeader>
+
+Most people have a camera roll full of photos they will never post: flat light,
+a cluttered background, a moment that was better in person than on screen.
+Doover is a small bet that those photos deserve another chance, and that the
+way to give them one is not a slider panel or a prompt box but a set of
+*looks* an art director would recognise.
+
+<Facts
+  items={[
+    { label: "First commit → App Store", value: "≈ 10 days" },
+    { label: "Commits, one author", value: "263" },
+    { label: "Hand-written visual skills", value: "15 · 41 looks" },
+    { label: "Render time per image", value: "30–90 s" },
+  ]}
+/>
+
+<Clip
+  src="/projects/doover/preview.mp4"
+  poster="/projects/doover/preview-poster.jpg"
+  aspect="498/1080"
+  portrait
+  caption="App Store preview: pick a look, wait about a minute, refine in plain language."
+/>
+
+## What it does
+
+Upload a photo, choose a look, tap once. About a minute later you have an
+editorial artwork rather than a filtered snapshot: a cinematic grade, a
+naturalist lithograph, a newsprint spread, a midnight-neon poster. If it is
+almost right, you say what to change in a sentence and it changes.
+
+<Gallery
+  cols={4}
+  images={[
+    { src: "/projects/doover/look-cinematic.webp", alt: "Cinematic look sample" },
+    { src: "/projects/doover/look-naturalist-lithograph.webp", alt: "Naturalist lithograph look sample" },
+    { src: "/projects/doover/look-newsprint-extra.webp", alt: "Newsprint look sample" },
+    { src: "/projects/doover/look-midnight-neon.webp", alt: "Midnight neon look sample" },
+  ]}
+  caption="Four of the 41 looks. Each is driven by a skill: a few thousand words of real art direction, not a one-line prompt."
+/>
+
+The thing I am proudest of is not the model call. It is the **skill format**.
+Each look is a `.doover` package, a small interchange format with a JSON
+schema, a prompt of up to 64,000 characters, and up to 24 directives that
+tell the compiler how to adapt the direction to *this* photo. Skills are
+authored, verified against a harness of A/B renders, and versioned like code.
+That is what makes the results consistent enough to charge for.
+
+<PhoneRail
+  screens={[
+    { src: "/projects/doover/screen-1.png", alt: "Doover home screen with looks" },
+    { src: "/projects/doover/screen-2.png", alt: "Doover result screen" },
+    { src: "/projects/doover/screen-3.png", alt: "Doover refinement screen" },
+  ]}
+  caption="App Store screenshots, iPhone 6.9″."
+/>
+
+## How it is built
+
+- **iOS.** A native SwiftUI app, about 30,000 lines of Swift. Colour work that
+  does not need a generative model, such as exposure rescue and saliency-aware
+  grading, runs on device with Core Image and Vision, so the first improvement
+  appears before any network call.
+- **Rendering.** Looks are compiled per photo by a language model, then
+  rendered with OpenAI's `gpt-image-2`; a separate verify pass checks the
+  output against the skill's intent. A China build swaps in Qwen image and
+  vision models behind the same interface.
+- **Backend.** Next.js on AWS ECS Fargate behind a load balancer, DynamoDB for
+  projects and effect versions, S3 for media, and an SQS queue with an
+  always-on worker so a 90-second render never blocks a request.
+- **Business.** In-app purchases verified server-side with Apple's App Store
+  Server library, credit packs, and Plus/Pro tiers. Phone verification and
+  WeChat sign-in for the China build.
+
+## Why it matters to me
+
+I spend most of my time on foundation models for biology, where a wrong claim
+costs a great deal and shipping is measured in papers. Doover was the
+opposite exercise: pick a real, small problem, put a generative model in
+front of real users, and get it into their hands before the idea went stale.
+Ten days from an empty repository to a listing was a useful reminder that the
+distance between a model and a product is mostly engineering discipline, and
+that discipline transfers.
+
+Doover is still evolving. If you try it and something feels off, I would like
+to know.

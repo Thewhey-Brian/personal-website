@@ -74,16 +74,18 @@ export async function getSiteContent(): Promise<SiteContent> {
   const siteInfo = {
     name: "Xinyu (Brian) Guo",
     title: "Postdoctoral Associate, AI for Biology (Ph.D., Computational Biology & Bioinformatics, USC)",
-    bio: "Passionate researcher focusing on genomics, statistical learning, and deep learning. Building tools that make sense of complex biological data and uncover patterns that drive disease and therapy insights.",
+    bio: "AI for biology researcher and builder. Develops and evaluates biological and genomic foundation models (DNA, RNA, single-cell) and scientific AI agents at Yale; USC Ph.D.; evaluated genomic foundation models on tumor cohorts at Abbott Cancer Diagnostics. Also a founder who has shipped AI products end to end to the App Store: RallyAI (tennis analytics) and Doover (AI photo editing).",
     location: "New Haven, CT",
     currentRole: "Postdoctoral Associate",
     university: "Yale University",
-    skills: ["R", "Python", "SQL", "Java", "PyTorch", "scikit-learn", "Bioconductor"],
+    skills: ["Python", "PyTorch", "JAX", "Hugging Face", "LLM training and fine-tuning", "AI agents and tool use", "computer vision", "Swift / iOS", "Next.js / TypeScript", "R", "SQL", "AWS SageMaker / Bedrock", "Nextflow"],
     researchAreas: [
-      "Computational Biology (single-cell, spatial transcriptomics, genomics)",
-      "Machine Learning & AI (self-supervised learning, LLMs)", 
-      "Statistical Modeling (risk prediction, regression, meta-analysis)",
-      "Computer Vision (object detection, tracking, action recognition)"
+      "Biological and genomic foundation models (AlphaGenome, Evo2, Enformer, DNA/RNA/single-cell)",
+      "Scientific AI agents, LLM tool use and governed workflows",
+      "Cancer genomics, variant-effect prediction and precision oncology",
+      "Single-cell and spatial transcriptomics, self-supervised learning",
+      "Computer vision and on-device ML (pose estimation, tracking, Core ML)",
+      "Benchmark design and model evaluation"
     ],
     lastUpdated: new Date().toISOString()
   }

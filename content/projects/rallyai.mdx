@@ -1,0 +1,136 @@
+---
+title: "RallyAI: an on-device AI tennis coach for iPhone, Apple Watch and WeChat"
+titleZh: "RallyAI：运行在 iPhone、Apple Watch 与微信上的端侧 AI 网球教练"
+summaryZh: "把网球视频分析放进口袋：九个 Core ML 模型在 iPhone 神经引擎上完成挥拍识别、球速估计、落点判定与技术评分，视频不离开手机。独立构建 iOS 与 Apple Watch 应用、微信小程序与 H5 客户端、AI 教练 Lio、投影训练模式与蓝牙发球机控制。"
+summary: "A tennis-training companion that runs swing detection, ball-speed estimation, placement and technique scoring entirely on the iPhone Neural Engine, so video never leaves the phone. Built as a founder: iOS and Apple Watch app with nine Core ML models, an AI coach, a WeChat mini program and web client, a projector-first practice-court mode, and a Bluetooth ball-machine controller."
+status: "in-progress"
+kind: "product"
+role: "Founder · computer vision, iOS, backend, product"
+logo: "/projects/rallyai/logo.png"
+demoUrl: "https://www.rallyai.ai"
+startDate: "2025-10-23"
+stack:
+  - "Swift / SwiftUI · watchOS"
+  - "Core ML · YOLO-pose · GCN"
+  - "PyTorch → ONNX → Core ML"
+  - "Vue 3 · uni-app · WeChat"
+  - "Node · FastAPI · Aliyun"
+tags:
+  - "Shipped products"
+  - "computer vision"
+  - "on-device ML"
+  - "iOS"
+  - "product engineering"
+  - "AI engineering"
+featured: true
+order: -10
+---
+
+<ProductHeader
+  logo="/projects/rallyai/logo.png"
+  name="RallyAI"
+  tagline="Your AI tennis coach. Right in your pocket."
+  website="https://www.rallyai.ai"
+>
+  iPhone + Apple Watch · WeChat mini program 「RallyAI 网球智能分析」 · Global site rallyai.ai · China site rallyai.com.cn
+</ProductHeader>
+
+Film a rally on your phone. A minute later you know which shots were
+forehands and backhands, how fast the ball left the racket, where it landed,
+and which swings earned an A and which a B+. No upload, no waiting on a
+server: **every model runs on the iPhone's Neural Engine, and the video never
+leaves the device.**
+
+<Clip
+  src="/projects/rallyai/promo.mp4"
+  poster="/projects/rallyai/promo-poster.jpg"
+  caption="Promo cut. Pose, ball track and court overlays are drawn from on-device inference."
+/>
+
+<Facts
+  items={[
+    { label: "Core ML models on device", value: "9" },
+    { label: "1-minute clip analysed in", value: "≈ 60 s on iPhone 15 Pro" },
+    { label: "Platforms", value: "iOS · watchOS · WeChat · H5" },
+    { label: "Commits across repos", value: "300+" },
+  ]}
+/>
+
+## What it does
+
+- **Swing analysis.** Swing type, ball speed, placement and in/out calls,
+  and a technique grade per stroke, with slow-motion replay of the moments
+  that matter.
+- **Apple Watch recording.** Start a session from the wrist; the journal and
+  data board fill in on the phone.
+- **AI coach.** "Lio" turns the numbers into a conversation: what to work on,
+  and why, grounded in the session's own data.
+- **Doubles and venue mode.** Player re-identification for doubles (beta),
+  and an iPad mode for clubs that pairs with a projector and a ball machine.
+
+<PhoneRail
+  screens={[
+    { src: "/projects/rallyai/01_analysis.png", alt: "RallyAI swing analysis screen" },
+    { src: "/projects/rallyai/02_overview.png", alt: "RallyAI session overview" },
+    { src: "/projects/rallyai/03_journal.png", alt: "RallyAI training journal" },
+    { src: "/projects/rallyai/04_profile.png", alt: "RallyAI profile and progress" },
+  ]}
+  caption="App Store screenshots, iPhone 6.5″."
+/>
+
+## The computer-vision stack
+
+The first version ran as a PyTorch web pipeline. Moving it on-device meant
+converting and, in places, redesigning five models, then adding four more
+as the product grew:
+
+| Task | Model on device |
+|---|---|
+| Player pose | YOLO11-pose / YOLO26-pose |
+| Court detection and homography | Custom court detector |
+| Ball tracking | MotionNet, an EfficientNet-B0 FPN heatmap model over 9 stacked frames |
+| Swing segmentation and classification | Swing model plus GCN + multi-stage TCN action heads (side and back views) |
+| Camera view classification | Small CNN |
+| Doubles re-identification | OSNet-AIN |
+| Voice notes | SenseVoice ASR (int8 ONNX) |
+
+Contact and landing points come from the court homography, and the
+temporal-action model started life as a Mamba design before being
+re-expressed as a transformer for Core ML. The trade-offs are documented in
+the repo as plans, not slogans: what was tried for ball tracking, what broke
+at 4 fps, what the doubles tracker still gets wrong.
+
+<Gallery
+  cols={2}
+  images={[
+    { src: "/projects/rallyai/ipad-venue.png", alt: "RallyAI iPad venue mode session summary" },
+    { src: "/projects/rallyai/promo-poster.jpg", alt: "RallyAI overlay frame from the promo" },
+  ]}
+  caption="Left: iPad venue mode for clubs. Right: overlays rendered from on-device tracks."
+/>
+
+## More than the app
+
+- **China.** A Vue 3 + uni-app codebase compiles to both an H5 web client
+  and the WeChat mini program, with server-side overlay rendering, WeChat
+  login and Qwen models standing in for OpenAI behind the same interface.
+- **RallyAI Studio.** A projector-first, live-camera app for the practice
+  court: motion-art effects, film grades, and a pose-driven mini-game,
+  running MediaPipe Pose in the browser.
+- **Ball machine.** A Web Bluetooth controller for Siboasi ball machines,
+  with a reverse-engineered protocol driver and USTA-mapped training courses,
+  built to plug into the iPad venue mode.
+- **CourtFlow.** A multi-tenant venue platform for court booking, dynamic
+  pricing and coaching, on FastAPI, PostgreSQL and WeChat Pay.
+
+## What I learned
+
+Research taught me to measure before I claim. RallyAI taught me that a
+product is a research problem with a deadline: the model that wins a
+benchmark is not the one that fits in a phone's thermal budget, and the
+most useful evaluation was watching real players squint at an overlay and
+ask why. I built this as a founder, end to end, and it changed how I think
+about what "done" means for a model.
+
+If you coach, run a club, or just play a lot and want to try it, the site
+has the details.

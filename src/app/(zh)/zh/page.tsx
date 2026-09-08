@@ -33,7 +33,19 @@ export default function ZhHome() {
       meta: [String(pub.year), pub.venue].filter(Boolean),
     }));
 
+  const products: ZhWorkItem[] = allProjects
+    .filter((p) => p.kind === "product")
+    .sort((a, b) => a.order - b.order)
+    .map((project) => ({
+      href: project.url,
+      titleZh: project.titleZh ?? project.title,
+      titleEn: project.title,
+      summaryZh: project.summaryZh ?? project.summary.slice(0, 160),
+      meta: [project.appStoreUrl ? "App Store" : "", ...project.stack.slice(0, 3)].filter(Boolean),
+    }));
+
   const projects: ZhWorkItem[] = [...allProjects]
+    .filter((p) => p.kind !== "product")
     .sort((a, b) => Number(b.featured) - Number(a.featured))
     .slice(0, 4)
     .map((project) => ({
@@ -53,7 +65,22 @@ export default function ZhHome() {
           {t.home.selectedWork}
         </p>
 
-        <div className="mt-16">
+        {products.length > 0 && (
+          <div className="mt-16">
+            <div className="mb-2 flex items-baseline justify-between gap-4">
+              <span className="label-mono">{t.home.products}</span>
+              <Link
+                href="/zh/projects"
+                className="link-wipe font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {t.home.viewAll} →
+              </Link>
+            </div>
+            <ZhWorkList items={products} />
+          </div>
+        )}
+
+        <div className="mt-20">
           <div className="mb-2 flex items-baseline justify-between gap-4">
             <span className="label-mono">{t.home.publications}</span>
             <Link

@@ -139,6 +139,22 @@ const Project = defineDocumentType(() => ({
       type: "boolean",
       default: false,
     },
+    // "product" marks something shipped to real users (an app, a site). It
+    // gets a logo, an App Store link and a showcase treatment; "research" is
+    // the default write-up.
+    kind: {
+      type: "enum",
+      options: ["research", "product"],
+      default: "research",
+    },
+    logo: {
+      type: "string",
+      required: false,
+    },
+    appStoreUrl: {
+      type: "string",
+      required: false,
+    },
     // Manual tiebreak, applied before status and date. Ongoing work with no
     // meaningful end date (the site itself) sets a high value to sit last.
     order: {

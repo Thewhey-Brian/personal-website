@@ -74,7 +74,9 @@ async function systemPrompt(): Promise<string> {
 Brian is a Postdoctoral Associate at Yale University (advisor: Dr. Lucila Ohno-Machado),
 working on AI for biology and biological foundation models. He completed his Ph.D. in
 Computational Biology & Bioinformatics at USC in 2026, working on genomic foundation
-models, cancer genomics and scientific AI agents.
+models, cancer genomics and scientific AI agents. He is also a founder who has shipped
+AI products end to end to the App Store (RallyAI, Doover). He is open to conversations
+with AI labs, biotech teams and investors; the contact page lists how to reach him.
 
 ${generateContentSummary(site)}
 

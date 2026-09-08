@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, ExternalLink, Github } from "lucide-react";
+import { ArrowUpRight, ExternalLink, Github, Smartphone } from "lucide-react";
 import { format } from "date-fns";
 import type { Project } from "contentlayer/generated";
 
@@ -42,9 +42,14 @@ function dateRange(project: Project): string | null {
 export function ProjectCard({ project }: { project: Project }) {
   const links = [
     project.demoUrl && {
-      label: "Demo",
+      label: project.kind === "product" ? "Website" : "Demo",
       href: project.demoUrl,
       icon: ExternalLink,
+    },
+    project.appStoreUrl && {
+      label: "App Store",
+      href: project.appStoreUrl,
+      icon: Smartphone,
     },
     project.repoUrl && { label: "Code", href: project.repoUrl, icon: Github },
   ].filter(Boolean) as {
@@ -78,7 +83,16 @@ export function ProjectCard({ project }: { project: Project }) {
         </span>
       </div>
 
-      <h3 className="text-xl leading-snug">
+      <h3 className="flex items-center gap-3 text-xl leading-snug">
+        {project.logo && (
+          <img
+            src={project.logo}
+            alt=""
+            width={36}
+            height={36}
+            className="h-9 w-9 shrink-0 rounded-lg border border-border"
+          />
+        )}
         <Link
           href={project.url}
           className="before:absolute before:inset-0 before:z-0"

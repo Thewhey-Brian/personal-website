@@ -7,7 +7,7 @@ import { Reveal } from "@/components/motion/reveal";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Learn about Xinyu Guo's background in computational biology, education at USC and Johns Hopkins, and research interests in genomics and AI.",
+    "Xinyu (Brian) Guo: AI for biology researcher at Yale, USC Ph.D., and builder of shipped AI products. Background, research areas, technical stack, experience and education.",
   alternates: {
     canonical: "https://www.xinyuguo.com/about",
     languages: {
@@ -19,23 +19,25 @@ export const metadata: Metadata = {
 };
 
 const RESEARCH_AREAS = [
-  "Genomic foundation models",
+  "Biological & genomic foundation models",
+  "LLM agents for science & tool use",
   "Cancer genomics & precision oncology",
   "Variant-effect prediction (SNV, SV, fusion)",
   "Single-cell & spatial transcriptomics",
   "Self-supervised & contrastive learning",
-  "GWAS / TWAS & statistical genetics",
-  "Scientific AI agents & tool use",
+  "Computer vision & on-device ML",
+  "Benchmark design & model evaluation",
 ];
 
 const TECHNICAL_SKILLS = [
-  "Python · R · C++ · SQL · Bash · TypeScript",
-  "PyTorch · PyTorch Geometric · JAX",
-  "Hugging Face · scikit-learn · CUDA",
-  "GNN / GAT · state-space models (Mamba)",
+  "Python · R · C++ · SQL · Bash · TypeScript · Swift",
+  "PyTorch · PyTorch Geometric · JAX · Hugging Face",
+  "LLM pretraining · SFT · RL · agents & tool use",
+  "Transformers · GNN / GAT · state-space models (Mamba)",
+  "Computer vision · pose estimation · Core ML on-device",
   "RNA-seq · ChIP-seq · ATAC-seq · NGS somatic calling",
-  "Nextflow / WDL · DuckDB · Parquet · Docker",
-  "AWS SageMaker · Bedrock · HealthOmics",
+  "Next.js · React · FastAPI · iOS · Vercel",
+  "AWS SageMaker · Bedrock · HealthOmics · Docker",
   "Multi-GPU distributed training · HPC",
 ];
 
@@ -132,11 +134,11 @@ export default function AboutPage() {
 
             <h1 className="mt-6 text-2xl">郭昕育 Xinyu Guo</h1>
             <p className="mt-1 text-[15px] text-muted-foreground">
-              Researcher &amp; developer
+              AI researcher · builder · founder
             </p>
             <p className="mt-3 flex items-center gap-2 font-mono text-xs text-muted-foreground">
               <MapPin className="h-3.5 w-3.5" />
-              Los Angeles, CA
+              New Haven, CT
             </p>
 
             <Link
@@ -156,21 +158,26 @@ export default function AboutPage() {
               <span className="label-mono">Background</span>
               <div className="mt-5 space-y-5 text-[1.0625rem] leading-[1.7] text-muted-foreground">
                 <p>
-                  My research focuses on the intersection of genomics,
-                  statistical learning and deep learning, where I build tools
-                  that make sense of complex biological data and uncover
-                  patterns driving disease and therapy insights.
+                  I work on AI for biology: foundation models that read DNA,
+                  RNA and single-cell data, and the agents that let scientists
+                  use them responsibly. I am a Postdoctoral Associate at Yale
+                  with Dr. Lucila Ohno-Machado, after a Ph.D. in Computational
+                  Biology &amp; Bioinformatics at USC and a summer at Abbott
+                  Cancer Diagnostics evaluating genomic foundation models on
+                  real tumor cohorts.
                 </p>
                 <p>
-                  I&apos;m especially drawn to new technology — from LLM-powered
-                  systems to computer vision pipelines. Every new algorithm is a
-                  chance to experiment and build something that bridges science
-                  and real-world impact.
+                  I also like shipping. I have taken two AI products from idea
+                  to the App Store, <Link href="/projects/rallyai" className="text-foreground underline underline-offset-4 decoration-border hover:decoration-signal">RallyAI</Link> for
+                  tennis and <Link href="/projects/doover" className="text-foreground underline underline-offset-4 decoration-border hover:decoration-signal">Doover</Link> for
+                  photo editing, doing the modeling, the app and the launch
+                  myself. Research taught me to be careful with claims; building
+                  taught me to be fast with everything else. I try to bring both
+                  to every team I work with.
                 </p>
                 <p>
-                  Outside research I stay equally curious: usually behind a
-                  camera, chasing moments that say something about the people in
-                  them.
+                  Outside work I am usually behind a camera, chasing moments
+                  that say something about the people in them.
                 </p>
               </div>
             </section>

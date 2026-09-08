@@ -8,11 +8,11 @@ import { SITE_URL } from "@/i18n/config";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Xinyu Guo - Computational Biology Researcher & AI Developer",
+    default: "Xinyu Guo — AI for Biology Researcher & Builder",
     template: "%s | Xinyu Guo",
   },
   description:
-    "Postdoctoral Associate at Yale University working on AI for biology and biological foundation models. Ph.D. in Computational Biology & Bioinformatics from USC.",
+    "Xinyu (Brian) Guo: Postdoctoral Associate at Yale working on biological foundation models and scientific AI agents, USC Ph.D., and founder who has shipped AI apps (RallyAI, Doover) to the App Store.",
   keywords: [
     "computational biology",
     "bioinformatics",
@@ -21,6 +21,14 @@ export const metadata: Metadata = {
     "AI research",
     "Yale postdoc",
     "biological foundation models",
+    "genomic foundation models",
+    "AI agents",
+    "LLM",
+    "AI for science",
+    "AI researcher",
+    "founder",
+    "RallyAI",
+    "Doover",
     "Xinyu Guo",
     "郭昕育",
     "single-cell",
