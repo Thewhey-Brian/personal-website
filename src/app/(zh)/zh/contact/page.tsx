@@ -1,6 +1,9 @@
-import { ArrowUpRight, Github, Linkedin, Mail, MapPin, Twitter } from "lucide-react";
+import { ArrowUpRight, Github,
+  GraduationCap, Linkedin, Mail, MapPin, Twitter } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
+
+import { ogMeta } from "@/lib/og";
 
 import { Reveal } from "@/components/motion/reveal";
 import { getMessages } from "@/i18n/messages";
@@ -19,6 +22,8 @@ export const metadata: Metadata = {
       "x-default": `${SITE_URL}/contact`,
     },
   },
+  openGraph: { images: ogMeta({ title: "联系我", kicker: "联系", sub: "科研合作 · AI 实验室 · 生物科技 · 投资人" }).images },
+  twitter: ogMeta({ title: "联系我", kicker: "联系", sub: "科研合作 · AI 实验室 · 生物科技 · 投资人" }).twitter,
 };
 
 const CHANNELS = [
@@ -42,6 +47,13 @@ const CHANNELS = [
     href: "https://www.linkedin.com/in/xinyu-guo-5408/",
     icon: Linkedin,
     note: t.contact.linkedinNote,
+  },
+  {
+    label: t.contact.scholar,
+    value: "F8JBdfEAAAAJ",
+    href: "https://scholar.google.com/citations?user=F8JBdfEAAAAJ&hl=en",
+    icon: GraduationCap,
+    note: t.contact.scholarNote,
   },
   {
     label: t.contact.twitter,

@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Metadata } from "next";
+
+import { ogMeta } from "@/lib/og";
 import { allPublications } from "contentlayer/generated";
 import {
   Code,
@@ -38,6 +40,11 @@ export async function generateMetadata({
   const publication = allPublications.find((p) => p.slug === slug);
   if (!publication) return {};
 
+  const og = ogMeta({
+    title: publication.title,
+    kicker: `${publication.venue} · ${publication.year}`,
+    sub: publication.abstract.slice(0, 140),
+  });
   return {
     title: publication.title,
     description: publication.abstract.slice(0, 200),
@@ -47,7 +54,9 @@ export async function generateMetadata({
       title: publication.title,
       description: publication.abstract.slice(0, 200),
       url: `https://www.xinyuguo.com${publication.url}`,
+      images: og.images,
     },
+    twitter: og.twitter,
   };
 }
 

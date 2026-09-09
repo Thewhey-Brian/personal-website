@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+
+import { ogImage } from "@/lib/og";
 import "../globals.css";
 import "katex/dist/katex.min.css";
 
@@ -53,10 +55,10 @@ export const metadata: Metadata = {
     siteName: "Xinyu Guo",
     images: [
       {
-        url: "/headshot.jpg",
+        url: ogImage({ title: "Xinyu (Brian) Guo", kicker: "xinyuguo.com", sub: "AI for biology · Yale · builder of AI products" }),
         width: 1200,
         height: 630,
-        alt: "Xinyu Guo",
+        alt: "Xinyu (Brian) Guo",
       },
     ],
   },
@@ -65,7 +67,7 @@ export const metadata: Metadata = {
     title: "Xinyu Guo - Computational Biology Researcher",
     description:
       "Ph.D. in Computational Biology exploring genomics, AI, and machine learning",
-    images: ["/headshot.jpg"],
+    images: [ogImage({ title: "Xinyu (Brian) Guo", kicker: "xinyuguo.com", sub: "AI for biology · Yale · builder of AI products" })],
   },
   robots: {
     index: true,

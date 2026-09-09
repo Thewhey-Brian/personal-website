@@ -101,6 +101,7 @@ export const personSchema = {
   sameAs: [
     "https://github.com/Thewhey-Brian",
     "https://www.linkedin.com/in/xinyu-guo-5408/",
+    "https://scholar.google.com/citations?user=F8JBdfEAAAAJ&hl=en",
     "https://x.com/BrianXinyu",
   ],
 } as const;

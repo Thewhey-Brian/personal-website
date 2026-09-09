@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Github, Linkedin, Mail, Twitter } from "lucide-react";
+import { Github, GraduationCap, Linkedin, Mail, Twitter } from "lucide-react";
 
 import { DEFAULT_LOCALE, localePath, type Locale } from "@/i18n/config";
 import { getMessages } from "@/i18n/messages";
@@ -12,6 +12,7 @@ const socialLinks = [
     href: "https://www.linkedin.com/in/xinyu-guo-5408/",
     icon: Linkedin,
   },
+  { name: "Google Scholar", href: "https://scholar.google.com/citations?user=F8JBdfEAAAAJ&hl=en", icon: GraduationCap },
   { name: "Email", href: "mailto:xyguo1202@gmail.com", icon: Mail },
 ];
 

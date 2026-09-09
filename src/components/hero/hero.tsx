@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Github, Linkedin, Mail, Twitter } from "lucide-react";
+import { ArrowRight, Github,
+  GraduationCap, Linkedin, Mail, Twitter } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -33,6 +34,7 @@ const SOCIALS = [
     href: "https://www.linkedin.com/in/xinyu-guo-5408/",
     icon: Linkedin,
   },
+  { name: "Google Scholar", href: "https://scholar.google.com/citations?user=F8JBdfEAAAAJ&hl=en", icon: GraduationCap },
   { name: "Email", href: "mailto:xyguo1202@gmail.com", icon: Mail },
 ];
 

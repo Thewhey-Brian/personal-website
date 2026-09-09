@@ -101,7 +101,7 @@ export function Navbar({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
           <a
             href={otherHref}
             hrefLang={other === "zh" ? "zh-CN" : "en"}
-            aria-label={t.nav.toggleLanguage}
+            title={t.nav.toggleLanguage}
             className="rounded-full px-3 py-1.5 font-mono text-xs tracking-[0.08em] text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
           >
             {LOCALE_LABEL[other]}

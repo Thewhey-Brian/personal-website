@@ -2,6 +2,8 @@ import { Download, MapPin } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
 
+import { ogMeta } from "@/lib/og";
+
 import { Reveal } from "@/components/motion/reveal";
 
 export const metadata: Metadata = {
@@ -16,7 +18,18 @@ export const metadata: Metadata = {
       "x-default": "https://www.xinyuguo.com/about",
     },
   },
+  openGraph: { images: ogMeta({ title: "About", kicker: "About", sub: "AI for biology researcher at Yale, USC Ph.D., builder of shipped AI products" }).images },
+  twitter: ogMeta({ title: "About", kicker: "About", sub: "AI for biology researcher at Yale, USC Ph.D., builder of shipped AI products" }).twitter,
 };
+
+const GLANCE: [string, string][] = [
+  ["Now", "Postdoctoral Associate, Yale University · AI for biology"],
+  ["Focus", "Biological & genomic foundation models · scientific AI agents"],
+  ["Training", "Ph.D. USC 2026 · M.S. Johns Hopkins · B.A. WashU"],
+  ["Industry", "Abbott Cancer Diagnostics, genomic AI (2026)"],
+  ["Shipped", "RallyAI and Doover, solo-built iOS apps on the App Store"],
+  ["Open to", "AI labs · biotech · founders and investors in AI × bio"],
+];
 
 const RESEARCH_AREAS = [
   "Biological & genomic foundation models",
@@ -153,6 +166,20 @@ export default function AboutPage() {
         </Reveal>
 
         <div className="min-w-0 space-y-16">
+          <Reveal>
+            <section>
+              <span className="label-mono">At a glance</span>
+              <dl className="mt-5 grid gap-x-8 gap-y-3 sm:grid-cols-[7rem_1fr]">
+                {GLANCE.map(([k, v]) => (
+                  <div key={k} className="contents">
+                    <dt className="font-mono text-xs uppercase tracking-[0.1em] text-signal sm:pt-1">{k}</dt>
+                    <dd className="text-[15px] leading-relaxed text-muted-foreground">{v}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          </Reveal>
+
           <Reveal>
             <section>
               <span className="label-mono">Background</span>

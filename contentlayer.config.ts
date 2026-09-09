@@ -218,8 +218,12 @@ export default makeSource({
       [
         rehypeAutolinkHeadings,
         {
+          // aria-hidden: the anchor has no text of its own, so screen readers
+          // and Lighthouse otherwise report an unnamed link per heading.
           properties: {
             className: ["anchor"],
+            ariaHidden: "true",
+            tabIndex: -1,
           },
         },
       ],

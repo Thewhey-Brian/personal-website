@@ -6,6 +6,7 @@ import { allProjects } from "contentlayer/generated";
 import { ExternalLink, Github, Smartphone } from "lucide-react";
 
 import { jsonLd, projectSchema } from "@/lib/schema";
+import { ogMeta } from "@/lib/og";
 
 import { Mdx } from "@/components/mdx-components";
 import { RelatedContent } from "@/components/related-content";
@@ -39,6 +40,11 @@ export async function generateMetadata({
   const project = allProjects.find((p) => p.slug === slug);
   if (!project) return {};
 
+  const og = ogMeta({
+    title: project.title,
+    kicker: project.kind === "product" ? "Shipped product" : "Project",
+    sub: project.summary.slice(0, 140),
+  });
   return {
     title: project.title,
     description: project.summary,
@@ -50,7 +56,9 @@ export async function generateMetadata({
       title: project.title,
       description: project.summary,
       url: `https://www.xinyuguo.com${project.url}`,
+      images: og.images,
     },
+    twitter: og.twitter,
   };
 }
 

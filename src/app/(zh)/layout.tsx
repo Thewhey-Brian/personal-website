@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+
+import { ogImage } from "@/lib/og";
 import "../globals.css";
 import "katex/dist/katex.min.css";
 
@@ -46,7 +48,7 @@ export const metadata: Metadata = {
     siteName: "郭昕育 Xinyu Guo",
     images: [
       {
-        url: "/headshot.jpg",
+        url: ogImage({ title: "郭昕育 Xinyu Guo", kicker: "xinyuguo.com", sub: "AI for Biology · 耶鲁大学 · AI 产品构建者" }),
         width: 1200,
         height: 630,
         alt: "郭昕育 Xinyu Guo",
@@ -58,7 +60,7 @@ export const metadata: Metadata = {
     title: "郭昕育 Xinyu Guo — AI for Biology 研究者与 AI 产品构建者",
     description:
       "耶鲁大学博士后研究员，研究生物基础模型、基因组学与人工智能。",
-    images: ["/headshot.jpg"],
+    images: [ogImage({ title: "郭昕育 Xinyu Guo", kicker: "xinyuguo.com", sub: "AI for Biology · 耶鲁大学 · AI 产品构建者" })],
   },
   robots: {
     index: true,

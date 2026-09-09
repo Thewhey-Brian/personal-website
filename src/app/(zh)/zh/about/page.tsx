@@ -2,6 +2,8 @@ import { Download, MapPin } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
 
+import { ogMeta } from "@/lib/og";
+
 import { Reveal } from "@/components/motion/reveal";
 import { getMessages } from "@/i18n/messages";
 import { SITE_URL } from "@/i18n/config";
@@ -20,6 +22,8 @@ export const metadata: Metadata = {
       "x-default": `${SITE_URL}/about`,
     },
   },
+  openGraph: { images: ogMeta({ title: "关于 郭昕育", kicker: "关于", sub: "耶鲁大学博士后 · AI for Biology · AI 产品构建者" }).images },
+  twitter: ogMeta({ title: "关于 郭昕育", kicker: "关于", sub: "耶鲁大学博士后 · AI for Biology · AI 产品构建者" }).twitter,
 };
 
 // Tool and library names are left as-is: they are how the reader will search
@@ -102,6 +106,20 @@ export default function ZhAboutPage() {
         </Reveal>
 
         <div className="min-w-0 space-y-16">
+          <Reveal>
+            <section>
+              <span className="label-mono">{t.about.glance}</span>
+              <dl className="mt-5 grid gap-x-8 gap-y-3 sm:grid-cols-[7rem_1fr]">
+                {t.about.glanceList.map(([k, v]) => (
+                  <div key={k} className="contents">
+                    <dt className="font-mono text-xs tracking-[0.1em] text-signal sm:pt-1">{k}</dt>
+                    <dd className="text-[15px] leading-relaxed text-muted-foreground">{v}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          </Reveal>
+
           <Reveal>
             <section>
               <span className="label-mono">{t.about.background}</span>
