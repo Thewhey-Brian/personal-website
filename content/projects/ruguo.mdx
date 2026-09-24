@@ -1,0 +1,130 @@
+---
+title: "如果 · IF: see a thousand futures before you choose"
+titleZh: "如果：在做决定之前，先去一千种未来里看看"
+summaryZh: "一个帮人做决定的工具：为每条路推演一千种未来，画成一棵墨线的树，读几张来自未来的明信片，记下心里的感觉，最后盖章落定，三个月后回访，看它准不准。数字判断全部来自 Jev（TypeSafe 的 System One 模型），文字来自 Qwen；支持语音输入。"
+summary: "A decision tool for everyday choices, big and small. Say what you're torn about; it simulates 1,000 futures for each path with Jev (TypeSafe's System One model), draws where they land as a tree of ink threads, lets you read postcards from those futures and name how each one feels, then seals the choice and asks three months later how it actually went: the only honest test of whether its numbers mean anything."
+status: "in-progress"
+kind: "product"
+role: "Solo · product, design, modeling, full stack"
+logo: "/projects/ruguo/logo.png"
+demoUrl: "https://ruguo.xinyuguo.com"
+startDate: "2026-09-23"
+stack:
+  - "Jev (TypeSafe System One)"
+  - "Qwen · Qwen3-ASR (Alibaba Cloud Bailian)"
+  - "Canvas 2D · Web Audio"
+  - "Node.js · Vercel Functions"
+tags:
+  - "Shipped products"
+  - "decision making"
+  - "calibrated probabilities"
+  - "AI engineering"
+  - "product design"
+featured: true
+order: -30
+---
+
+<ProductHeader
+  logo="/projects/ruguo/logo.png"
+  name="如果 · IF"
+  tagline="在做决定之前，先去一千种未来里看看。"
+  website="https://ruguo.xinyuguo.com"
+>
+  Free · works in any phone browser · Chinese interface · built to become a WeChat mini-program
+</ProductHeader>
+
+Everyone knows the feeling of being stuck between two paths: a job in
+another city or staying for grad school, moving in or staying long-distance,
+hotpot or barbecue tonight. Asking a chatbot mostly gets your own opinion
+handed back, nicely worded. Fortune-telling apps are comforting and
+unfalsifiable. 如果 tries a third thing: show the spread of how each path
+could turn out, in numbers that can be checked later, and pay attention to
+how you *feel* when you read them.
+
+<Facts
+  items={[
+    { label: "Futures per path", value: "1,000" },
+    { label: "Simulation time", value: "≈ 2–5 s" },
+    { label: "Model cost per decision", value: "≈ $0.02" },
+    { label: "Idea → live", value: "≈ 1 day" },
+  ]}
+/>
+
+<PhoneRail
+  screens={[
+    { src: "/projects/ruguo/screen-ask.jpg", alt: "Say or type what you're torn about" },
+    { src: "/projects/ruguo/screen-breath.jpg", alt: "One breath before the futures unfold" },
+    { src: "/projects/ruguo/screen-tree.jpg", alt: "The tree of futures with a drawn stick" },
+  ]}
+  caption="Say it, take one breath, and 2,000 ink threads grow from today. The higher a thread ends, the gladder that future; above the dashed line are the futures you'd be glad about."
+/>
+
+## How the thousand futures are made
+
+Language models are good at words and bad at honest numbers. Jev, TypeSafe's
+System One model, is the opposite: it never writes a sentence, it returns
+calibrated probabilities over options you define, in about 100 ms, for
+fractions of a cent. So the work is split:
+
+- **Qwen** names the 6–8 uncertainties that decide this particular choice
+  (industry outlook, money, health, the people around you; or appetite,
+  weather and company for tonight's dinner), each with states ordered from
+  worst to best, and picks a sensible horizon: *tomorrow morning* for dinner,
+  *three years* for a job.
+- **Jev** gives the odds of each state under each path, given who you are.
+- **Code** samples 1,000 combinations per path from those odds.
+- **Jev** scores how each distinct future would feel, over seven levels from
+  deep regret to fulfilled, about 40 futures per call, all in parallel.
+- **Code** draws the tree, counts the glad futures, and finds *levers*: tap
+  "先争取三个月实习" and the whole tree re-weights instantly, without a new
+  model call.
+
+<PhoneRail
+  screens={[
+    { src: "/projects/ruguo/screen-read.jpg", alt: "A postcard from one future, with feelings to choose" },
+    { src: "/projects/ruguo/screen-decide.jpg", alt: "Numbers and feelings side by side" },
+    { src: "/projects/ruguo/screen-seal.jpg", alt: "The choice sealed with a red stamp" },
+  ]}
+  caption="Read postcards from individual futures and name the feeling. 松了口气, 期待, 不甘心, 害怕. The decide screen puts the numbers beside your feelings and says plainly whether they agree."
+/>
+
+## Design choices I care about
+
+- **For anyone, any age.** Four plain steps, one question per screen, voice
+  input (Qwen3-ASR, so it works in China), buttons named in words. An earlier
+  version had five breathing rituals; early feedback said it was tiring, so there is
+  one breath now, and it never asks you to hold it while the server thinks.
+- **宿命感, without lying.** A generated pentatonic soundscape, a lottery-wheel
+  draw that slows and lands with a temple bell, a seal that thuds down with a
+  splash of ink. The drama is in the presentation, never in the numbers.
+- **Honest about calibration.** Re-running the same plan moves a count by
+  about 1%. A freshly generated factor plan moves it more, and answering 18
+  questions instead of 6 cuts the swing from any single answer by about 60%.
+  But whether "598 of 1,000 glad" matches reality for life decisions is
+  unproven, which is why every sealed choice comes with a calendar reminder
+  and a check-in that records what actually happened.
+
+<Gallery
+  cols={2}
+  images={[
+    { src: "/projects/ruguo/poster.jpg", alt: "The keepsake poster: the question, the tree, the counts, a postcard and the seal" },
+    { src: "/projects/ruguo/screen-checkin.jpg", alt: "Three-month check-in on the same scale, with the same dashed line" },
+  ]}
+  caption="Left: the keepsake poster, re-rendered at high resolution. Right: the three-month check-in, which is what turns predictions into a track record."
+/>
+
+## How it is built
+
+- **Front end.** Plain JavaScript, no framework. The thread renderer uses only
+  the Canvas 2D calls that WeChat's `<canvas type="2d">` supports, so the
+  simulation core and renderer move to a mini-program unchanged.
+- **Back end.** A small Node service, deployed as Vercel Functions, with
+  per-visitor rate limits. Qwen on Alibaba Cloud Bailian for words and speech;
+  Claude is a drop-in alternative.
+- **Market research first.** Before writing code I looked at how people decide
+  today, in English and Chinese communities: the sycophancy complaints about
+  chatbots, the 赛博算命 wave, 测测's business model. The consistent gap was a
+  fortune-teller that shows its track record.
+
+如果 is new and still changing. Try it on something small first. Tonight's
+dinner is a fine place to start.
