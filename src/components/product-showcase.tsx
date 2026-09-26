@@ -117,6 +117,7 @@ export function Clip({
   caption,
   aspect = "16/9",
   portrait = false,
+  sound = false,
 }: {
   src: string;
   poster?: string;
@@ -124,15 +125,24 @@ export function Clip({
   aspect?: string;
   /** Phone-shaped clips sit in a narrow centred column instead of stretching. */
   portrait?: boolean;
+  /**
+   * A clip with narration worth hearing: it still starts muted, because
+   * browsers allow nothing else, but it gets controls so a reader can
+   * unmute it, and it plays once rather than looping under them.
+   */
+  sound?: boolean;
 }) {
   return (
-    <figure className={`not-prose my-10 ${portrait ? "mx-auto max-w-[320px]" : ""}`}>
+    <figure
+      className={`not-prose my-10 ${portrait ? "mx-auto max-w-[320px]" : ""}`}
+    >
       <video
         src={src}
         poster={poster}
         autoPlay
         muted
-        loop
+        loop={!sound}
+        controls={sound}
         playsInline
         preload="metadata"
         style={{ aspectRatio: aspect }}
@@ -148,7 +158,11 @@ export function Clip({
 }
 
 /** Three or four facts a reader should leave with. */
-export function Facts({ items }: { items: { label: string; value: string }[] }) {
+export function Facts({
+  items,
+}: {
+  items: { label: string; value: string }[];
+}) {
   return (
     <dl className="not-prose my-10 grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
       {items.map((f) => (
@@ -173,7 +187,11 @@ export function Gallery({
   cols?: 2 | 3 | 4;
   caption?: string;
 }) {
-  const colClass = { 2: "sm:grid-cols-2", 3: "sm:grid-cols-3", 4: "sm:grid-cols-2 lg:grid-cols-4" }[cols];
+  const colClass = {
+    2: "sm:grid-cols-2",
+    3: "sm:grid-cols-3",
+    4: "sm:grid-cols-2 lg:grid-cols-4",
+  }[cols];
   return (
     <figure className="not-prose my-10">
       <div className={`grid gap-4 ${colClass}`}>
