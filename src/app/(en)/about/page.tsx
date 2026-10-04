@@ -9,7 +9,7 @@ import { Reveal } from "@/components/motion/reveal";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Xinyu (Brian) Guo: AI for biology researcher at Yale, USC Ph.D., and builder of shipped AI products. Background, research areas, technical stack, experience and education.",
+    "Xinyu (Brian) Guo: AI for science researcher at Yale, USC Ph.D., and builder of shipped AI products. Background, research areas, technical stack, experience and education.",
   alternates: {
     canonical: "https://www.xinyuguo.com/about",
     languages: {
@@ -18,12 +18,12 @@ export const metadata: Metadata = {
       "x-default": "https://www.xinyuguo.com/about",
     },
   },
-  openGraph: { images: ogMeta({ title: "About", kicker: "About", sub: "AI for biology researcher at Yale, USC Ph.D., builder of shipped AI products" }).images },
-  twitter: ogMeta({ title: "About", kicker: "About", sub: "AI for biology researcher at Yale, USC Ph.D., builder of shipped AI products" }).twitter,
+  openGraph: { images: ogMeta({ title: "About", kicker: "About", sub: "AI for science researcher at Yale, USC Ph.D., builder of shipped AI products" }).images },
+  twitter: ogMeta({ title: "About", kicker: "About", sub: "AI for science researcher at Yale, USC Ph.D., builder of shipped AI products" }).twitter,
 };
 
 const GLANCE: [string, string][] = [
-  ["Now", "Postdoctoral Associate, Yale University · AI for biology"],
+  ["Now", "Postdoctoral Associate, Yale University · AI for science"],
   ["Focus", "Biological & genomic foundation models · scientific AI agents"],
   ["Training", "Ph.D. USC 2026 · M.S. Johns Hopkins · B.A. WashU"],
   ["Industry", "Abbott Cancer Diagnostics, genomic AI (2026)"],
@@ -58,7 +58,7 @@ const EXPERIENCE = [
   {
     when: "2026 — now",
     what: "Postdoctoral Associate",
-    where: "Yale University — AI for biology & biological foundation models",
+    where: "Yale University — foundation models & generative modeling",
   },
   {
     when: "Summer 2026",
@@ -185,7 +185,7 @@ export default function AboutPage() {
               <span className="label-mono">Background</span>
               <div className="mt-5 space-y-5 text-[1.0625rem] leading-[1.7] text-muted-foreground">
                 <p>
-                  I work on AI for biology: foundation models that read DNA,
+                  I work on AI for science: foundation models that read DNA,
                   RNA and single-cell data, and the agents that let scientists
                   use them responsibly. I am a Postdoctoral Associate at Yale
                   with Dr. Lucila Ohno-Machado, after a Ph.D. in Computational

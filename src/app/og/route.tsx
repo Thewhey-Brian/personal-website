@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const title = clamp(searchParams.get("title"), 110, "Xinyu (Brian) Guo");
   const kicker = clamp(searchParams.get("kicker"), 60, "xinyuguo.com");
-  const sub = clamp(searchParams.get("sub"), 140, "AI for biology · Yale · builder of AI products");
+  const sub = clamp(searchParams.get("sub"), 140, "AI for science · Yale · builder of AI products");
   const big = title.length < 40;
   const fonts = await cjkFont(title + kicker + sub);
 

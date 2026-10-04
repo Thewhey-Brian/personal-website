@@ -25,7 +25,7 @@ export function GET() {
 
   const body = `# Xinyu (Brian) Guo
 
-> AI for biology researcher and builder. Postdoctoral Associate at Yale University (advisor: Dr. Lucila Ohno-Machado) working on biological and genomic foundation models and scientific AI agents. Ph.D. in Computational Biology & Bioinformatics, University of Southern California (2026). Founder who has shipped AI products end to end to the App Store.
+> AI for science researcher and builder. Postdoctoral Associate at Yale University (advisor: Dr. Lucila Ohno-Machado) working on foundation models, generative modeling and scientific AI agents. Ph.D. in Computational Biology & Bioinformatics, University of Southern California (2026). Founder who has shipped AI products end to end to the App Store.
 
 Name: Xinyu Guo (also Brian Guo; 郭昕育)
 Current role: Postdoctoral Associate, Yale University, New Haven, CT (Sep 2026 – present)
@@ -37,7 +37,7 @@ CV (PDF): ${SITE_URL}/cv.pdf
 
 ## Expertise
 
-- Biological and genomic foundation models (AlphaGenome, Evo2, Enformer, Borzoi, DNABERT): evaluation on real cohorts, benchmark design, transfer to variant-effect and regulatory tasks
+- Genomic foundation models (AlphaGenome, Evo2, Enformer, Borzoi, DNABERT): evaluation on real cohorts, benchmark design, transfer to variant-effect and regulatory tasks
 - Scientific AI agents: LLM tool use, governed workflows, provenance, model routing across hosted genomic model endpoints
 - Cancer genomics and precision oncology: variant-effect prediction (SNV, SV, fusion), FFPE artifact modeling, digital pathology multiple-instance learning
 - Single-cell and spatial transcriptomics; self-supervised and contrastive learning; GNNs; state-space models

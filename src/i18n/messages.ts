@@ -25,7 +25,7 @@ const en = {
   },
 
   hero: {
-    eyebrow: "AI for Biology · Yale · Builder of AI products",
+    eyebrow: "AI for Science · Yale · Builder of AI products",
     greeting: "Hi, I'm",
     name: "Xinyu Guo",
     ariaName: "Hi, I'm Xinyu Guo",
@@ -38,7 +38,7 @@ const en = {
       "Photographer",
     ],
     copyLead: "Building",
-    copyFields: ["biological foundation models", "scientific AI agents", "AI products people use"],
+    copyFields: ["foundation models", "scientific AI agents", "AI products people use"],
     copyTail: "— from genomes to the App Store.",
     ctaPrimary: "Discover my story",
     ctaSecondary: "Research & projects",
@@ -62,7 +62,7 @@ const en = {
     background: "Background",
     glance: "At a glance",
     glanceList: [
-      ["Now", "Postdoctoral Associate, Yale University · AI for biology"],
+      ["Now", "Postdoctoral Associate, Yale University · AI for science"],
       ["Focus", "Biological & genomic foundation models · scientific AI agents"],
       ["Training", "Ph.D. USC 2026 · M.S. Johns Hopkins · B.A. WashU"],
       ["Industry", "Abbott Cancer Diagnostics, genomic AI (2026)"],
@@ -74,7 +74,7 @@ const en = {
     experience: "Experience",
     education: "Education",
     bio: [
-      "I work on AI for biology: foundation models that read DNA, RNA and single-cell data, and the agents that let scientists use them responsibly. I am a Postdoctoral Associate at Yale with Dr. Lucila Ohno-Machado, after a Ph.D. in Computational Biology & Bioinformatics at USC and a summer at Abbott Cancer Diagnostics evaluating genomic foundation models on real tumor cohorts.",
+      "I work on AI for science: foundation models that read DNA, RNA and single-cell data, and the agents that let scientists use them responsibly. I am a Postdoctoral Associate at Yale with Dr. Lucila Ohno-Machado, after a Ph.D. in Computational Biology & Bioinformatics at USC and a summer at Abbott Cancer Diagnostics evaluating genomic foundation models on real tumor cohorts.",
       "I also like shipping. I have taken two AI products from idea to the App Store, RallyAI for tennis and Doover for photo editing, doing the modeling, the app, and the launch myself. Research taught me to be careful with claims; building taught me to be fast with everything else. I try to bring both to every team I work with.",
       "Outside work I am usually behind a camera, chasing moments that say something about the people in them.",
     ],
@@ -92,7 +92,7 @@ const en = {
       {
         when: "2026 — now",
         what: "Postdoctoral Associate",
-        where: "Yale University — AI for biology & biological foundation models",
+        where: "Yale University — foundation models & generative modeling",
       },
       {
         when: "Summer 2026",
@@ -215,14 +215,14 @@ const zh: Messages = {
   },
 
   hero: {
-    eyebrow: "AI for Biology · 耶鲁大学 · AI 产品构建者",
+    eyebrow: "AI for Science · 耶鲁大学 · AI 产品构建者",
     greeting: "你好，我是",
     name: "郭昕育",
     ariaName: "你好，我是郭昕育",
     currently: "当前身份",
     roles: ["AI 研究者", "构建者", "创业者", "科学家", "摄影爱好者"],
     copyLead: "正在构建",
-    copyFields: ["生物基础模型", "科研 AI 智能体", "真正被使用的 AI 产品"],
+    copyFields: ["基础模型", "科研 AI 智能体", "真正被使用的 AI 产品"],
     copyTail: "——从基因组到 App Store。",
     ctaPrimary: "了解我的经历",
     ctaSecondary: "研究与项目",
@@ -246,7 +246,7 @@ const zh: Messages = {
     background: "个人简介",
     glance: "一览",
     glanceList: [
-      ["现在", "耶鲁大学博士后研究员 · AI for Biology"],
+      ["现在", "耶鲁大学博士后研究员 · AI for Science"],
       ["方向", "生物与基因组基础模型 · 科研 AI 智能体"],
       ["学历", "南加州大学博士（2026）· 约翰斯·霍普金斯硕士 · 圣路易斯华盛顿大学学士"],
       ["产业", "雅培癌症诊断，基因组 AI（2026）"],
@@ -258,7 +258,7 @@ const zh: Messages = {
     experience: "工作经历",
     education: "教育背景",
     bio: [
-      "我的研究方向是 AI for Biology：能够读懂 DNA、RNA 与单细胞数据的基础模型，以及让科学家负责任地使用这些模型的智能体。我目前在耶鲁大学担任博士后研究员（导师：Lucila Ohno-Machado 教授），此前在南加州大学获得计算生物学与生物信息学博士学位，并曾在雅培癌症诊断（Abbott Cancer Diagnostics）在真实肿瘤队列上评估基因组基础模型。",
+      "我的研究方向是 AI for Science：能够读懂 DNA、RNA 与单细胞数据的基础模型，以及让科学家负责任地使用这些模型的智能体。我目前在耶鲁大学担任博士后研究员（导师：Lucila Ohno-Machado 教授），此前在南加州大学获得计算生物学与生物信息学博士学位，并曾在雅培癌症诊断（Abbott Cancer Diagnostics）在真实肿瘤队列上评估基因组基础模型。",
       "我也喜欢把东西做出来。我独立完成了两款 AI 产品从想法到 App Store 上线的全过程：面向网球的 RallyAI 与面向照片编辑的 Doover，模型、应用与发布都由我一人完成。科研让我对结论保持谨慎，做产品让我在其他一切上保持快速。我希望把这两点都带给每一个与我共事的团队。",
       "工作之外，我多数时候在相机后面，捕捉那些能够讲述人物故事的瞬间。",
     ],
@@ -276,7 +276,7 @@ const zh: Messages = {
       {
         when: "2026 — 至今",
         what: "博士后研究员",
-        where: "耶鲁大学 —— AI for Biology 与生物基础模型",
+        where: "耶鲁大学 —— 基础模型与生成式建模",
       },
       {
         when: "2026 年夏",

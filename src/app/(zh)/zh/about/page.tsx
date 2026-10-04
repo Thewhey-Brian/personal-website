@@ -22,8 +22,8 @@ export const metadata: Metadata = {
       "x-default": `${SITE_URL}/about`,
     },
   },
-  openGraph: { images: ogMeta({ title: "关于 郭昕育", kicker: "关于", sub: "耶鲁大学博士后 · AI for Biology · AI 产品构建者" }).images },
-  twitter: ogMeta({ title: "关于 郭昕育", kicker: "关于", sub: "耶鲁大学博士后 · AI for Biology · AI 产品构建者" }).twitter,
+  openGraph: { images: ogMeta({ title: "关于 郭昕育", kicker: "关于", sub: "耶鲁大学博士后 · AI for Science · AI 产品构建者" }).images },
+  twitter: ogMeta({ title: "关于 郭昕育", kicker: "关于", sub: "耶鲁大学博士后 · AI for Science · AI 产品构建者" }).twitter,
 };
 
 // Tool and library names are left as-is: they are how the reader will search

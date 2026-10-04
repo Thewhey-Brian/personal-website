@@ -10,11 +10,11 @@ import { SITE_URL } from "@/i18n/config";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "郭昕育 Xinyu Guo — AI for Biology 研究者与 AI 产品构建者",
+    default: "郭昕育 Xinyu Guo — AI for Science 研究者与 AI 产品构建者",
     template: "%s | 郭昕育 Xinyu Guo",
   },
   description:
-    "耶鲁大学博士后研究员，研究方向为 AI for Biology 与生物基础模型；南加州大学计算生物学与生物信息学博士。",
+    "耶鲁大学博士后研究员，研究方向为基础模型与生成式建模；南加州大学计算生物学与生物信息学博士。",
   keywords: [
     "郭昕育",
     "Xinyu Guo",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     "单细胞",
     "空间转录组",
     "耶鲁大学",
-    "生物基础模型",
+    "基础模型",
     "AI 智能体",
     "大语言模型",
     "AI for Science",
@@ -42,13 +42,13 @@ export const metadata: Metadata = {
     locale: "zh_CN",
     alternateLocale: ["en_US"],
     url: `${SITE_URL}/zh`,
-    title: "郭昕育 Xinyu Guo — AI for Biology 研究者与 AI 产品构建者",
+    title: "郭昕育 Xinyu Guo — AI for Science 研究者与 AI 产品构建者",
     description:
-      "耶鲁大学博士后研究员，研究生物基础模型、基因组学与人工智能。",
+      "耶鲁大学博士后研究员，研究基础模型、基因组学与人工智能。",
     siteName: "郭昕育 Xinyu Guo",
     images: [
       {
-        url: ogImage({ title: "郭昕育 Xinyu Guo", kicker: "xinyuguo.com", sub: "AI for Biology · 耶鲁大学 · AI 产品构建者" }),
+        url: ogImage({ title: "郭昕育 Xinyu Guo", kicker: "xinyuguo.com", sub: "AI for Science · 耶鲁大学 · AI 产品构建者" }),
         width: 1200,
         height: 630,
         alt: "郭昕育 Xinyu Guo",
@@ -57,10 +57,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "郭昕育 Xinyu Guo — AI for Biology 研究者与 AI 产品构建者",
+    title: "郭昕育 Xinyu Guo — AI for Science 研究者与 AI 产品构建者",
     description:
-      "耶鲁大学博士后研究员，研究生物基础模型、基因组学与人工智能。",
-    images: [ogImage({ title: "郭昕育 Xinyu Guo", kicker: "xinyuguo.com", sub: "AI for Biology · 耶鲁大学 · AI 产品构建者" })],
+      "耶鲁大学博士后研究员，研究基础模型、基因组学与人工智能。",
+    images: [ogImage({ title: "郭昕育 Xinyu Guo", kicker: "xinyuguo.com", sub: "AI for Science · 耶鲁大学 · AI 产品构建者" })],
   },
   robots: {
     index: true,

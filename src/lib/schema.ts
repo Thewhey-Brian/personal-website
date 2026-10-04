@@ -29,16 +29,16 @@ export const personSchema = {
   familyName: "Guo",
   url: SITE_URL,
   image: `${SITE_URL}/headshot.jpg`,
-  jobTitle: "Postdoctoral Associate, AI for Biology",
+  jobTitle: "Postdoctoral Associate, AI for Science",
   description:
-    "AI for biology researcher and builder. Postdoctoral Associate at Yale University (Ph.D., Computational Biology & Bioinformatics, USC) working on biological and genomic foundation models, cancer genomics and scientific AI agents; founder who has shipped AI products (RallyAI, Doover) to the App Store.",
+    "AI for science researcher and builder. Postdoctoral Associate at Yale University (Ph.D., Computational Biology & Bioinformatics, USC) working on foundation models and generative modeling, cancer genomics and scientific AI agents; founder who has shipped AI products (RallyAI, Doover) to the App Store.",
   hasOccupation: [
     {
       "@type": "Occupation",
       name: "AI Researcher",
       occupationLocation: { "@type": "City", name: "New Haven, Connecticut" },
       skills:
-        "Biological foundation models, genomic foundation models, large language models, AI agents, PyTorch, JAX, computer vision, cancer genomics",
+        "Foundation models, generative models, genomic foundation models, large language models, AI agents, PyTorch, JAX, computer vision, cancer genomics",
     },
     {
       "@type": "Occupation",
@@ -78,7 +78,7 @@ export const personSchema = {
   knowsAbout: [
     "Artificial Intelligence",
     "Machine Learning",
-    "Biological Foundation Models",
+    "Foundation Models",
     "Genomic Foundation Models",
     "Large Language Models",
     "AI Agents",

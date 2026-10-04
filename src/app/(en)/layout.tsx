@@ -10,11 +10,11 @@ import { SITE_URL } from "@/i18n/config";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Xinyu Guo — AI for Biology Researcher & Builder",
+    default: "Xinyu Guo — AI for Science Researcher & Builder",
     template: "%s | Xinyu Guo",
   },
   description:
-    "Xinyu (Brian) Guo: Postdoctoral Associate at Yale working on biological foundation models and scientific AI agents, USC Ph.D., and founder who has shipped AI apps (RallyAI, Doover) to the App Store.",
+    "Xinyu (Brian) Guo: Postdoctoral Associate at Yale working on foundation models and scientific AI agents, USC Ph.D., and founder who has shipped AI apps (RallyAI, Doover) to the App Store.",
   keywords: [
     "computational biology",
     "bioinformatics",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     "genomics",
     "AI research",
     "Yale postdoc",
-    "biological foundation models",
+    "foundation models",
     "genomic foundation models",
     "AI agents",
     "LLM",
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     siteName: "Xinyu Guo",
     images: [
       {
-        url: ogImage({ title: "Xinyu (Brian) Guo", kicker: "xinyuguo.com", sub: "AI for biology · Yale · builder of AI products" }),
+        url: ogImage({ title: "Xinyu (Brian) Guo", kicker: "xinyuguo.com", sub: "AI for science · Yale · builder of AI products" }),
         width: 1200,
         height: 630,
         alt: "Xinyu (Brian) Guo",
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
     title: "Xinyu Guo - Computational Biology Researcher",
     description:
       "Ph.D. in Computational Biology exploring genomics, AI, and machine learning",
-    images: [ogImage({ title: "Xinyu (Brian) Guo", kicker: "xinyuguo.com", sub: "AI for biology · Yale · builder of AI products" })],
+    images: [ogImage({ title: "Xinyu (Brian) Guo", kicker: "xinyuguo.com", sub: "AI for science · Yale · builder of AI products" })],
   },
   robots: {
     index: true,
