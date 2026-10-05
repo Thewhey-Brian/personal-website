@@ -42,6 +42,7 @@ const en = {
     copyTail: "— from genomes to the App Store.",
     ctaPrimary: "Discover my story",
     ctaSecondary: "Research & projects",
+    ctaBook: "Book a 30-min call",
     scroll: "Scroll",
   },
 
@@ -226,6 +227,7 @@ const zh: Messages = {
     copyTail: "——从基因组到 App Store。",
     ctaPrimary: "了解我的经历",
     ctaSecondary: "研究与项目",
+    ctaBook: "预约 30 分钟通话",
     scroll: "向下滚动",
   },
 

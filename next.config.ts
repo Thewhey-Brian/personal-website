@@ -6,6 +6,14 @@ const nextConfig: NextConfig = {
   // set here. They meant a build with real type errors still deployed — which
   // is how four broken `project.date` references in sitemap.ts survived. Both
   // checks now pass, so let the build enforce them.
+  // Short, shareable booking links for email signatures: xinyuguo.com/meet
+  async redirects() {
+    return ["/meet", "/book", "/zh/meet"].map((source) => ({
+      source,
+      destination: "https://calendly.com/xyguo1202/30min",
+      permanent: false,
+    }));
+  },
   experimental: {
     mdxRs: true,
   },

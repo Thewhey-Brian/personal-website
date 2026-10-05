@@ -2,6 +2,8 @@ import { Metadata } from "next";
 import { allProjects, allPublications } from "contentlayer/generated";
 
 import { Hero } from "@/components/hero/hero";
+import { CareerTracks } from "@/components/sections/career-tracks";
+import { careerFeatures, yearOf } from "@/lib/career";
 import { type WorkItem } from "@/components/sections/index-row";
 import { SelectedWork } from "@/components/sections/selected-work";
 import { firstSentence } from "@/lib/text";
@@ -18,6 +20,7 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
+  const now = yearOf(new Date());
   const publications: WorkItem[] = [...allPublications]
     .sort((a, b) => b.year - a.year)
     .slice(0, 4)
@@ -57,6 +60,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <CareerTracks features={careerFeatures("en", now)} now={now} />
       <SelectedWork products={products} publications={publications} projects={projects} />
     </>
   );

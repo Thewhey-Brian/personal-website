@@ -3,9 +3,10 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Moon, Sun } from "lucide-react";
+import { CalendarClock, Menu, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
+import { BookCall, CALENDLY_URL } from "@/components/booking/book-call";
 import { Button } from "@/components/ui/button";
 import {
   DEFAULT_LOCALE,
@@ -21,6 +22,29 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+// The wordmark is read like a sequencing trace: on hover the letters light up
+// one after another in a fluorescent glow, left to right.
+function SequenceMark({ text }: { text: string }) {
+  return (
+    <span aria-label={text} className="inline-flex">
+      {[...text].map((ch, i) =>
+        ch === " " ? (
+          <span key={i} className="w-[0.55em]" aria-hidden="true" />
+        ) : (
+          <span
+            key={i}
+            aria-hidden="true"
+            className="transition-[color,text-shadow] duration-300 ease-out group-hover:text-signal group-hover:[text-shadow:var(--glow)]"
+            style={{ transitionDelay: `${i * 35}ms` }}
+          >
+            {ch}
+          </span>
+        ),
+      )}
+    </span>
+  );
+}
 
 export function Navbar({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
   const pathname = usePathname();
@@ -65,9 +89,9 @@ export function Navbar({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
       <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <Link
           href={localePath("/", locale)}
-          className="font-display text-lg tracking-tight transition-opacity hover:opacity-70"
+          className="group font-mark text-[17px] font-bold uppercase tracking-[0.14em]"
         >
-          {locale === "zh" ? "郭昕育" : "Xinyu Guo"}
+          <SequenceMark text={locale === "zh" ? "郭昕育" : "Xinyu Guo"} />
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
@@ -79,10 +103,10 @@ export function Navbar({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`relative font-mono text-xs uppercase tracking-[0.12em] transition-colors ${
+                className={`relative font-nav text-[15.5px] font-semibold tracking-[-0.005em] transition-colors ${
                   active
                     ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
+                    : "text-foreground/70 hover:text-foreground"
                 }`}
               >
                 {item.name}
@@ -98,6 +122,10 @@ export function Navbar({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
         </nav>
 
         <div className="flex items-center gap-1">
+          <BookCall className="font-nav mr-2 hidden items-center gap-1.5 rounded-full border border-signal/50 px-3.5 py-1.5 text-sm font-medium text-signal transition-colors hover:bg-signal hover:text-signal-foreground sm:inline-flex">
+            <CalendarClock className="h-3.5 w-3.5" aria-hidden="true" />
+            {locale === "zh" ? "预约" : "Book a call"}
+          </BookCall>
           <a
             href={otherHref}
             hrefLang={other === "zh" ? "zh-CN" : "en"}
@@ -138,11 +166,22 @@ export function Navbar({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" sideOffset={8} className="w-48">
+              <DropdownMenuItem asChild>
+                <a
+                  href={CALENDLY_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-nav flex w-full items-center gap-2 text-[15px] font-medium text-signal"
+                >
+                  <CalendarClock className="h-3.5 w-3.5" aria-hidden="true" />
+                  {locale === "zh" ? "预约通话" : "Book a call"}
+                </a>
+              </DropdownMenuItem>
               {navigation.map((item) => (
                 <DropdownMenuItem key={item.href} asChild>
                   <Link
                     href={item.href}
-                    className="w-full font-mono text-xs uppercase tracking-[0.12em]"
+                    className="font-nav w-full text-[15px] font-medium"
                   >
                     {item.name}
                   </Link>

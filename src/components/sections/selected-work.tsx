@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, CalendarClock } from "lucide-react";
+
+import { BookCall } from "@/components/booking/book-call";
 
 import { Reveal, RevealWords } from "@/components/motion/reveal";
 import { IndexRow, type WorkItem } from "./index-row";
@@ -95,13 +97,19 @@ export function SelectedWork({
             Building something at the edge of AI and biology? I&apos;d like to
             hear about it.
           </p>
-          <Link
-            href="/contact"
-            className="group mt-7 inline-flex items-center gap-2 rounded-full bg-signal px-8 py-4 text-base font-semibold text-signal-foreground transition-opacity hover:opacity-90"
-          >
-            Get in touch
-            <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </Link>
+          <div className="mt-7 flex flex-wrap items-center gap-3">
+            <BookCall className="group inline-flex items-center gap-2 rounded-full bg-signal px-8 py-4 text-base font-semibold text-signal-foreground transition-opacity hover:opacity-90">
+              <CalendarClock className="h-4 w-4" aria-hidden="true" />
+              Book a 30-minute call
+            </BookCall>
+            <Link
+              href="/contact"
+              className="group inline-flex items-center gap-2 rounded-full border border-border px-8 py-4 text-base font-semibold transition-colors hover:bg-accent"
+            >
+              Get in touch
+              <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </Link>
+          </div>
         </Reveal>
       </div>
     </section>

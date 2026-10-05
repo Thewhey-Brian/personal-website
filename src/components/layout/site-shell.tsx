@@ -1,4 +1,10 @@
-import { Inter, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import {
+  Geist_Mono,
+  Inter,
+  Instrument_Sans,
+  JetBrains_Mono,
+  Plus_Jakarta_Sans,
+} from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -24,6 +30,20 @@ const inter = Inter({
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-plus-jakarta",
+  display: "swap",
+});
+
+// Wordmark: letter-spaced mono, read like a sequence.
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+  display: "swap",
+});
+
+// Navigation tabs: a neutral grotesk with a little more warmth than Inter.
+const instrumentSans = Instrument_Sans({
+  subsets: ["latin"],
+  variable: "--font-instrument-sans",
   display: "swap",
 });
 
@@ -58,7 +78,7 @@ export function SiteShell({
   return (
     <html
       lang={HTML_LANG[locale]}
-      className={`${inter.variable} ${plusJakarta.variable} ${jetbrainsMono.variable}`}
+      className={`${inter.variable} ${plusJakarta.variable} ${jetbrainsMono.variable} ${geistMono.variable} ${instrumentSans.variable}`}
       suppressHydrationWarning
     >
       {/* eslint-disable-next-line @next/next/no-head-element --

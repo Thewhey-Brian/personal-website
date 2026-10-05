@@ -13,6 +13,7 @@ import { Metadata } from "next";
 import { ogMeta } from "@/lib/og";
 
 import { Reveal } from "@/components/motion/reveal";
+import { BookingCard } from "@/components/booking/booking-card";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -81,6 +82,10 @@ export default function ContactPage() {
           computational biology, AI, or turning a rough idea into a real
           prototype. I&apos;d be glad to hear from you.
         </p>
+      </Reveal>
+
+      <Reveal>
+        <BookingCard />
       </Reveal>
 
       <Reveal>

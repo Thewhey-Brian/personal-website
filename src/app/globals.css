@@ -93,6 +93,8 @@
      harmonious instead of turning muddy the way blue→purple does. */
   --signal: oklch(0.56 0.09 68);
   --signal-soft: oklch(0.56 0.09 68 / 12%);
+  /* Fluorescent glow for the wordmark: a soft halo on paper. */
+  --glow: 0 0 10px oklch(0.56 0.09 68 / 35%);
   --signal-foreground: oklch(0.985 0.005 85);
   --secondary-signal: oklch(0.53 0.13 25);
 
@@ -143,6 +145,7 @@
 
   --signal: oklch(0.8 0.095 80);
   --signal-soft: oklch(0.8 0.095 80 / 14%);
+  --glow: 0 0 6px oklch(0.8 0.095 80), 0 0 18px oklch(0.8 0.095 80 / 55%);
   --signal-foreground: oklch(0.16 0.01 60);
   --secondary-signal: oklch(0.74 0.11 28);
 
@@ -221,6 +224,16 @@
 }
 
 @layer components {
+  /* Navigation tabs and the booking pill. */
+  .font-nav {
+    font-family: var(--font-instrument-sans), var(--font-inter), ui-sans-serif, sans-serif;
+  }
+
+  /* Wordmark, set like a sequence read. */
+  .font-mark {
+    font-family: var(--font-geist-mono), var(--font-jetbrains-mono), ui-monospace, monospace;
+  }
+
   /* Monospace eyebrow used for section labels and metadata. */
   .label-mono {
     font-family: var(--font-mono-stack);

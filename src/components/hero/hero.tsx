@@ -2,13 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Github,
+import { ArrowRight, CalendarClock, Github,
   GraduationCap, Linkedin, Mail, Twitter } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 
 import { Magnetic } from "@/components/motion/reveal";
+import { BookCall } from "@/components/booking/book-call";
 import { DEFAULT_LOCALE, localePath, type Locale } from "@/i18n/config";
 import { getMessages } from "@/i18n/messages";
 import ParticleNetwork from "@/components/particle-network";
@@ -337,14 +338,23 @@ export function Hero({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
           </div>
 
           <div className="mt-10 flex flex-wrap items-center gap-3">
+            {/* Booking leads: the fastest path from reading to talking. */}
+            <div data-hero data-hero-cta>
+              <Magnetic>
+                <BookCall className="group inline-flex items-center gap-2 rounded-full bg-signal px-8 py-4 text-base font-semibold text-signal-foreground transition-opacity hover:opacity-90">
+                  <CalendarClock className="h-4 w-4" aria-hidden="true" />
+                  {t.hero.ctaBook}
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </BookCall>
+              </Magnetic>
+            </div>
             <div data-hero data-hero-cta>
               <Magnetic>
                 <Link
                   href={localePath("/about", locale)}
-                  className="group inline-flex items-center gap-2 rounded-full bg-signal px-8 py-4 text-base font-semibold text-signal-foreground transition-opacity hover:opacity-90"
+                  className="inline-flex items-center rounded-full border border-border px-8 py-4 text-base font-semibold transition-colors hover:bg-accent"
                 >
                   {t.hero.ctaPrimary}
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </Link>
               </Magnetic>
             </div>
@@ -352,7 +362,7 @@ export function Hero({ locale = DEFAULT_LOCALE }: { locale?: Locale }) {
               <Magnetic>
                 <Link
                   href={localePath("/publications", locale)}
-                  className="inline-flex items-center rounded-full border border-border px-8 py-4 text-base font-semibold transition-colors hover:bg-accent"
+                  className="inline-flex items-center px-4 py-4 text-base font-semibold text-muted-foreground transition-colors hover:text-foreground"
                 >
                   {t.hero.ctaSecondary}
                 </Link>

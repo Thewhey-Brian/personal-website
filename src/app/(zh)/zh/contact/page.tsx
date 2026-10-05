@@ -6,6 +6,7 @@ import { Metadata } from "next";
 import { ogMeta } from "@/lib/og";
 
 import { Reveal } from "@/components/motion/reveal";
+import { BookingCard } from "@/components/booking/booking-card";
 import { getMessages } from "@/i18n/messages";
 import { SITE_URL } from "@/i18n/config";
 
@@ -78,6 +79,7 @@ export default function ZhContactPage() {
       </p>
 
       <div className="mt-14">
+        <BookingCard locale="zh" />
         <span className="label-mono">{t.contact.channels}</span>
         <ul className="mt-5 border-t border-border">
           {CHANNELS.map((c) => (

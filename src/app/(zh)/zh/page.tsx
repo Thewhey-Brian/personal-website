@@ -3,6 +3,8 @@ import Link from "next/link";
 import { allProjects, allPublications } from "contentlayer/generated";
 
 import { Hero } from "@/components/hero/hero";
+import { CareerTracks } from "@/components/sections/career-tracks";
+import { careerFeatures, yearOf } from "@/lib/career";
 import { ZhWorkList, type ZhWorkItem } from "@/components/sections/zh-work-list";
 import { getMessages } from "@/i18n/messages";
 import { SITE_URL } from "@/i18n/config";
@@ -22,6 +24,7 @@ export const metadata: Metadata = {
 };
 
 export default function ZhHome() {
+  const now = yearOf(new Date());
   const publications: ZhWorkItem[] = [...allPublications]
     .sort((a, b) => b.year - a.year)
     .slice(0, 4)
@@ -59,6 +62,7 @@ export default function ZhHome() {
   return (
     <>
       <Hero locale="zh" />
+      <CareerTracks features={careerFeatures("zh", now)} now={now} locale="zh" />
 
       <section className="container mx-auto max-w-4xl px-6 py-24 md:py-32">
         <p className="text-2xl leading-snug sm:text-3xl">
