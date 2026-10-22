@@ -1,0 +1,139 @@
+---
+title: "hotedit: edit the HTML reports your AI writes, right in the browser"
+titleZh: "hotedit：AI 写好的 HTML 报告，直接在浏览器里改"
+summaryZh: "一个开源工具：打开任意 HTML 文件，点哪改哪：文字、样式、版面，以及 Plotly、Chart.js、Vega-Lite、Mermaid 图表；每处修改都以最小的字节补丁写回原文件。它不改变 AI 生成的内容和质量，只是让结果可以编辑。附带 Claude Code 插件与 Codex 钩子，智能体写出的每份报告都会自动在浏览器里打开；还有 MCP 服务器和页内 ✨ AI 对话，可以只改选中的那一块。"
+summary: "An open-source tool that makes any HTML file editable in the browser: click text and type, restyle and drag blocks, and change Plotly, Chart.js, Vega-Lite and Mermaid charts in a form. Every change is written back into the original file as a minimal byte patch. It doesn't change what the AI makes, only lets you edit it afterwards. A Claude Code plugin and a Codex hook open every report an agent writes, ready to edit; an MCP server and an in-page ✨ chat let an AI change just the block you point at."
+status: "in-progress"
+kind: "product"
+role: "Solo · design, engineering, agent integration, launch"
+logo: "/projects/hotedit/logo.png"
+repoUrl: "https://github.com/Thewhey-Brian/hotedit"
+startDate: "2026-10-20"
+stack:
+  - "Node.js · parse5"
+  - "Shadow DOM overlay · Server-Sent Events"
+  - "Model Context Protocol"
+  - "Claude Code plugin · Codex hooks"
+  - "Playwright"
+tags:
+  - "Shipped products"
+  - "open source"
+  - "AI agents"
+  - "developer tools"
+  - "AI engineering"
+  - "product design"
+featured: true
+order: -40
+---
+
+<ProductHeader
+  logo="/projects/hotedit/logo.png"
+  name="hotedit"
+  tagline="Your AI wrote the report. Now edit it yourself."
+  website="https://github.com/Thewhey-Brian/hotedit"
+>
+  Free and open source (MIT) · `npx hotedit report.html` · on npm, the MCP Registry and as a Claude Code plugin
+</ProductHeader>
+
+AI assistants now write a lot of HTML: research reports, dashboards,
+analysis summaries. Mine certainly do. They look great until one number is
+wrong. Then the choice is to dig through two thousand lines of generated
+markup, or ask the AI again and hope it doesn't quietly change something
+else. hotedit is the third option: open the page in your browser, click what
+you want to change, and change it.
+
+<Clip
+  src="/projects/hotedit/promo.mp4"
+  poster="/projects/hotedit/promo-poster.jpg"
+  sound
+  caption="Thirty-five seconds, recorded from the real tool in a browser. Unmute for the narration."
+/>
+
+<Facts
+  items={[
+    { label: "First commit → on npm", value: "same day" },
+    { label: "Chart libraries", value: "4" },
+    { label: "Automated tests", value: "124" },
+    { label: "Works with", value: "Claude Code · Codex · MCP" },
+  ]}
+/>
+
+## Same report, now editable
+
+The rule I cared about most: hotedit must not make the AI's work worse. It
+doesn't ask the model to write simpler pages. It takes the report exactly as
+the AI made it, at the same quality, with the same charts, design and depth,
+and only adds editing on top. Nothing is re-generated, nothing is added to
+the file.
+
+That rule shaped how it works:
+
+- **Edits are byte patches, not re-writes.** The page is parsed with
+  parse5, keeping the source position of every element. The browser gets a
+  copy with element ids and an editor overlay in a shadow DOM; the file on
+  disk never sees either. Each edit is mapped back to the exact bytes it came
+  from, so entities, quote styles, indentation and comments elsewhere stay
+  identical, and the git diff shows only what you changed.
+- **Charts are edited in their own source.** Click a Plotly, Chart.js,
+  Vega-Lite or Mermaid chart and you get type tiles (bar, line, area, pie…)
+  that redraw live, a form for titles, axes, colours and legend, and an
+  editable data table. The spec literal in the page's `<script>` is patched
+  value by value, in its own quote and key style.
+- **Generated things open as source.** KaTeX maths, Mermaid output and
+  script-built tables are never saved as frozen rendered HTML.
+
+<Gallery
+  cols={2}
+  images={[
+    { src: "/projects/hotedit/shot-chart.jpg", alt: "The chart panel on a Plotly chart: type tiles, switches and menus, live preview" },
+    { src: "/projects/hotedit/tour-diff.jpg", alt: "The git diff after a full tour of edits: only the changed lines" },
+  ]}
+  caption="Left: switch a Plotly chart to bars and tune it in a form; it redraws live. Right: after the whole tour of edits, the diff is just the lines that changed."
+/>
+
+## Built for working with agents
+
+The reports come from agents, so the agents should hand them over ready to
+edit:
+
+- **Auto-open.** Install the Claude Code plugin (or the Codex hook) once, and
+  every HTML report the agent writes opens in hotedit in your browser
+  automatically. Pages that belong to an app or website (under `src/`,
+  `public/`, with template tags…) are left alone, and the background server
+  stops itself once you close the page.
+- **Live edits, no blinking.** An MCP server gives any agent `open`,
+  `outline`, `read` and `edit`. Its edits, and edits from anywhere else, are
+  patched into the open page in place, without a reload, so the page keeps its
+  scroll position and charts redraw.
+- **✨ Ask AI about one block.** Select a paragraph, chart or section and say
+  what should change. The AI (your Claude Code or Codex login, an API key, or
+  any agent CLI) can only touch that block: the server rejects edits anywhere
+  else. It's a chat, so follow-ups know what came before, and every reply
+  says which model answered.
+
+<Gallery
+  cols={2}
+  images={[
+    { src: "/projects/hotedit/tour-ai.jpg", alt: "The ✨ panel after a request: the change, the reply and the model that answered" },
+    { src: "/projects/hotedit/tour-agent.jpg", alt: "Installing the skill: every report Claude Code writes opens in hotedit" },
+  ]}
+  caption="Left: ✨ changed only the selected paragraph and says which AI and model answered (in the recorded tour a stand-in script plays the AI; with real Claude Code the panel is the same). Right: one install, then every report the agent writes opens ready to edit."
+/>
+
+## How I built it
+
+- **Plain Node, three runtime dependencies.** parse5, entities and the
+  Anthropic SDK. No framework, no build step; `npx hotedit` works on a clean
+  machine.
+- **Tested on real, messy pages.** Every test page is opened, every editable
+  element is saved unchanged, and the file must stay byte-identical; every
+  real edit must produce exactly the expected diff. Browser tests run in
+  Playwright on each push.
+- **Shipped like a product.** A narrated tour and a social cut, both recorded
+  from the real tool with Playwright and voiced with ElevenLabs; a Claude Code
+  plugin and marketplace, an MCP Registry listing, and starter issues for
+  contributors.
+
+hotedit is young and contributions are welcome. Try it with
+`npx hotedit demo`, and if one of your AI-written pages won't edit, [open an
+issue](https://github.com/Thewhey-Brian/hotedit/issues) with the file.
