@@ -11,9 +11,13 @@ export default function PublicationsPage() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const allTags = useMemo(() => {
-    const tags = new Set<string>();
-    allPublications.forEach((pub) => pub.tags.forEach((t) => tags.add(t)));
-    return Array.from(tags).sort();
+    const counts = new Map<string, number>();
+    allPublications.forEach((pub) =>
+      new Set(pub.tags).forEach((t) => counts.set(t, (counts.get(t) ?? 0) + 1)),
+    );
+    return Array.from(counts.keys()).sort(
+      (a, b) => counts.get(b)! - counts.get(a)! || a.localeCompare(b),
+    );
   }, []);
 
   const items = useMemo(() => {

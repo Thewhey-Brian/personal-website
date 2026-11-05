@@ -19,12 +19,16 @@ export default function ProjectsPage() {
   // Tags and stack share one filter list: a visitor looking for "PyTorch"
   // doesn't care which frontmatter field it happens to live in.
   const allTags = useMemo(() => {
-    const tags = new Set<string>();
+    // Most-used first, so the folded list shows the tags that matter.
+    const counts = new Map<string, number>();
     allProjects.forEach((project) => {
-      project.tags.forEach((t) => tags.add(t));
-      project.stack.forEach((t) => tags.add(t));
+      new Set([...project.tags, ...project.stack]).forEach((t) =>
+        counts.set(t, (counts.get(t) ?? 0) + 1),
+      );
     });
-    return Array.from(tags).sort();
+    return Array.from(counts.keys()).sort(
+      (a, b) => counts.get(b)! - counts.get(a)! || a.localeCompare(b),
+    );
   }, []);
 
   const items = useMemo(() => {

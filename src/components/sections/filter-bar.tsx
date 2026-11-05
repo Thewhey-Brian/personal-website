@@ -1,6 +1,10 @@
 "use client";
 
-import { Search, X } from "lucide-react";
+import { useState } from "react";
+import { ChevronDown, Search, X } from "lucide-react";
+
+/** Tags shown before the list is folded. Tags arrive most-used first. */
+const COLLAPSED_COUNT = 10;
 
 /**
  * Search + tag filtering for the index pages.
@@ -32,6 +36,18 @@ export function FilterBar({
   noun: string;
 }) {
   const filtering = query !== "" || selectedTags.length > 0;
+  const [expanded, setExpanded] = useState(false);
+
+  // Folded: the most-used tags, plus any selected one so the active filter is
+  // never hidden. Expanded: everything.
+  const collapsible = tags.length > COLLAPSED_COUNT;
+  const visibleTags =
+    expanded || !collapsible
+      ? tags
+      : tags.filter(
+          (t, i) => i < COLLAPSED_COUNT || selectedTags.includes(t),
+        );
+  const hiddenCount = tags.length - visibleTags.length;
 
   return (
     <div className="mb-12">
@@ -59,7 +75,7 @@ export function FilterBar({
       </div>
 
       <div className="mt-5 flex flex-wrap items-center gap-2">
-        {tags.map((tag) => {
+        {visibleTags.map((tag) => {
           const active = selectedTags.includes(tag);
           return (
             <button
@@ -76,6 +92,18 @@ export function FilterBar({
             </button>
           );
         })}
+        {collapsible && (
+          <button
+            onClick={() => setExpanded((v) => !v)}
+            aria-expanded={expanded}
+            className="flex items-center gap-1 rounded-full border border-dashed border-border px-3 py-1.5 font-mono text-[11px] text-muted-foreground transition-colors hover:border-signal/50 hover:text-foreground"
+          >
+            {expanded ? "Show fewer" : `Show all ${tags.length} (+${hiddenCount})`}
+            <ChevronDown
+              className={`h-3 w-3 transition-transform ${expanded ? "rotate-180" : ""}`}
+            />
+          </button>
+        )}
       </div>
 
       <p className="mt-5 font-mono text-xs text-muted-foreground">
