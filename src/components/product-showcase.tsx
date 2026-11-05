@@ -213,3 +213,60 @@ export function Gallery({
     </figure>
   );
 }
+
+/**
+ * A lesson figure: a looping muted video (.mp4) or an image, shown at its
+ * natural proportions with a numbered caption. `width` caps the displayed
+ * size in px so small pixel-art clips are not blown up into blur.
+ */
+export function Media({
+  src,
+  alt = "",
+  caption,
+  width = 720,
+  pixelated = false,
+}: {
+  src: string;
+  alt?: string;
+  caption?: string;
+  width?: number;
+  pixelated?: boolean;
+}) {
+  const isVideo = src.endsWith(".mp4");
+  const style = {
+    maxWidth: width,
+    imageRendering: pixelated ? ("pixelated" as const) : undefined,
+  };
+  return (
+    <figure className="not-prose my-8">
+      {isVideo ? (
+        <video
+          src={src}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          style={style}
+          className="mx-auto h-auto w-full rounded-xl border border-border bg-black"
+        />
+      ) : (
+        <img
+          src={src}
+          alt={alt || caption || ""}
+          loading="lazy"
+          style={style}
+          className="mx-auto h-auto w-full rounded-xl border border-border bg-white"
+        />
+      )}
+      {caption && (
+        <figcaption
+          style={{ maxWidth: width }}
+          className="mx-auto mt-3 font-mono text-xs leading-relaxed text-muted-foreground"
+        >
+          {caption}
+        </figcaption>
+      )}
+    </figure>
+  );
+}

@@ -7,6 +7,7 @@ import {
   Clip,
   Facts,
   Gallery,
+  Media,
   PhoneRail,
   ProductHeader,
 } from "@/components/product-showcase"
@@ -126,6 +127,7 @@ const components = {
   Clip,
   Facts,
   Gallery,
+  Media,
   PhoneRail,
   ProductHeader,
 }

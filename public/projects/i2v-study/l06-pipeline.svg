@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="370" viewBox="0 0 1120 370">
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="#53657a"/></marker></defs>
+<rect width="1120" height="370" fill="white"/>
+<g font-family="Arial,sans-serif" fill="#203049" font-size="16">
+<text x="24" y="30" font-size="22" font-weight="bold">One image + caption + random seed → one sampled video</text>
+<g fill="#eef2f7" stroke="#abb6c5"><rect x="24" y="65" width="160" height="65" rx="10"/><rect x="215" y="65" width="180" height="65" rx="10"/><rect x="24" y="185" width="160" height="65" rx="10"/><rect x="215" y="185" width="180" height="65" rx="10"/><rect x="740" y="125" width="150" height="75" rx="10"/><rect x="920" y="125" width="175" height="75" rx="10"/></g>
+<rect x="440" y="115" width="255" height="105" rx="12" fill="#e3f3eb" stroke="#298260" stroke-width="2"/>
+<text x="43" y="93">Initial image</text><text x="43" y="116" font-size="13">Observed scene</text>
+<text x="232" y="93">Video VAE encoder</text><text x="232" y="116" font-size="13">Frozen · clean first slice</text>
+<text x="43" y="212">Action caption</text><text x="43" y="236" font-size="13">Requested behavior</text>
+<text x="232" y="212">Text encoder</text><text x="232" y="236" font-size="13">Frozen · text features</text>
+<text x="458" y="146" font-weight="bold">Video Transformer + LoRA</text><text x="458" y="172" font-size="14">Base frozen · adapter trained</text><text x="458" y="198" font-size="14">Predict velocity for future tokens</text>
+<text x="759" y="154">Flow solver</text><text x="759" y="178" font-size="13">Update noisy future</text>
+<text x="937" y="154">Video VAE decoder</text><text x="937" y="178" font-size="13">Frozen · 49 RGB frames</text>
+<text x="441" y="75" font-size="14">Random noise + current noise level</text>
+<g stroke="#53657a" fill="none" stroke-width="2" marker-end="url(#arrow)"><path d="M184 97H215"/><path d="M184 218H215"/><path d="M395 97H420V140H440"/><path d="M395 218H420V192H440"/><path d="M568 83V115"/><path d="M695 164H740"/><path d="M890 164H920"/><path d="M815 200V273H568V220"/></g>
+<text x="596" y="293" font-size="14">Repeat: field evaluated at the updated state</text>
+<text x="24" y="333" font-size="14">Training additionally supplies clean future latents to construct noisy examples and velocity targets (Section 3).</text>
+<text x="24" y="357" font-size="14">Generation has no future target. Different seeds can produce alternatives; diversity does not establish calibrated probabilities.</text>
+</g></svg>
